@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Wane</string>
+  <string name="accessibility_service_description">Wane uses this service to gently cover other apps with a calming water animation during focus sessions. It only detects which app is in the foreground — it never reads screen content, passwords, or personal information.</string>
+</resources>

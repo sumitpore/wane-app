@@ -48,12 +48,12 @@
 
 | ID | Task | Role | Status | Depends On | Notes |
 | -- | ---- | ---- | ------ | ---------- | ----- |
-| P3-1 | Define module boundaries | Lead | PENDING | P2-3 | File ownership per role |
-| P3-2 | Tech stack proposals | Backend/Frontend/DB/DevOps | PENDING | P3-1 | Android-specific proposals |
-| P3-3 | HIL Gate 2: Tech stack approval | Lead | PENDING | P3-2 | User approves tech choices |
-| P3-4 | Define interfaces | Specialists | PENDING | P3-3 | INTERFACES.md |
-| P3-5 | Tech-specific conventions | All tech roles | PENDING | P3-3 | Role CONVENTIONS.md files |
-| P3-6 | Full scaffold with stubs | Frontend/Backend Dev | PENDING | P3-4, P3-5 | Build-ready project |
+| P3-1 | Define module boundaries | Lead | COMPLETED | P2-3 | 7 modules, clear file ownership per role |
+| P3-2 | Tech stack proposals | Backend/Frontend/DB/DevOps | COMPLETED | P3-1 | 4 proposals completed |
+| P3-3 | HIL Gate 2: Tech stack approval | Lead | COMPLETED | P3-2 | All approved. compileSdk=36/targetSdk=36, minSdk=28, Nav3, Room 3.0, Hilt 2.57.1 |
+| P3-4 | Define interfaces | Specialists | COMPLETED | P3-3 | INTERFACES.md: 12 API contracts, 9 shared types, 5 event contracts |
+| P3-5 | Tech-specific conventions | All tech roles | COMPLETED | P3-3 | All 6 technical role convention files updated |
+| P3-6 | Full scaffold with stubs | Frontend/Backend Dev | COMPLETED | P3-4, P3-5 | 42 files: build config, manifest, shared types, interface stubs, theme foundation, entry points |
 
 ## Phase 4+: Implementation
 

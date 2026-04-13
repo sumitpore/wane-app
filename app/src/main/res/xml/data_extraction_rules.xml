@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+  <cloud-backup>
+    <include domain="database" path="wane.db" />
+    <include domain="file" path="datastore/wane_preferences.preferences_pb" />
+    <exclude domain="database" path="wane.db-journal" />
+    <exclude domain="database" path="wane.db-wal" />
+    <exclude domain="database" path="wane.db-shm" />
+    <exclude domain="no_backup" path="." />
+    <exclude domain="cache" path="." />
+  </cloud-backup>
+  <device-transfer>
+    <include domain="database" path="wane.db" />
+    <include domain="file" path="datastore/wane_preferences.preferences_pb" />
+    <exclude domain="no_backup" path="." />
+    <exclude domain="cache" path="." />
+  </device-transfer>
+</data-extraction-rules>
