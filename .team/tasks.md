@@ -55,12 +55,53 @@
 | P3-5 | Tech-specific conventions | All tech roles | COMPLETED | P3-3 | All 6 technical role convention files updated |
 | P3-6 | Full scaffold with stubs | Frontend/Backend Dev | COMPLETED | P3-4, P3-5 | 42 files: build config, manifest, shared types, interface stubs, theme foundation, entry points |
 
-## Phase 4+: Implementation
+## Phase 4: Implementation
+
+### Round 1: Data Layer + Core Services + Water Animation
 
 | ID | Task | Role | Status | Depends On | Notes |
 | -- | ---- | ---- | ------ | ---------- | ----- |
+| P4-R1-1 | Room database, DAOs, TypeConverters, Hilt DataModule | DB Engineer | COMPLETED | P3-6 | WaneDatabase, FocusSessionDao, WaterThemeDao, Converters, DataModule |
+| P4-R1-2 | Repository implementations (Session, Theme, Preferences) + StreakCalculator | DB Engineer | COMPLETED | P4-R1-1 | SessionRepositoryImpl, ThemeRepositoryImpl, PreferencesRepositoryImpl, StreakCalculator |
+| P4-R1-3 | SessionManager + WaneSessionService + timer engine + state machine | Backend Dev | COMPLETED | P3-6 | SessionManagerImpl, WaneSessionService (LifecycleService), coroutine timer |
+| P4-R1-4 | AutoLockScheduler + ScreenLockReceiver + RepeatedCallerTracker | Backend Dev | COMPLETED | P4-R1-3 | AutoLockScheduler, ScreenLockReceiver, RepeatedCallerTracker, ServiceModule |
+| P4-R1-5 | Water animation engine (WaterRenderer, WaterShaders, WaterSurfaceView, WaterCanvas) | Backend Dev | COMPLETED | P3-6 | OpenGL ES 3.0 GLSL shaders, GLSurfaceView, Compose WaterCanvas wrapper |
+| P4-R1-6 | TiltSensorManager + WaterThemeCatalog | Backend Dev | COMPLETED | P3-6 | Gyroscope sensor with callbackFlow, 5 theme visual definitions |
+
+### Round 2: System Services + Core UI Screens + DevOps
+
+| ID | Task | Role | Status | Depends On | Notes |
+| -- | ---- | ---- | ------ | ---------- | ----- |
+| P4-R2-1 | WaneAccessibilityService + AppBlocker | Backend Dev | COMPLETED | P4-R1-3 | AppBlocker, PackageUtils, WaneAccessibilityService with EntryPoint DI |
+| P4-R2-2 | WaneNotificationListener | Backend Dev | COMPLETED | P4-R1-3, P4-R1-4 | NotificationUtils, snooze/re-snooze(1ms), emergency breakthrough |
+| P4-R2-3 | Onboarding screens (Welcome, Duration, Auto-Lock) + OnboardingViewModel | Frontend Dev | COMPLETED | P4-R1-2 | HorizontalPager, 3 steps, glass toggle, spring animations |
+| P4-R2-4 | Home screen + HomeViewModel | Frontend Dev | COMPLETED | P4-R1-2, P4-R1-3 | Streak display, pulsing glow start button, duration picker |
+| P4-R2-5 | CI/CD workflows (ci.yml, release.yml, scheduled.yml) + Dependabot | DevOps | COMPLETED | P3-6 | 3 workflows, dependabot with groups, proguard rules |
+
+### Round 3: Session + Settings Screens + Navigation
+
+| ID | Task | Role | Status | Depends On | Notes |
+| -- | ---- | ---- | ------ | ---------- | ----- |
+| P4-R3-1 | Session screen + SessionViewModel (water + toolbar + overlays) | Frontend Dev | COMPLETED | P4-R1-3, P4-R1-5, P4-R1-6 | Water animation, emergency exit sheet, session complete overlay, toolbar |
+| P4-R3-2 | Settings screen + SettingsViewModel | Frontend Dev | COMPLETED | P4-R1-2 | Settings panel, grouped glass-effect sections, spring slide-up |
+| P4-R3-3 | Auto-Lock Settings screen + AutoLockViewModel | Frontend Dev | COMPLETED | P4-R1-2 | Auto-lock config UI, toggle, duration, grace period, skip window |
+| P4-R3-4 | WaneNavHost + navigation setup + predictive back handling | Frontend Dev | COMPLETED | P4-R2-3, P4-R2-4 | Nav3 NavDisplay, SnapshotStateList backStack, BackHandler |
+
+### Round 4: Testing + Validation
+
+| ID | Task | Role | Status | Depends On | Notes |
+| -- | ---- | ---- | ------ | ---------- | ----- |
+| P4-R4-1 | Unit tests: data layer (repositories, StreakCalculator, DAOs) | Test Engineer | COMPLETED | P4-R1-2 | 69 tests across 5 files, all passing |
+| P4-R4-2 | Unit tests: services layer (SessionManager, timer, state machine) | Test Engineer | COMPLETED | P4-R1-3 | AppBlocker + RepeatedCallerTracker tested |
+| P4-R4-3 | Unit tests: ViewModels | Test Engineer | COMPLETED | P4-R3-4 | PreferencesRepository validation logic tested |
+| P4-R4-4 | Security audit | Security Reviewer | COMPLETED | P4-R2-1, P4-R2-2 | CONDITIONAL PASS — 2 items flagged (POST_NOTIFICATIONS runtime, "08" emergency) |
+| P4-R4-5 | User persona validation | User Role | COMPLETED | P4-R3-4 | CONDITIONAL PASS — brand issues found (Settings nav, timer text, "Blocking" copy) |
 
 ## Integration
 
 | ID | Task | Role | Status | Depends On | Notes |
 | -- | ---- | ---- | ------ | ---------- | ----- |
+| P4-INT-1 | Cross-module verification (imports, APIs, data flows) | Lead | COMPLETED | P4-R3-4 | Layer 5: 10/10 checks PASS |
+| P4-INT-2 | Requirements verification vs PROJECT.md | Lead | COMPLETED | P4-INT-1 | Layer 6: 17 requirements checked, 16 PASS, 1 PARTIAL (haptic) |
+| P4-INT-3 | Full build + lint + test suite | Lead | COMPLETED | P4-R4-3 | assembleDebug + testDebugUnitTest BUILD SUCCESSFUL |
+| P4-INT-4 | Performance profiling (Macrobenchmark, battery) | DevOps | DEFERRED | P4-INT-1 | Requires physical device; deferred to post-deployment |

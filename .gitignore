@@ -1,13 +1,55 @@
-*.iml
-.gradle
-/local.properties
-/.idea
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# ── Gradle ──
+.gradle/
+**/build/
+/build/
+app/build/
 local.properties
-/app/build
-/app/release.keystore
+/Focus Mode App/
+# Wrapper JAR must stay tracked (do not blanket-ignore *.jar at repo root)
+!gradle/wrapper/gradle-wrapper.jar
+
+# ── Android / Kotlin ──
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+*.hprof
+
+# ── IDE — Android Studio / IntelliJ ──
+.idea/
+*.iml
+*.ipr
+*.iws
+.navigation/
+
+# ── Keystores & secrets (never commit) ──
+*.jks
+*.keystore
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ── Lint / analysis (regenerate locally) ──
 lint-baseline.xml
+
+# ── Fastlane / Play (if added later) ──
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# ── Kotlin compiler / tooling ──
+.kotlin/
+
+# Version catalog must remain tracked even if *.toml patterns are added later
+!gradle/libs.versions.toml

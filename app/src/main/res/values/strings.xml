@@ -1,5 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Wane</string>
-  <string name="accessibility_service_description">Wane uses this service to gently cover other apps with a calming water animation during focus sessions. It only detects which app is in the foreground — it never reads screen content, passwords, or personal information.</string>
+    <string name="app_name">Wane</string>
+    <string name="accessibility_service_description">Wane uses this service to gently cover other apps with a calming water animation during focus sessions. It only detects which app is in the foreground — it never reads screen content, passwords, or personal information.</string>
+
+    <!-- Onboarding: Welcome -->
+    <string name="welcome_title">Wane</string>
+    <string name="welcome_subtitle">Let your focus flow naturally</string>
+    <string name="begin">Begin</string>
+    <string name="next">Next</string>
+    <string name="start">Start</string>
+
+    <!-- Onboarding: Duration -->
+    <string name="duration_title">Set your focus duration</string>
+    <string name="minutes_label">minutes</string>
+    <string name="decrease_duration">Decrease duration</string>
+    <string name="increase_duration">Increase duration</string>
+
+    <!-- Onboarding: Auto-Lock -->
+    <string name="auto_lock_title">Stay focused, even when tempted</string>
+    <string name="auto_lock_description">Auto-lock gently starts a focus session when you unlock your phone, giving you a calm moment before diving in.</string>
+    <string name="auto_lock_toggle_label">Enable auto-lock</string>
+
+    <!-- Home -->
+    <string name="minutes_format">%d min</string>
+    <string name="day_streak">day streak</string>
+    <string name="start_session">Start Session</string>
+
+    <string name="no_streak_yet">Begin your first session</string>
+
+    <!-- Session -->
+    <string name="end_session">End</string>
+    <string name="emergency_exit_title">Are you sure?</string>
+    <string name="emergency_exit_instruction">Type EXIT to end your session early</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="session_complete_title">Well done</string>
+    <string name="session_complete_message">You focused for %d minutes</string>
+    <string name="session_phone">Phone</string>
+    <string name="session_contacts">Contacts</string>
+    <string name="session_sms">Messages</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_none">None</string>
+    <string name="settings_contacts_count">%d contacts</string>
+    <string name="settings_total_sessions">Total sessions</string>
+    <string name="settings_total_focus_time">Total focus time</string>
+    <string name="settings_hours_format">%d hours</string>
+    <string name="settings_clear">Clear</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_value">0.1.0</string>
+    <string name="focus_section">Focus</string>
+    <string name="default_duration">Default duration</string>
+    <string name="blocking_section">Automation</string>
+    <string name="auto_lock">Auto-Lock</string>
+    <string name="safety_section">Safety</string>
+    <string name="emergency_contacts">Emergency contacts</string>
+    <string name="experience_section">Experience</string>
+    <string name="ambient_sounds">Ambient sounds</string>
+    <string name="haptic_feedback">Haptic feedback</string>
+    <string name="data_section">Data</string>
+    <string name="clear_sessions">Clear all sessions</string>
+    <string name="clear_sessions_confirm">This will delete all session history and reset your streak. This cannot be undone.</string>
+    <string name="about_section">About</string>
+    <string name="auto_lock_settings_title">Auto-Lock Settings</string>
+    <string name="auto_lock_enabled">Auto-Lock enabled</string>
+    <string name="auto_lock_duration">Duration</string>
+    <string name="grace_period">Grace period</string>
+    <string name="skip_window">Skip window</string>
+    <string name="skip_while_charging">Skip while charging</string>
+    <string name="autolock_seconds_format">%d sec</string>
+    <string name="autolock_skip_window_range" formatted="false">%02d:%02d – %02d:%02d</string>
+
+    <!-- Errors -->
+    <string name="error_foreground_service">Unable to start session. Please allow background activity for Wane in system settings.</string>
+    <string name="error_accessibility_service">Accessibility service is required. Please enable it in system settings.</string>
 </resources>

@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.room)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -24,24 +25,10 @@ android {
 
     signingConfigs {
         create("release") {
-            val props = rootProject.file("local.properties")
-                .takeIf { it.exists() }
-                ?.let { java.util.Properties().apply { load(it.inputStream()) } }
-
-            storeFile = file(
-                System.getenv("KEYSTORE_FILE")
-                    ?: props?.getProperty("release.storeFile")
-                    ?: "release.keystore"
-            )
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-                ?: props?.getProperty("release.storePassword")
-                ?: ""
-            keyAlias = System.getenv("KEY_ALIAS")
-                ?: props?.getProperty("release.keyAlias")
-                ?: ""
-            keyPassword = System.getenv("KEY_PASSWORD")
-                ?: props?.getProperty("release.keyPassword")
-                ?: ""
+            storeFile = file(System.getenv("KEYSTORE_FILE") ?: "release.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 
@@ -59,7 +46,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                rootProject.file("proguard-rules.pro"),
             )
         }
     }
@@ -67,10 +54,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -104,12 +87,14 @@ dependencies {
 
     // Compose core
     implementation(libs.bundles.compose.core)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
 
     // Lifecycle
     implementation(libs.bundles.lifecycle)
+    implementation(libs.lifecycle.service)
 
     // Navigation 3
     implementation(libs.bundles.navigation3)
@@ -139,7 +124,18 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.compose.ui.test.junit4)
+}
+
+ktlint {
+    version.set("1.8.0")
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    baseline = file("$rootDir/config/detekt/baseline.xml")
 }
