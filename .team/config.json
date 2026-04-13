@@ -1,0 +1,41 @@
+{
+  "project_name": "Focus Mode App",
+  "created": "2026-04-10",
+  "domain": "",
+  "stitch_project_id": "",
+  "team": {
+    "lead": {
+      "agent_id": "",
+      "status": "active"
+    },
+    "teammates": []
+  },
+  "hil_gates": {
+    "tech_stack": {
+      "status": "pending",
+      "approved_date": null
+    },
+    "design": {
+      "status": "pending",
+      "approved_date": null,
+      "screens": {}
+    }
+  },
+  "active_roles": [
+    "content-writer",
+    "ui-designer",
+    "frontend-dev",
+    "backend-dev",
+    "db-engineer",
+    "data-engineer",
+    "test-engineer",
+    "security-reviewer",
+    "devops",
+    "business",
+    "user-testing",
+    "customer-specialist",
+    "consent-manager"
+  ],
+  "custom_roles": [],
+  "subagents": []
+}
