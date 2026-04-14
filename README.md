@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo-and-icons/Logo.png" alt="Wane App Icon" width="120" />
+</p>
+
 # Wane
 
 A focus session app for Android that helps you stay off your phone by blocking distracting apps during timed sessions. Features a calming water animation that recedes as your session progresses.

@@ -113,6 +113,7 @@ fun SessionScreen(
     if (uiState.isExitSheetVisible) {
         EmergencyExitSheet(
             exitInput = uiState.exitInput,
+            exitPhrase = uiState.exitPhrase,
             onInputChange = { viewModel.onEvent(SessionUiEvent.UpdateExitInput(it)) },
             onConfirm = { viewModel.onEvent(SessionUiEvent.ConfirmEmergencyExit) },
             onDismiss = { viewModel.onEvent(SessionUiEvent.DismissExitSheet) },
@@ -210,6 +211,7 @@ private fun ToolbarIconButton(
 @Composable
 private fun EmergencyExitSheet(
     exitInput: String,
+    exitPhrase: String,
     onInputChange: (String) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
@@ -245,6 +247,15 @@ private fun EmergencyExitSheet(
                 textAlign = TextAlign.Center,
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "\"$exitPhrase\"",
+                style = WaneTypography.bodyLarge,
+                color = AccentPrimary,
+                textAlign = TextAlign.Center,
+            )
+
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedTextField(
@@ -256,6 +267,14 @@ private fun EmergencyExitSheet(
                     textAlign = TextAlign.Center,
                     color = TextPrimary,
                 ),
+                placeholder = {
+                    Text(
+                        text = exitPhrase,
+                        style = WaneTypography.bodyLarge.copy(textAlign = TextAlign.Center),
+                        color = TextMuted,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = AccentPrimary,
                     unfocusedBorderColor = SurfaceGlass,
@@ -285,7 +304,7 @@ private fun EmergencyExitSheet(
                     text = stringResource(R.string.end_session),
                     onClick = onConfirm,
                     modifier = Modifier.weight(1f),
-                    enabled = exitInput.equals("EXIT", ignoreCase = true),
+                    enabled = exitInput.equals(exitPhrase, ignoreCase = true),
                     containerColor = Color(0xFFE04848),
                 )
             }

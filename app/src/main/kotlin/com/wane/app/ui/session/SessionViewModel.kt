@@ -27,6 +27,7 @@ data class SessionUiState(
     val totalDurationMs: Long = 0L,
     val isExitSheetVisible: Boolean = false,
     val exitInput: String = "",
+    val exitPhrase: String = "",
     val isSessionComplete: Boolean = false,
     val completedDurationMs: Long = 0L,
     val shouldNavigateHome: Boolean = false,
@@ -66,6 +67,7 @@ class SessionViewModel @Inject constructor(
                 totalDurationMs = session.totalDurationMs,
                 isExitSheetVisible = local.isExitSheetVisible,
                 exitInput = local.exitInput,
+                exitPhrase = local.exitPhrase,
                 isSessionComplete = false,
                 completedDurationMs = 0L,
             )
@@ -101,13 +103,20 @@ class SessionViewModel @Inject constructor(
     fun onEvent(event: SessionUiEvent) {
         when (event) {
             SessionUiEvent.ShowExitSheet ->
-                localState.update { it.copy(isExitSheetVisible = true, exitInput = "") }
+                localState.update {
+                    it.copy(
+                        isExitSheetVisible = true,
+                        exitInput = "",
+                        exitPhrase = EXIT_PHRASES.random(),
+                    )
+                }
             SessionUiEvent.DismissExitSheet ->
                 localState.update { it.copy(isExitSheetVisible = false, exitInput = "") }
             is SessionUiEvent.UpdateExitInput ->
                 localState.update { it.copy(exitInput = event.text) }
             SessionUiEvent.ConfirmEmergencyExit -> {
-                if (localState.value.exitInput.equals(EXIT_KEYWORD, ignoreCase = true)) {
+                val local = localState.value
+                if (local.exitInput.equals(local.exitPhrase, ignoreCase = true)) {
                     sessionManager.requestEmergencyExit()
                     localState.update { it.copy(isExitSheetVisible = false, exitInput = "") }
                 }
@@ -133,9 +142,21 @@ class SessionViewModel @Inject constructor(
     private data class LocalSessionState(
         val isExitSheetVisible: Boolean = false,
         val exitInput: String = "",
+        val exitPhrase: String = "",
     )
 
     companion object {
-        private const val EXIT_KEYWORD = "EXIT"
+        private val EXIT_PHRASES = listOf(
+            "I am blessed",
+            "I feel alive",
+            "I am worthy",
+            "I am strong",
+            "I am loved",
+            "I am brave",
+            "I am at peace",
+            "I am grateful",
+            "I shine bright",
+            "I am radiant",
+        )
     }
 }

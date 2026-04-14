@@ -46,7 +46,7 @@
     <!-- Session -->
     <string name="end_session">End</string>
     <string name="emergency_exit_title">Are you sure?</string>
-    <string name="emergency_exit_instruction">Type EXIT to end your session early</string>
+    <string name="emergency_exit_instruction">Type the phrase below to end your session early</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
     <string name="session_complete_title">Well done</string>
