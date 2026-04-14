@@ -25,8 +25,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,7 +40,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wane.app.R
 import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BackgroundSettings
-import com.wane.app.ui.theme.SurfaceDim
 import com.wane.app.ui.theme.SurfaceGlass
 import com.wane.app.ui.theme.TextMuted
 import com.wane.app.ui.theme.TextPrimary
@@ -87,30 +84,6 @@ fun SettingsScreen(
                 SettingsRowNavigation(
                     label = stringResource(R.string.auto_lock),
                     onClick = onNavigateToAutoLock,
-                )
-            }
-
-            SettingsSection(title = stringResource(R.string.safety_section)) {
-                SettingsRowValue(
-                    label = stringResource(R.string.emergency_contacts),
-                    value = if (uiState.emergencyContacts.isEmpty()) {
-                        stringResource(R.string.settings_none)
-                    } else {
-                        stringResource(R.string.settings_contacts_count, uiState.emergencyContacts.size)
-                    },
-                )
-            }
-
-            SettingsSection(title = stringResource(R.string.experience_section)) {
-                SettingsRowToggle(
-                    label = stringResource(R.string.ambient_sounds),
-                    checked = uiState.ambientSounds,
-                    onCheckedChange = { viewModel.onEvent(SettingsUiEvent.SetAmbientSounds(it)) },
-                )
-                SettingsRowToggle(
-                    label = stringResource(R.string.haptic_feedback),
-                    checked = uiState.hapticFeedback,
-                    onCheckedChange = { viewModel.onEvent(SettingsUiEvent.SetHapticFeedback(it)) },
                 )
             }
 
@@ -260,37 +233,6 @@ private fun SettingsRowValue(
             text = value,
             style = WaneTypography.bodyMedium,
             color = TextStatus,
-        )
-    }
-}
-
-@Composable
-private fun SettingsRowToggle(
-    label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            style = WaneTypography.bodyLarge,
-            color = TextPrimary,
-        )
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = AccentPrimary,
-                checkedTrackColor = AccentPrimary.copy(alpha = 0.3f),
-                uncheckedThumbColor = TextStatus,
-                uncheckedTrackColor = SurfaceDim,
-            ),
         )
     }
 }

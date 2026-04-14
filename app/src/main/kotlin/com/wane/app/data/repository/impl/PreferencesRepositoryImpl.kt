@@ -41,16 +41,6 @@ class PreferencesRepositoryImpl @Inject constructor(
         dataStore.data.map { prefs -> readEmergencyContacts(prefs) }
             .catch { emit(emptyList()) }
 
-    override fun observeAmbientSoundsEnabled(): Flow<Boolean> =
-        dataStore.data.map { prefs ->
-            prefs[PreferenceKeys.AMBIENT_SOUNDS_ENABLED] ?: DEFAULT_AMBIENT_SOUNDS
-        }.catch { emit(DEFAULT_AMBIENT_SOUNDS) }
-
-    override fun observeHapticFeedbackEnabled(): Flow<Boolean> =
-        dataStore.data.map { prefs ->
-            prefs[PreferenceKeys.HAPTIC_FEEDBACK_ENABLED] ?: DEFAULT_HAPTIC_FEEDBACK
-        }.catch { emit(DEFAULT_HAPTIC_FEEDBACK) }
-
     override fun observeOnboardingCompleted(): Flow<Boolean> =
         dataStore.data.map { prefs ->
             prefs[PreferenceKeys.ONBOARDING_COMPLETED] ?: DEFAULT_ONBOARDING_COMPLETED
@@ -104,22 +94,6 @@ class PreferencesRepositoryImpl @Inject constructor(
         try {
             val encoded = json.encodeToString(stringListSerializer, cleaned)
             dataStore.edit { it[PreferenceKeys.EMERGENCY_CONTACTS_JSON] = encoded }
-        } catch (_: Exception) {
-            // no-op
-        }
-    }
-
-    override suspend fun setAmbientSoundsEnabled(enabled: Boolean) {
-        try {
-            dataStore.edit { it[PreferenceKeys.AMBIENT_SOUNDS_ENABLED] = enabled }
-        } catch (_: Exception) {
-            // no-op
-        }
-    }
-
-    override suspend fun setHapticFeedbackEnabled(enabled: Boolean) {
-        try {
-            dataStore.edit { it[PreferenceKeys.HAPTIC_FEEDBACK_ENABLED] = enabled }
         } catch (_: Exception) {
             // no-op
         }
@@ -213,8 +187,6 @@ class PreferencesRepositoryImpl @Inject constructor(
         private val HOUR_RANGE = 0..23
         private val MINUTE_RANGE = 0..59
 
-        private const val DEFAULT_AMBIENT_SOUNDS = false
-        private const val DEFAULT_HAPTIC_FEEDBACK = true
         private const val DEFAULT_ONBOARDING_COMPLETED = false
     }
 }

@@ -37,7 +37,7 @@ class OnboardingViewModel @Inject constructor(
     fun onEvent(event: OnboardingUiEvent) {
         when (event) {
             is OnboardingUiEvent.NextPage -> {
-                _uiState.update { it.copy(currentPage = (it.currentPage + 1).coerceAtMost(2)) }
+                _uiState.update { it.copy(currentPage = (it.currentPage + 1).coerceAtMost(4)) }
             }
             is OnboardingUiEvent.PreviousPage -> {
                 _uiState.update { it.copy(currentPage = (it.currentPage - 1).coerceAtLeast(0)) }

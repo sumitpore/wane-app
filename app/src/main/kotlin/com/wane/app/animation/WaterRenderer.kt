@@ -70,6 +70,7 @@ class WaterRenderer : GLSurfaceView.Renderer {
     private var uCausticRadiusOscillation = -1
 
     private var timeSeconds = 0f
+    private var lastFrameNanos = 0L
     private var viewportW = 1
     private var viewportH = 1
 
@@ -133,6 +134,7 @@ class WaterRenderer : GLSurfaceView.Renderer {
 
     private fun onSurfaceCreatedInner() {
         shaderFailed.set(false)
+        lastFrameNanos = 0L
         val versionStr = GLES20.glGetString(GLES20.GL_VERSION) ?: ""
         val major = parseGlMajorVersion(versionStr)
         glEsVersion = if (major >= 3) 3 else 2
@@ -252,7 +254,11 @@ class WaterRenderer : GLSurfaceView.Renderer {
             return
         }
 
-        timeSeconds += FRAME_DT
+        val now = System.nanoTime()
+        val dt = if (lastFrameNanos == 0L) 0.016f
+                 else ((now - lastFrameNanos) / 1_000_000_000f).coerceIn(0.001f, 0.1f)
+        lastFrameNanos = now
+        timeSeconds += dt
         if (touchPending.getAndSet(false)) {
             touchTime.set(timeSeconds)
         }
@@ -336,7 +342,6 @@ class WaterRenderer : GLSurfaceView.Renderer {
 
     private companion object {
         private const val TAG = "WaterRenderer"
-        private const val FRAME_DT = 0.015f
     }
 }
 

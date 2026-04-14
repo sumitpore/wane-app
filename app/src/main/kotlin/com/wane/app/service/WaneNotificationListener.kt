@@ -32,9 +32,9 @@ class WaneNotificationListener : NotificationListenerService() {
 
     private val phoneAndSmsPackages: Set<String> by lazy {
         buildSet {
-            addAll(PackageUtils.getDialerPackages())
-            addAll(PackageUtils.getContactsPackages())
-            addAll(PackageUtils.getSmsPackages())
+            addAll(PackageUtils.resolveDialerPackages(applicationContext))
+            addAll(PackageUtils.resolveContactsPackages(applicationContext))
+            addAll(PackageUtils.resolveSmsPackages(applicationContext))
         }
     }
 

@@ -15,10 +15,6 @@ interface PreferencesRepository {
 
     fun observeEmergencyContacts(): Flow<List<String>>
 
-    fun observeAmbientSoundsEnabled(): Flow<Boolean>
-
-    fun observeHapticFeedbackEnabled(): Flow<Boolean>
-
     fun observeOnboardingCompleted(): Flow<Boolean>
 
     // Write operations (suspend, atomic)
@@ -30,10 +26,6 @@ interface PreferencesRepository {
     suspend fun setSelectedThemeId(themeId: String)
 
     suspend fun setEmergencyContacts(contacts: List<String>)
-
-    suspend fun setAmbientSoundsEnabled(enabled: Boolean)
-
-    suspend fun setHapticFeedbackEnabled(enabled: Boolean)
 
     suspend fun setOnboardingCompleted(completed: Boolean)
 }

@@ -16,15 +16,30 @@
     <string name="decrease_duration">Decrease duration</string>
     <string name="increase_duration">Increase duration</string>
 
+    <!-- Onboarding: Accessibility -->
+    <string name="accessibility_title">Stay focused</string>
+    <string name="accessibility_description">Wane gently covers other apps during your focus session. Enable accessibility access to activate this.</string>
+    <string name="enable_accessibility">Open Settings</string>
+
+    <!-- Onboarding: Notification -->
+    <string name="notification_title">Silence distractions</string>
+    <string name="notification_description">Wane can temporarily snooze notifications during your focus session, so nothing breaks your flow. Enable notification access to activate this.</string>
+    <string name="enable_notification_access">Open Settings</string>
+
     <!-- Onboarding: Auto-Lock -->
-    <string name="auto_lock_title">Stay focused, even when tempted</string>
-    <string name="auto_lock_description">Auto-lock gently starts a focus session when you unlock your phone, giving you a calm moment before diving in.</string>
+    <string name="auto_lock_title">Focus, on its own</string>
+    <string name="auto_lock_description">When enabled, a focus session starts quietly a few seconds after you unlock your phone — no need to open Wane.</string>
     <string name="auto_lock_toggle_label">Enable auto-lock</string>
 
     <!-- Home -->
     <string name="minutes_format">%d min</string>
+    <string name="min_label">min</string>
+    <string name="begin_focus_session">Begin focus session</string>
+    <string name="wane_logo">Wane</string>
     <string name="day_streak">day streak</string>
     <string name="start_session">Start Session</string>
+    <string name="accessibility_prompt_message">To block distracting apps during focus sessions, Wane needs Accessibility access. This permission is only used to detect and redirect app launches — no personal data is collected.</string>
+    <string name="notification_prompt_message">To silence distracting notifications during focus sessions, Wane needs Notification access. This permission is only used to temporarily snooze non-essential notifications.</string>
 
     <string name="no_streak_yet">Begin your first session</string>
 
@@ -55,11 +70,6 @@
     <string name="default_duration">Default duration</string>
     <string name="blocking_section">Automation</string>
     <string name="auto_lock">Auto-Lock</string>
-    <string name="safety_section">Safety</string>
-    <string name="emergency_contacts">Emergency contacts</string>
-    <string name="experience_section">Experience</string>
-    <string name="ambient_sounds">Ambient sounds</string>
-    <string name="haptic_feedback">Haptic feedback</string>
     <string name="data_section">Data</string>
     <string name="clear_sessions">Clear all sessions</string>
     <string name="clear_sessions_confirm">This will delete all session history and reset your streak. This cannot be undone.</string>

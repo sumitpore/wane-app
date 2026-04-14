@@ -1,7 +1,7 @@
 package com.wane.app.ui.onboarding
 
 import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,7 +48,7 @@ fun DurationStep(
 ) {
     val animatedDuration by animateIntAsState(
         targetValue = selectedDuration,
-        animationSpec = spring(stiffness = 100f, dampingRatio = 0.85f),
+        animationSpec = tween(durationMillis = 300),
         label = "duration_anim",
     )
 

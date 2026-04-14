@@ -1,15 +1,30 @@
 package com.wane.app.ui.theme
 
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.wane.app.R
 
-// Font families will be initialized with actual font resources in Phase 4.
-// For now, use default sans-serif as placeholder until TTF files are bundled.
-val Sora = FontFamily.Default
-val DmSans = FontFamily.Default
-val SpaceGrotesk = FontFamily.Default
+val Sora = FontFamily(
+    Font(R.font.sora_extralight, FontWeight.ExtraLight),
+    Font(R.font.sora_light, FontWeight.Light),
+    Font(R.font.sora_regular, FontWeight.Normal),
+    Font(R.font.sora_medium, FontWeight.Medium),
+    Font(R.font.sora_semibold, FontWeight.SemiBold),
+)
+
+val DmSans = FontFamily(
+    Font(R.font.dm_sans_light, FontWeight.Light),
+    Font(R.font.dm_sans_regular, FontWeight.Normal),
+    Font(R.font.dm_sans_medium, FontWeight.Medium),
+)
+
+val SpaceGrotesk = FontFamily(
+    Font(R.font.space_grotesk_regular, FontWeight.Normal),
+    Font(R.font.space_grotesk_medium, FontWeight.Medium),
+)
 
 object WaneTypography {
 

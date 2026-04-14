@@ -23,6 +23,11 @@ object EmergencySafety {
         "com.android.systemui",
         "com.android.settings",
         "com.android.emergency",
+        // System resolver/chooser — appears when multiple apps handle an intent
+        "android",
+        "com.android.internal.app",
+        "com.google.android.permissioncontroller",
+        "com.samsung.android.app.resolver",
     )
 
     fun isEmergencyNumber(number: String): Boolean {

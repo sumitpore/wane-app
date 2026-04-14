@@ -87,6 +87,20 @@ class AppBlockerTest {
         assertTrue(blocker.shouldBlockApp("com.facebook.katana"))
     }
 
+    @Test
+    fun `running state does not block system resolver and chooser`() {
+        fakeSessionManager.setState(runningState())
+        val resolverPackages = listOf(
+            "android",
+            "com.android.internal.app",
+            "com.google.android.permissioncontroller",
+            "com.samsung.android.app.resolver",
+        )
+        for (pkg in resolverPackages) {
+            assertFalse("Expected resolver $pkg to not be blocked", blocker.shouldBlockApp(pkg))
+        }
+    }
+
     private fun runningState() = SessionState.Running(
         sessionId = 1L,
         totalDurationMs = 25 * 60_000L,

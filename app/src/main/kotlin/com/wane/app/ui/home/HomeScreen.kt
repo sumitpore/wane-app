@@ -1,16 +1,12 @@
 package com.wane.app.ui.home
 
 import android.widget.Toast
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -26,10 +22,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,12 +38,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,20 +59,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wane.app.R
 import com.wane.app.service.SessionError
-import com.wane.app.ui.theme.AccentLight
 import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BackgroundDeep
 import com.wane.app.ui.theme.BackgroundDeepEnd
 import com.wane.app.ui.theme.BackgroundDeepMid
-import com.wane.app.ui.theme.Crystalline
 import com.wane.app.ui.theme.Sora
+import com.wane.app.ui.theme.SpaceGrotesk
+import com.wane.app.ui.theme.SurfaceGlass
 import com.wane.app.ui.theme.TextMuted
 import com.wane.app.ui.theme.TextPrimary
-import com.wane.app.ui.theme.TextSecondary
-import com.wane.app.ui.theme.TextStatus
+import com.wane.app.ui.theme.TextSubtle
 import com.wane.app.ui.theme.WaneMotion
 import com.wane.app.ui.theme.WaneTheme
 import com.wane.app.ui.theme.WaneTypography
+
+private val DURATION_OPTIONS = HomeViewModel.DURATION_OPTIONS
 
 @Composable
 fun HomeScreen(
@@ -77,18 +84,22 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.onEvent(HomeUiEvent.RefreshPermissions)
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is HomeEffect.NavigateToSession -> onNavigateToSession()
                 is HomeEffect.ShowError -> {
-                    val message = when (effect.error) {
-                        is SessionError.ForegroundServiceBlocked ->
-                            context.getString(R.string.error_foreground_service)
-                        is SessionError.AccessibilityServiceDisabled ->
-                            context.getString(R.string.error_accessibility_service)
+                    when (effect.error) {
+                        is SessionError.ForegroundServiceBlocked -> {
+                            val message = context.getString(R.string.error_foreground_service)
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                        }
+                        is SessionError.AccessibilityServiceDisabled -> { /* handled inline */ }
                     }
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -100,7 +111,11 @@ fun HomeScreen(
             val durationMs = uiState.defaultDuration * 60L * 1000L
             viewModel.onEvent(HomeUiEvent.StartSession(durationMs))
         },
+        onIncreaseDuration = { viewModel.onEvent(HomeUiEvent.IncreaseDuration) },
+        onDecreaseDuration = { viewModel.onEvent(HomeUiEvent.DecreaseDuration) },
         onSettings = onNavigateToSettings,
+        onOpenAccessibilitySettings = { viewModel.onEvent(HomeUiEvent.OpenAccessibilitySettings) },
+        onOpenNotificationSettings = { viewModel.onEvent(HomeUiEvent.OpenNotificationSettings) },
     )
 }
 
@@ -108,91 +123,262 @@ fun HomeScreen(
 private fun HomeContent(
     uiState: HomeUiState,
     onStartSession: () -> Unit,
+    onIncreaseDuration: () -> Unit,
+    onDecreaseDuration: () -> Unit,
     onSettings: () -> Unit = {},
+    onOpenAccessibilitySettings: () -> Unit = {},
+    onOpenNotificationSettings: () -> Unit = {},
 ) {
+    val currentIndex = DURATION_OPTIONS.indexOfFirst { it >= uiState.defaultDuration }
+        .takeIf { it >= 0 } ?: 0
+    val canIncrease = currentIndex < DURATION_OPTIONS.lastIndex
+    val canDecrease = currentIndex > 0
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(BackgroundDeep, BackgroundDeepEnd),
+                    colors = listOf(BackgroundDeep, BackgroundDeepMid, BackgroundDeepEnd),
                 ),
             )
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
+        // Ambient glow behind center area
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val glowCenter = Offset(size.width / 2f, size.height * 0.52f)
+            val glowRadius = 150.dp.toPx()
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        AccentPrimary.copy(alpha = 0.08f),
+                        Color.Transparent,
+                    ),
+                    center = glowCenter,
+                    radius = glowRadius,
+                ),
+                radius = glowRadius,
+                center = glowCenter,
+            )
+        }
+
+        // Settings gear — top right
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(end = 8.dp, top = 4.dp),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            IconButton(onClick = onSettings) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = stringResource(R.string.settings_title),
+                    tint = TextMuted,
+                )
+            }
+        }
+
+        // Main vertical layout: logo -> duration picker -> start button -> micro label
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                IconButton(onClick = onSettings) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = stringResource(R.string.settings_title),
-                        tint = TextMuted,
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.weight(0.15f))
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Logo
+            WaneLogo()
 
+            Spacer(modifier = Modifier.weight(0.18f))
+
+            // Duration picker
+            DurationPicker(
+                duration = uiState.defaultDuration,
+                canIncrease = canIncrease,
+                canDecrease = canDecrease,
+                onIncrease = onIncreaseDuration,
+                onDecrease = onDecreaseDuration,
+            )
+
+            Spacer(modifier = Modifier.weight(0.18f))
+
+            // Start button
+            StartButton(onClick = onStartSession)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Micro-label
             Text(
-                text = stringResource(R.string.welcome_title),
-                style = WaneTypography.headlineLarge.copy(
-                    fontWeight = FontWeight.ExtraLight,
-                ),
-                color = TextSecondary,
+                text = stringResource(R.string.begin_focus_session).uppercase(),
+                fontFamily = SpaceGrotesk,
+                fontWeight = FontWeight.Normal,
+                fontSize = 10.sp,
+                color = TextSubtle,
+                letterSpacing = 3.sp,
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.weight(0.15f))
+            if (uiState.accessibilityDisabled) {
+                Spacer(modifier = Modifier.height(24.dp))
+                AccessibilityPromptBanner(
+                    onEnableClick = onOpenAccessibilitySettings,
+                )
+            }
 
-            StreakDisplay(streak = uiState.currentStreak)
+            if (uiState.notificationListenerDisabled) {
+                Spacer(modifier = Modifier.height(if (uiState.accessibilityDisabled) 12.dp else 24.dp))
+                NotificationPromptBanner(
+                    onEnableClick = onOpenNotificationSettings,
+                )
+            }
 
-            Spacer(modifier = Modifier.weight(0.2f))
-
-            StartButton(onClick = onStartSession)
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            DurationLabel(duration = uiState.defaultDuration)
-
-            Spacer(modifier = Modifier.weight(0.3f))
+            Spacer(modifier = Modifier.weight(0.22f))
         }
     }
 }
 
 @Composable
-private fun StreakDisplay(streak: Int) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        if (streak > 0) {
-            Text(
-                text = streak.toString(),
-                fontFamily = Sora,
-                fontWeight = FontWeight.ExtraLight,
-                fontSize = 56.sp,
-                color = TextPrimary,
-                textAlign = TextAlign.Center,
+private fun WaneLogo() {
+    Image(
+        painter = painterResource(R.drawable.wane_logo),
+        contentDescription = stringResource(R.string.wane_logo),
+        modifier = Modifier.height(48.dp),
+        contentScale = ContentScale.FillHeight,
+    )
+}
+
+@Composable
+private fun AccessibilityPromptBanner(
+    onEnableClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = SurfaceGlass,
+                shape = RoundedCornerShape(16.dp),
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(R.string.accessibility_prompt_message),
+            style = WaneTypography.bodyMedium,
+            color = TextPrimary,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(
+            onClick = onEnableClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = AccentPrimary,
+            ),
+            shape = RoundedCornerShape(12.dp),
+        ) {
             Text(
-                text = stringResource(R.string.day_streak),
-                style = WaneTypography.labelMedium,
-                color = TextStatus,
-                textAlign = TextAlign.Center,
+                text = stringResource(R.string.enable_accessibility),
+                style = WaneTypography.labelLarge,
             )
-        } else {
+        }
+    }
+}
+
+@Composable
+private fun NotificationPromptBanner(
+    onEnableClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = SurfaceGlass,
+                shape = RoundedCornerShape(16.dp),
+            )
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(R.string.notification_prompt_message),
+            style = WaneTypography.bodyMedium,
+            color = TextPrimary,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(
+            onClick = onEnableClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = AccentPrimary,
+            ),
+            shape = RoundedCornerShape(12.dp),
+        ) {
             Text(
-                text = stringResource(R.string.no_streak_yet),
-                style = WaneTypography.bodyLarge,
-                color = TextMuted,
-                textAlign = TextAlign.Center,
+                text = stringResource(R.string.enable_notification_access),
+                style = WaneTypography.labelLarge,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DurationPicker(
+    duration: Int,
+    canIncrease: Boolean,
+    canDecrease: Boolean,
+    onIncrease: () -> Unit,
+    onDecrease: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        // Chevron up
+        IconButton(
+            onClick = onIncrease,
+            enabled = canIncrease,
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowUp,
+                contentDescription = stringResource(R.string.increase_duration),
+                modifier = Modifier.size(32.dp),
+                tint = if (canIncrease) TextMuted else Color.White.copy(alpha = 0.10f),
+            )
+        }
+
+        // Large duration number
+        Text(
+            text = duration.toString(),
+            fontFamily = Sora,
+            fontWeight = FontWeight.ExtraLight,
+            fontSize = 64.sp,
+            color = Color.White.copy(alpha = 0.9f),
+            textAlign = TextAlign.Center,
+        )
+
+        // "min" label
+        Text(
+            text = stringResource(R.string.min_label).uppercase(),
+            fontFamily = SpaceGrotesk,
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            color = TextMuted,
+            letterSpacing = 3.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Chevron down
+        IconButton(
+            onClick = onDecrease,
+            enabled = canDecrease,
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = stringResource(R.string.decrease_duration),
+                modifier = Modifier.size(32.dp),
+                tint = if (canDecrease) TextMuted else Color.White.copy(alpha = 0.10f),
             )
         }
     }
@@ -209,75 +395,34 @@ private fun StartButton(onClick: () -> Unit) {
         label = "start_scale",
     )
 
-    val infiniteTransition = rememberInfiniteTransition(label = "start_glow")
-    val glowPulse by infiniteTransition.animateFloat(
-        initialValue = 0.8f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2500, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "glow_pulse",
-    )
-
-    Box(contentAlignment = Alignment.Center) {
-        Canvas(
-            modifier = Modifier.size(180.dp),
-        ) {
-            val center = Offset(size.width / 2f, size.height / 2f)
-            val radius = size.minDimension / 2f * glowPulse
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        AccentPrimary.copy(alpha = 0.2f),
-                        AccentLight.copy(alpha = 0.08f),
-                        BackgroundDeepMid.copy(alpha = 0f),
-                    ),
-                    center = center,
-                    radius = radius,
-                ),
-                radius = radius,
-                center = center,
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(80.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .border(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.20f),
+                shape = CircleShape,
             )
-        }
-
-        FloatingActionButton(
-            onClick = onClick,
-            modifier = Modifier
-                .size(120.dp)
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                },
-            shape = CircleShape,
-            containerColor = AccentPrimary,
-            contentColor = Crystalline,
-            elevation = FloatingActionButtonDefaults.elevation(
-                defaultElevation = 0.dp,
-                pressedElevation = 0.dp,
+            .background(
+                color = Color.White.copy(alpha = 0.05f),
+                shape = CircleShape,
+            )
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
             ),
-            interactionSource = interactionSource,
-        ) {
-            Text(
-                text = stringResource(R.string.start_session),
-                style = WaneTypography.labelLarge,
-                color = Crystalline,
-                textAlign = TextAlign.Center,
-            )
-        }
-    }
-}
-
-@Composable
-private fun DurationLabel(duration: Int) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
     ) {
-        Text(
-            text = stringResource(R.string.minutes_format, duration),
-            style = WaneTypography.bodyLarge,
-            color = TextStatus,
+        Icon(
+            imageVector = Icons.Filled.PlayArrow,
+            contentDescription = stringResource(R.string.start_session),
+            modifier = Modifier.size(28.dp),
+            tint = Color.White.copy(alpha = 0.80f),
         )
     }
 }
@@ -287,21 +432,29 @@ private fun DurationLabel(duration: Int) {
 private fun HomeContentPreview() {
     WaneTheme {
         HomeContent(
-            uiState = HomeUiState(currentStreak = 5, defaultDuration = 25),
+            uiState = HomeUiState(defaultDuration = 25),
             onStartSession = {},
+            onIncreaseDuration = {},
+            onDecreaseDuration = {},
             onSettings = {},
+            onOpenAccessibilitySettings = {},
+            onOpenNotificationSettings = {},
         )
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A1628)
 @Composable
-private fun HomeContentNoStreakPreview() {
+private fun HomeContentDurationBoundaryPreview() {
     WaneTheme {
         HomeContent(
-            uiState = HomeUiState(currentStreak = 0, defaultDuration = 25),
+            uiState = HomeUiState(defaultDuration = 120),
             onStartSession = {},
+            onIncreaseDuration = {},
+            onDecreaseDuration = {},
             onSettings = {},
+            onOpenAccessibilitySettings = {},
+            onOpenNotificationSettings = {},
         )
     }
 }

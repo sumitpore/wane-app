@@ -16,10 +16,20 @@ class AppBlocker @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
 
+    private val sessionAllowlist: Set<String> by lazy {
+        buildSet {
+            addAll(EmergencySafety.NEVER_BLOCK_PACKAGES)
+            addAll(PackageUtils.resolveDialerPackages(context))
+            addAll(PackageUtils.resolveContactsPackages(context))
+            addAll(PackageUtils.resolveSmsPackages(context))
+            add("com.wane.app")
+        }
+    }
+
     fun shouldBlockApp(packageName: String): Boolean {
         if (EmergencySafety.isNeverBlockPackage(packageName)) return false
         if (sessionManager.sessionState.value !is SessionState.Running) return false
-        if (packageName in SESSION_ALLOWLIST) return false
+        if (packageName in sessionAllowlist) return false
         return true
     }
 
@@ -28,15 +38,5 @@ class AppBlocker @Inject constructor(
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         context.startActivity(intent)
-    }
-
-    companion object {
-        val SESSION_ALLOWLIST: Set<String> = buildSet {
-            addAll(EmergencySafety.NEVER_BLOCK_PACKAGES)
-            addAll(PackageUtils.getDialerPackages())
-            addAll(PackageUtils.getContactsPackages())
-            addAll(PackageUtils.getSmsPackages())
-            add("com.wane.app")
-        }
     }
 }

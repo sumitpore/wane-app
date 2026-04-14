@@ -29,9 +29,10 @@ import com.wane.app.ui.components.PageIndicator
 import com.wane.app.ui.components.WaneButton
 import com.wane.app.ui.theme.BackgroundDeep
 import com.wane.app.ui.theme.BackgroundDeepEnd
+import com.wane.app.ui.theme.BackgroundDeepMid
 import com.wane.app.ui.theme.WaneTheme
 
-private const val PAGE_COUNT = 3
+private const val PAGE_COUNT = 5
 
 @Composable
 fun OnboardingScreen(
@@ -67,7 +68,7 @@ fun OnboardingScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(BackgroundDeep, BackgroundDeepEnd),
+                    colors = listOf(BackgroundDeep, BackgroundDeepMid, BackgroundDeepEnd),
                 ),
             )
             .statusBarsPadding()
@@ -87,6 +88,8 @@ fun OnboardingScreen(
                     autoLockEnabled = uiState.autoLockEnabled,
                     onToggle = { viewModel.onEvent(OnboardingUiEvent.ToggleAutoLock(it)) },
                 )
+                3 -> NotificationStep()
+                4 -> AccessibilityStep()
             }
         }
 
@@ -95,7 +98,7 @@ fun OnboardingScreen(
             currentPage = uiState.currentPage,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp),
+                .padding(bottom = 140.dp),
         )
 
         val buttonAlpha by animateFloatAsState(
@@ -107,8 +110,8 @@ fun OnboardingScreen(
         WaneButton(
             text = when (uiState.currentPage) {
                 0 -> stringResource(R.string.begin)
-                1 -> stringResource(R.string.next)
-                else -> stringResource(R.string.start)
+                PAGE_COUNT - 1 -> stringResource(R.string.start)
+                else -> stringResource(R.string.next)
             },
             onClick = {
                 if (uiState.currentPage < PAGE_COUNT - 1) {

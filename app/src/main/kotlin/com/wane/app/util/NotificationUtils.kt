@@ -1,6 +1,7 @@
 package com.wane.app.util
 
 import android.app.Notification
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.service.notification.StatusBarNotification
@@ -42,8 +43,8 @@ object NotificationUtils {
         return null
     }
 
-    fun isPhoneNotification(sbn: StatusBarNotification): Boolean {
-        return sbn.packageName in PackageUtils.getDialerPackages()
+    fun isPhoneNotification(context: Context, sbn: StatusBarNotification): Boolean {
+        return sbn.packageName in PackageUtils.resolveDialerPackages(context)
     }
 
     private fun extractNumberFromTelUri(uriString: String): String? {

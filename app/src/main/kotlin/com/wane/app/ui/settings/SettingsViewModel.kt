@@ -18,17 +18,12 @@ import javax.inject.Inject
 
 data class SettingsUiState(
     val defaultDuration: Int = 25,
-    val ambientSounds: Boolean = false,
-    val hapticFeedback: Boolean = true,
-    val emergencyContacts: List<String> = emptyList(),
     val streakInfo: StreakInfo = StreakInfo(0, 0, 0, 0L),
     val showClearConfirmation: Boolean = false,
 )
 
 sealed interface SettingsUiEvent {
     data class SetDefaultDuration(val minutes: Int) : SettingsUiEvent
-    data class SetAmbientSounds(val enabled: Boolean) : SettingsUiEvent
-    data class SetHapticFeedback(val enabled: Boolean) : SettingsUiEvent
     data object ShowClearConfirmation : SettingsUiEvent
     data object DismissClearConfirmation : SettingsUiEvent
     data object ConfirmClearSessions : SettingsUiEvent
@@ -45,25 +40,11 @@ class SettingsViewModel @Inject constructor(
 
     val uiState: StateFlow<SettingsUiState> = combine(
         preferencesRepository.observeDefaultDuration(),
-        preferencesRepository.observeAmbientSoundsEnabled(),
-        preferencesRepository.observeHapticFeedbackEnabled(),
-        preferencesRepository.observeEmergencyContacts(),
         sessionRepository.observeStreakInfo(),
         localState,
-    ) { values ->
-        @Suppress("UNCHECKED_CAST")
-        val duration = values[0] as Int
-        val ambient = values[1] as Boolean
-        val haptic = values[2] as Boolean
-        val contacts = values[3] as List<String>
-        val streak = values[4] as StreakInfo
-        val local = values[5] as LocalSettingsState
-
+    ) { duration, streak, local ->
         SettingsUiState(
             defaultDuration = duration,
-            ambientSounds = ambient,
-            hapticFeedback = haptic,
-            emergencyContacts = contacts,
             streakInfo = streak,
             showClearConfirmation = local.showClearConfirmation,
         )
@@ -77,12 +58,6 @@ class SettingsViewModel @Inject constructor(
         when (event) {
             is SettingsUiEvent.SetDefaultDuration -> viewModelScope.launch {
                 preferencesRepository.setDefaultDuration(event.minutes.coerceIn(5, 120))
-            }
-            is SettingsUiEvent.SetAmbientSounds -> viewModelScope.launch {
-                preferencesRepository.setAmbientSoundsEnabled(event.enabled)
-            }
-            is SettingsUiEvent.SetHapticFeedback -> viewModelScope.launch {
-                preferencesRepository.setHapticFeedbackEnabled(event.enabled)
             }
             SettingsUiEvent.ShowClearConfirmation ->
                 localState.update { it.copy(showClearConfirmation = true) }

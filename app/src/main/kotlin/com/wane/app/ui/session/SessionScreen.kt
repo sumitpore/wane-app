@@ -2,12 +2,9 @@ package com.wane.app.ui.session
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.Sms
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,15 +36,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -60,6 +56,7 @@ import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BackgroundDeep
 import com.wane.app.ui.theme.Crystalline
 import com.wane.app.ui.theme.SurfaceGlass
+import com.wane.app.ui.theme.TextMuted
 import com.wane.app.ui.theme.TextPrimary
 import com.wane.app.ui.theme.TextSecondary
 import com.wane.app.ui.theme.TextStatus
@@ -77,6 +74,12 @@ fun SessionScreen(
 
     BackHandler {
         viewModel.onEvent(SessionUiEvent.ShowExitSheet)
+    }
+
+    LaunchedEffect(uiState.shouldNavigateHome) {
+        if (uiState.shouldNavigateHome) {
+            onSessionEnd()
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -100,7 +103,7 @@ fun SessionScreen(
                 onPhone = { IntentHelpers.openDialer(context) },
                 onContacts = { IntentHelpers.openContacts(context) },
                 onSms = { IntentHelpers.openSms(context) },
-                onEndLongPress = { viewModel.onEvent(SessionUiEvent.ShowExitSheet) },
+                onEnd = { viewModel.onEvent(SessionUiEvent.ShowExitSheet) },
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -136,84 +139,69 @@ private fun BottomToolbar(
     onPhone: () -> Unit,
     onContacts: () -> Unit,
     onSms: () -> Unit,
-    onEndLongPress: () -> Unit,
+    onEnd: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 32.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.padding(horizontal = 32.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ToolbarIconButton(
-            icon = { Icon(Icons.Outlined.Call, contentDescription = stringResource(R.string.session_phone)) },
+            icon = Icons.Outlined.Call,
+            label = stringResource(R.string.session_phone),
             onClick = onPhone,
         )
 
         ToolbarIconButton(
-            icon = { Icon(Icons.Outlined.Contacts, contentDescription = stringResource(R.string.session_contacts)) },
+            icon = Icons.Outlined.Contacts,
+            label = stringResource(R.string.session_contacts),
             onClick = onContacts,
         )
 
         ToolbarIconButton(
-            icon = { Icon(Icons.Outlined.Sms, contentDescription = stringResource(R.string.session_sms)) },
+            icon = Icons.Outlined.Sms,
+            label = stringResource(R.string.session_sms),
             onClick = onSms,
         )
 
-        EndSessionButton(onLongPress = onEndLongPress)
+        ToolbarIconButton(
+            icon = Icons.Outlined.Close,
+            label = stringResource(R.string.end_session),
+            onClick = onEnd,
+            contentColor = TextStatus,
+        )
     }
 }
 
 @Composable
 private fun ToolbarIconButton(
-    icon: @Composable () -> Unit,
+    icon: ImageVector,
+    label: String,
     onClick: () -> Unit,
+    contentColor: Color = TextSecondary,
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape)
-            .background(SurfaceGlass),
-        colors = IconButtonDefaults.iconButtonColors(
-            contentColor = TextSecondary,
-        ),
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        icon()
-    }
-}
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(SurfaceGlass),
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = contentColor,
+            ),
+        ) {
+            Icon(icon, contentDescription = label)
+        }
 
-@Composable
-private fun EndSessionButton(onLongPress: () -> Unit) {
-    var isPressed by remember { mutableStateOf(false) }
+        Spacer(modifier = Modifier.height(4.dp))
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.92f else 1f,
-        animationSpec = spring(stiffness = 100f, dampingRatio = 0.85f),
-        label = "end_scale",
-    )
-
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape)
-            .background(SurfaceGlass)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = { onLongPress() },
-                    onPress = {
-                        isPressed = true
-                        tryAwaitRelease()
-                        isPressed = false
-                    },
-                )
-            },
-        contentAlignment = Alignment.Center,
-    ) {
         Text(
-            text = stringResource(R.string.end_session),
+            text = label,
             style = WaneTypography.labelSmall,
-            color = TextStatus,
+            color = TextMuted,
         )
     }
 }
@@ -297,7 +285,7 @@ private fun EmergencyExitSheet(
                     text = stringResource(R.string.end_session),
                     onClick = onConfirm,
                     modifier = Modifier.weight(1f),
-                    enabled = exitInput.equals("EXIT", ignoreCase = false),
+                    enabled = exitInput.equals("EXIT", ignoreCase = true),
                     containerColor = Color(0xFFE04848),
                 )
             }

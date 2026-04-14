@@ -60,7 +60,7 @@ precision mediump float;
 precision mediump int;
 
 const float TAU = 6.2831853;
-const int MAX_CAUSTICS = 8;
+const int MAX_CAUSTICS = 4;
 
 in vec2 v_uv;
 out vec4 fragColor;
@@ -157,33 +157,36 @@ void main() {
   float x = uv.x;
   float t = u_time;
   float edge1 = abs(uv.y - surfaceY);
-  float foam = smoothstep(0.04, 0.0, edge1);
-  vec4 crest = u_wave1Color * foam * 0.35;
-  waterCol += crest;
+  float foam = smoothstep(0.04, 0.001, edge1);
+  float edgeLine = smoothstep(0.006, 0.0, edge1);
+  waterCol += u_wave1Color * foam * 0.4;
+  waterCol.rgb += vec3(1.0) * edgeLine * 0.25;
 
   float s1 = sin(TAU * u_wave1Frequency * x + u_wave1Speed * t + u_tiltX * 2.0) * 0.5 + 0.5;
   float s2 = sin(TAU * u_wave2Frequency * x + u_wave2Speed * t + u_tiltY * 2.0) * 0.5 + 0.5;
   float s3 = sin(TAU * u_wave3Frequency * x + u_wave3Speed * t) * 0.5 + 0.5;
-  waterCol += u_wave1Color * (0.08 * s1 * (1.0 - depthT * 0.5));
-  waterCol += u_wave2Color * (0.06 * s2 * (1.0 - depthT * 0.4));
-  waterCol += u_wave3Color * (0.05 * s3 * (1.0 - depthT * 0.3));
+  waterCol += u_wave1Color * (0.04 * s1 * (1.0 - depthT * 0.5));
+  waterCol += u_wave2Color * (0.03 * s2 * (1.0 - depthT * 0.4));
+  waterCol += u_wave3Color * (0.02 * s3 * (1.0 - depthT * 0.3));
 
   float causticAccum = 0.0;
   for (int i = 0; i < MAX_CAUSTICS; i++) {
     if (i >= u_causticCount) break;
     float fi = float(i);
     vec2 seed = vec2(
-      fract(sin(fi * 12.9898 + 1.23) * 43758.5453),
-      fract(cos(fi * 78.233 + 4.56) * 24634.6415)
+      fract(fi * 0.7531 + 0.143),
+      fract(fi * 0.3713 + 0.527)
     );
     vec2 center = vec2(0.12, 0.18) + seed * vec2(0.76, 0.62);
     center += vec2(u_tiltX, u_tiltY) * 0.12;
     center += 0.04 * vec2(sin(t * 0.37 + fi * 1.7), cos(t * 0.29 + fi * 2.1));
     float r = u_causticBaseRadius + u_causticRadiusOscillation * sin(t * 2.1 + fi * 0.8);
-    float d = length(uv - center);
+    vec2 diff = uv - center;
+    float dist2 = dot(diff, diff);
+    float blob = exp(-dist2 / (r * r * 3.5));
+    float d = sqrt(dist2);
     float ring = sin(d * 38.0 - t * 3.5 + fi) * 0.5 + 0.5;
-    float blob = exp(-(d * d) / (r * r * 3.5)) * ring;
-    causticAccum += blob;
+    causticAccum += blob * ring;
   }
   waterCol.rgb += u_causticCenterColor.rgb * causticAccum * u_causticCenterColor.a;
 
@@ -211,7 +214,7 @@ precision mediump int;
 #endif
 
 const float TAU = 6.2831853;
-const int MAX_CAUSTICS = 8;
+const int MAX_CAUSTICS = 4;
 
 varying vec2 v_uv;
 
@@ -307,33 +310,36 @@ void main() {
   float x = uv.x;
   float t = u_time;
   float edge1 = abs(uv.y - surfaceY);
-  float foam = smoothstep(0.04, 0.0, edge1);
-  vec4 crest = u_wave1Color * foam * 0.35;
-  waterCol += crest;
+  float foam = smoothstep(0.04, 0.001, edge1);
+  float edgeLine = smoothstep(0.006, 0.0, edge1);
+  waterCol += u_wave1Color * foam * 0.4;
+  waterCol.rgb += vec3(1.0) * edgeLine * 0.25;
 
   float s1 = sin(TAU * u_wave1Frequency * x + u_wave1Speed * t + u_tiltX * 2.0) * 0.5 + 0.5;
   float s2 = sin(TAU * u_wave2Frequency * x + u_wave2Speed * t + u_tiltY * 2.0) * 0.5 + 0.5;
   float s3 = sin(TAU * u_wave3Frequency * x + u_wave3Speed * t) * 0.5 + 0.5;
-  waterCol += u_wave1Color * (0.08 * s1 * (1.0 - depthT * 0.5));
-  waterCol += u_wave2Color * (0.06 * s2 * (1.0 - depthT * 0.4));
-  waterCol += u_wave3Color * (0.05 * s3 * (1.0 - depthT * 0.3));
+  waterCol += u_wave1Color * (0.04 * s1 * (1.0 - depthT * 0.5));
+  waterCol += u_wave2Color * (0.03 * s2 * (1.0 - depthT * 0.4));
+  waterCol += u_wave3Color * (0.02 * s3 * (1.0 - depthT * 0.3));
 
   float causticAccum = 0.0;
   for (int i = 0; i < MAX_CAUSTICS; i++) {
     if (i >= u_causticCount) break;
     float fi = float(i);
     vec2 seed = vec2(
-      fract(sin(fi * 12.9898 + 1.23) * 43758.5453),
-      fract(cos(fi * 78.233 + 4.56) * 24634.6415)
+      fract(fi * 0.7531 + 0.143),
+      fract(fi * 0.3713 + 0.527)
     );
     vec2 center = vec2(0.12, 0.18) + seed * vec2(0.76, 0.62);
     center += vec2(u_tiltX, u_tiltY) * 0.12;
     center += 0.04 * vec2(sin(t * 0.37 + fi * 1.7), cos(t * 0.29 + fi * 2.1));
     float r = u_causticBaseRadius + u_causticRadiusOscillation * sin(t * 2.1 + fi * 0.8);
-    float d = length(uv - center);
+    vec2 diff = uv - center;
+    float dist2 = dot(diff, diff);
+    float blob = exp(-dist2 / (r * r * 3.5));
+    float d = sqrt(dist2);
     float ring = sin(d * 38.0 - t * 3.5 + fi) * 0.5 + 0.5;
-    float blob = exp(-(d * d) / (r * r * 3.5)) * ring;
-    causticAccum += blob;
+    causticAccum += blob * ring;
   }
   waterCol.rgb += u_causticCenterColor.rgb * causticAccum * u_causticCenterColor.a;
 

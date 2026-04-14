@@ -29,6 +29,7 @@ data class SessionUiState(
     val exitInput: String = "",
     val isSessionComplete: Boolean = false,
     val completedDurationMs: Long = 0L,
+    val shouldNavigateHome: Boolean = false,
 )
 
 sealed interface SessionUiEvent {
@@ -79,6 +80,11 @@ class SessionViewModel @Inject constructor(
                 isSessionComplete = true,
                 completedDurationMs = session.actualDurationMs,
             )
+            is SessionState.EmergencyExit -> SessionUiState(
+                themeVisuals = visuals,
+                tiltState = tilt,
+                shouldNavigateHome = true,
+            )
             else -> SessionUiState(themeVisuals = visuals, tiltState = tilt)
         }
     }.stateIn(
@@ -101,7 +107,7 @@ class SessionViewModel @Inject constructor(
             is SessionUiEvent.UpdateExitInput ->
                 localState.update { it.copy(exitInput = event.text) }
             SessionUiEvent.ConfirmEmergencyExit -> {
-                if (localState.value.exitInput.equals(EXIT_KEYWORD, ignoreCase = false)) {
+                if (localState.value.exitInput.equals(EXIT_KEYWORD, ignoreCase = true)) {
                     sessionManager.requestEmergencyExit()
                     localState.update { it.copy(isExitSheetVisible = false, exitInput = "") }
                 }

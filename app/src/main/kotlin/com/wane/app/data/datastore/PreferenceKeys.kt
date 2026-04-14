@@ -16,7 +16,5 @@ object PreferenceKeys {
     val AUTO_LOCK_SKIP_WHILE_CHARGING = booleanPreferencesKey("auto_lock_skip_while_charging")
     val SELECTED_THEME_ID = stringPreferencesKey("selected_theme_id")
     val EMERGENCY_CONTACTS_JSON = stringPreferencesKey("emergency_contacts_json")
-    val AMBIENT_SOUNDS_ENABLED = booleanPreferencesKey("ambient_sounds_enabled")
-    val HAPTIC_FEEDBACK_ENABLED = booleanPreferencesKey("haptic_feedback_enabled")
     val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
 }
