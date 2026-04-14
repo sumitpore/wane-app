@@ -26,10 +26,10 @@
     <string name="notification_description">Wane can temporarily snooze notifications during your focus session, so nothing breaks your flow. Enable notification access to activate this.</string>
     <string name="enable_notification_access">Open Settings</string>
 
-    <!-- Onboarding: Auto-Lock -->
+    <!-- Onboarding: Auto-Start -->
     <string name="auto_lock_title">Focus, on its own</string>
     <string name="auto_lock_description">When enabled, a focus session starts quietly a few seconds after you unlock your phone — no need to open Wane.</string>
-    <string name="auto_lock_toggle_label">Enable auto-lock</string>
+    <string name="auto_lock_toggle_label">Start focus on unlock</string>
 
     <!-- Home -->
     <string name="minutes_format">%d min</string>
@@ -69,13 +69,13 @@
     <string name="focus_section">Focus</string>
     <string name="default_duration">Default duration</string>
     <string name="blocking_section">Automation</string>
-    <string name="auto_lock">Auto-Lock</string>
+    <string name="auto_lock">Focus on Unlock</string>
     <string name="data_section">Data</string>
     <string name="clear_sessions">Clear all sessions</string>
     <string name="clear_sessions_confirm">This will delete all session history and reset your streak. This cannot be undone.</string>
     <string name="about_section">About</string>
-    <string name="auto_lock_settings_title">Auto-Lock Settings</string>
-    <string name="auto_lock_enabled">Auto-Lock enabled</string>
+    <string name="auto_lock_settings_title">Focus on Unlock</string>
+    <string name="auto_lock_enabled">Start focus on unlock</string>
     <string name="auto_lock_duration">Duration</string>
     <string name="grace_period">Grace period</string>
     <string name="skip_window">Skip window</string>
