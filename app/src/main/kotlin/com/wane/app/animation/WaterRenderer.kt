@@ -75,6 +75,7 @@ class WaterRenderer : GLSurfaceView.Renderer {
     private var viewportH = 1
 
     private val fallbackClearRgb = floatArrayOf(0.02f, 0.06f, 0.12f)
+    private val colorScratch = FloatArray(4)
 
     fun setWaterLevel(value: Float) {
         waterLevel.set(value.coerceIn(0f, 1f))
@@ -259,6 +260,13 @@ class WaterRenderer : GLSurfaceView.Renderer {
                  else ((now - lastFrameNanos) / 1_000_000_000f).coerceIn(0.001f, 0.1f)
         lastFrameNanos = now
         timeSeconds += dt
+        if (timeSeconds > TIME_WRAP) {
+            timeSeconds -= TIME_WRAP
+            val tt = touchTime.get()
+            if (tt >= 0f) {
+                touchTime.set(tt - TIME_WRAP)
+            }
+        }
         if (touchPending.getAndSet(false)) {
             touchTime.set(timeSeconds)
         }
@@ -284,32 +292,30 @@ class WaterRenderer : GLSurfaceView.Renderer {
         GLES20.glUniform1f(uTouchY, tcy)
         GLES20.glUniform1f(uTouchTime, tt)
 
-        val bgS = theme.backgroundStart.toRgbaFloats()
-        val bgE = theme.backgroundEnd.toRgbaFloats()
-        GLES20.glUniform4fv(uBackgroundStart, 1, bgS, 0)
-        GLES20.glUniform4fv(uBackgroundEnd, 1, bgE, 0)
+        GLES20.glUniform4fv(uBackgroundStart, 1, fillColor(theme.backgroundStart), 0)
+        GLES20.glUniform4fv(uBackgroundEnd, 1, fillColor(theme.backgroundEnd), 0)
 
-        GLES20.glUniform4fv(uGradientTop, 1, theme.gradientTop.toRgbaFloats(), 0)
-        GLES20.glUniform4fv(uGradientUpper, 1, theme.gradientUpper.toRgbaFloats(), 0)
-        GLES20.glUniform4fv(uGradientLower, 1, theme.gradientLower.toRgbaFloats(), 0)
-        GLES20.glUniform4fv(uGradientBottom, 1, theme.gradientBottom.toRgbaFloats(), 0)
+        GLES20.glUniform4fv(uGradientTop, 1, fillColor(theme.gradientTop), 0)
+        GLES20.glUniform4fv(uGradientUpper, 1, fillColor(theme.gradientUpper), 0)
+        GLES20.glUniform4fv(uGradientLower, 1, fillColor(theme.gradientLower), 0)
+        GLES20.glUniform4fv(uGradientBottom, 1, fillColor(theme.gradientBottom), 0)
 
-        GLES20.glUniform4fv(uWave1Color, 1, theme.wave1.color.toRgbaFloats(), 0)
+        GLES20.glUniform4fv(uWave1Color, 1, fillColor(theme.wave1.color), 0)
         GLES20.glUniform1f(uWave1Amplitude, theme.wave1.amplitude)
         GLES20.glUniform1f(uWave1Frequency, theme.wave1.frequency)
         GLES20.glUniform1f(uWave1Speed, theme.wave1.speed)
 
-        GLES20.glUniform4fv(uWave2Color, 1, theme.wave2.color.toRgbaFloats(), 0)
+        GLES20.glUniform4fv(uWave2Color, 1, fillColor(theme.wave2.color), 0)
         GLES20.glUniform1f(uWave2Amplitude, theme.wave2.amplitude)
         GLES20.glUniform1f(uWave2Frequency, theme.wave2.frequency)
         GLES20.glUniform1f(uWave2Speed, theme.wave2.speed)
 
-        GLES20.glUniform4fv(uWave3Color, 1, theme.wave3.color.toRgbaFloats(), 0)
+        GLES20.glUniform4fv(uWave3Color, 1, fillColor(theme.wave3.color), 0)
         GLES20.glUniform1f(uWave3Amplitude, theme.wave3.amplitude)
         GLES20.glUniform1f(uWave3Frequency, theme.wave3.frequency)
         GLES20.glUniform1f(uWave3Speed, theme.wave3.speed)
 
-        GLES20.glUniform4fv(uCausticCenterColor, 1, theme.causticCenterColor.toRgbaFloats(), 0)
+        GLES20.glUniform4fv(uCausticCenterColor, 1, fillColor(theme.causticCenterColor), 0)
         GLES20.glUniform1i(uCausticCount, causticCount)
         GLES20.glUniform1f(uCausticBaseRadius, theme.causticBaseRadius)
         GLES20.glUniform1f(uCausticRadiusOscillation, theme.causticRadiusOscillation)
@@ -322,8 +328,14 @@ class WaterRenderer : GLSurfaceView.Renderer {
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
             GLES20.glDisableVertexAttribArray(0)
         }
+    }
 
-        GLES20.glFlush()
+    private fun fillColor(argb: Long): FloatArray {
+        colorScratch[0] = ((argb ushr 16) and 0xFF) / 255f
+        colorScratch[1] = ((argb ushr 8) and 0xFF) / 255f
+        colorScratch[2] = (argb and 0xFF) / 255f
+        colorScratch[3] = ((argb ushr 24) and 0xFF) / 255f
+        return colorScratch
     }
 
     private fun compileShader(type: Int, source: String): Int {
@@ -342,13 +354,6 @@ class WaterRenderer : GLSurfaceView.Renderer {
 
     private companion object {
         private const val TAG = "WaterRenderer"
+        private const val TIME_WRAP = 62831.853f // TAU * 10000
     }
-}
-
-private fun Long.toRgbaFloats(): FloatArray {
-    val a = ((this ushr 24) and 0xFF) / 255f
-    val r = ((this ushr 16) and 0xFF) / 255f
-    val g = ((this ushr 8) and 0xFF) / 255f
-    val b = (this and 0xFF) / 255f
-    return floatArrayOf(r, g, b, a)
 }

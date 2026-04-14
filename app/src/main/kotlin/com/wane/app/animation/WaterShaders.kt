@@ -56,7 +56,7 @@ void main() {
      * - `u_causticRadiusOscillation` float — radius modulation amplitude (UV).
      */
     const val FRAGMENT_SHADER = """#version 300 es
-precision mediump float;
+precision highp float;
 precision mediump int;
 
 const float TAU = 6.2831853;
@@ -208,10 +208,12 @@ void main() {
     /**
      * ES 2.0 fragment shader — same uniforms and behavior as [FRAGMENT_SHADER] (mediump).
      */
-    const val FRAGMENT_SHADER_ES2 = """#ifdef GL_ES
+    const val FRAGMENT_SHADER_ES2 = """#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
-precision mediump int;
 #endif
+precision mediump int;
 
 const float TAU = 6.2831853;
 const int MAX_CAUSTICS = 4;

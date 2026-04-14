@@ -9,7 +9,8 @@ import android.os.Build
 import android.opengl.GLSurfaceView
 import android.os.BatteryManager
 import android.util.AttributeSet
-import android.view.Choreographer
+import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import com.wane.app.shared.TiltState
 import com.wane.app.shared.WaterThemeVisuals
@@ -30,20 +31,21 @@ class WaterSurfaceView @JvmOverloads constructor(
     var onTouchNormalized: ((Float, Float) -> Unit)? = null
 
     private var lastShaderFailed: Boolean = false
-    private val frameCallback = object : Choreographer.FrameCallback {
-        override fun doFrame(frameTimeNanos: Long) {
+    private val handler = Handler(Looper.getMainLooper())
+    private val shaderCheckRunnable = object : Runnable {
+        override fun run() {
             try {
                 val failed = renderer.shaderFailed.get()
                 if (failed != lastShaderFailed) {
                     lastShaderFailed = failed
                     onShaderFailedChanged?.invoke(failed)
                 }
-            } catch (_: Throwable) {
-            }
-            choreographer?.postFrameCallback(this)
+                if (!failed) {
+                    handler.postDelayed(this, SHADER_CHECK_INTERVAL_MS)
+                }
+            } catch (_: Throwable) {}
         }
     }
-    private var choreographer: Choreographer? = null
 
     private val batteryReceiver = object : BroadcastReceiver() {
         override fun onReceive(ctx: Context?, intent: Intent?) {
@@ -77,8 +79,7 @@ class WaterSurfaceView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         try {
-            choreographer = Choreographer.getInstance()
-            choreographer?.postFrameCallback(frameCallback)
+            handler.post(shaderCheckRunnable)
             val appCtx = context.applicationContext
             val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -93,8 +94,7 @@ class WaterSurfaceView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         try {
-            choreographer?.removeFrameCallback(frameCallback)
-            choreographer = null
+            handler.removeCallbacks(shaderCheckRunnable)
             context.applicationContext.unregisterReceiver(batteryReceiver)
         } catch (_: Throwable) {
         }
@@ -138,4 +138,8 @@ class WaterSurfaceView @JvmOverloads constructor(
     }
 
     fun isShaderFailed(): Boolean = renderer.shaderFailed.get()
+
+    private companion object {
+        private const val SHADER_CHECK_INTERVAL_MS = 500L
+    }
 }

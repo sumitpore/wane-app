@@ -72,7 +72,7 @@ Wane uses an Accessibility Service to block distracting apps during focus sessio
 > **Why does Wane need Accessibility access?**
 > The Accessibility Service allows Wane to detect when you open a blocked app during a focus session and redirect you back. Wane does not read, collect, or transmit any personal data through this service.
 
-### Step 5: Grant Notification Access (Optional)
+### Step 5: Grant Notification Access
 
 For notification filtering during focus sessions:
 
