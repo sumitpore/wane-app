@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.ContactsContract
+import android.provider.Telephony
+import android.telecom.TelecomManager
 
 object PackageUtils {
 
@@ -52,23 +54,51 @@ object PackageUtils {
         addAll(DIALER_PACKAGES_FALLBACK)
         addAll(resolvePackages(context, Intent(Intent.ACTION_DIAL, Uri.parse("tel:"))))
         addAll(resolvePackages(context, Intent(Intent.ACTION_CALL, Uri.parse("tel:"))))
+        addAll(resolveInCallServices(context))
+        resolveDefaultDialer(context)?.let { add(it) }
     }
 
     fun resolveContactsPackages(context: Context): Set<String> = buildSet {
         addAll(CONTACTS_PACKAGES_FALLBACK)
         addAll(resolvePackages(context, Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI)))
         addAll(resolvePackages(context, Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)))
+        addAll(resolvePackages(context, Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)))
+        addAll(resolvePackages(context, Intent(Intent.ACTION_EDIT, ContactsContract.Contacts.CONTENT_URI)))
     }
 
     fun resolveSmsPackages(context: Context): Set<String> = buildSet {
         addAll(SMS_PACKAGES_FALLBACK)
         addAll(resolvePackages(context, Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"))))
         addAll(resolvePackages(context, Intent(Intent.ACTION_VIEW, Uri.parse("sms:"))))
+        resolveDefaultSmsPackage(context)?.let { add(it) }
     }
 
     private fun resolvePackages(context: Context, intent: Intent): List<String> {
         return context.packageManager
             .queryIntentActivities(intent, PackageManager.MATCH_ALL)
             .mapNotNull { it.activityInfo?.packageName }
+    }
+
+    private fun resolveInCallServices(context: Context): List<String> {
+        return context.packageManager
+            .queryIntentServices(Intent("android.telecom.InCallService"), PackageManager.MATCH_ALL)
+            .mapNotNull { it.serviceInfo?.packageName }
+    }
+
+    private fun resolveDefaultDialer(context: Context): String? {
+        return try {
+            val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+            telecomManager?.defaultDialerPackage
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun resolveDefaultSmsPackage(context: Context): String? {
+        return try {
+            Telephony.Sms.getDefaultSmsPackage(context)
+        } catch (_: Exception) {
+            null
+        }
     }
 }

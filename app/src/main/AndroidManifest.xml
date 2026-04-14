@@ -13,6 +13,44 @@
     android:glEsVersion="0x00030000"
     android:required="false" />
 
+  <queries>
+    <!-- Dialer/Phone apps -->
+    <intent>
+      <action android:name="android.intent.action.DIAL" />
+      <data android:scheme="tel" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.CALL" />
+      <data android:scheme="tel" />
+    </intent>
+    <!-- Modern dialer apps (Truecaller, etc.) register as InCallService -->
+    <intent>
+      <action android:name="android.telecom.InCallService" />
+    </intent>
+    <!-- Contacts apps -->
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:mimeType="vnd.android.cursor.dir/contact" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.PICK" />
+      <data android:mimeType="vnd.android.cursor.dir/contact" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:mimeType="vnd.android.cursor.item/contact" />
+    </intent>
+    <!-- SMS/Messaging apps -->
+    <intent>
+      <action android:name="android.intent.action.SENDTO" />
+      <data android:scheme="smsto" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="sms" />
+    </intent>
+  </queries>
+
   <application
     android:name=".WaneApplication"
     android:allowBackup="true"
