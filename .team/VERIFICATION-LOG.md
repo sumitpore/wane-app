@@ -397,3 +397,61 @@
 - **Final Build**: `assembleDebug` + `testDebugUnitTest` BUILD SUCCESSFUL
 - **Result**: PASSED
 - **Action**: Phase 4 Implementation COMPLETE. App is buildable, testable, and meets core requirements.
+
+---
+
+## Round 5: UX Minimalist Roadmap (2026-04-15)
+
+### Entry R5-1: Content Writer — Language Audit
+- **Layer**: 1 (Self) + 3 (Lead)
+- **Artifact**: `.team/artifacts/content-writer/minimalist-language-audit.md`
+- **Questions**:
+  1. Were all 68 strings.xml entries audited? YES
+  2. Were hardcoded Kotlin strings audited? YES — 18 entries across ui/ and service/
+  3. Are replacements calm, factual, non-judgmental? YES
+  4. Do any replacements use banned words? NO
+  5. Is the completion overlay replacement fact-only? YES — "Session complete" (status) + duration
+- **Result**: PASSED
+- **Findings**: 2 XML changes (session_complete_title, accessibility_prompt_message), 0 Kotlin changes applied (EXIT_PHRASES kept — deliberate UX friction, not evaluative copy)
+
+### Entry R5-2: Backend Developer — extendSession()
+- **Layer**: 1 (Self) + 3 (Lead)
+- **Files**: `SessionManager.kt`, `SessionManagerImpl.kt`, `FocusSessionDao.kt`, `SessionRepository.kt`, `SessionRepositoryImpl.kt`
+- **Questions**:
+  1. Does extendSession only work when Running? YES — casts to Running, returns on null
+  2. Does timer loop see updated duration? YES — reads `sessionTotalDurationMs.get()` each tick
+  3. Is Running.totalDurationMs updated? YES — immediate StateFlow update in extendSession
+  4. Is waterLevel correct after extension? YES — remaining/total recalculated with same elapsed anchor
+  5. Is DB plannedDurationMs updated? YES — async scope.launch with try/catch
+  6. No crash paths? YES — outer try/catch, CancellationException rethrown
+  7. Follows conventions? YES — monotonic time, StateFlow as source of truth, structured concurrency
+- **Result**: PASSED
+
+### Entry R5-3: Frontend Developer — 4 UI Changes
+- **Layer**: 1 (Self) + 3 (Lead)
+- **Files**: `strings.xml`, `HomeScreen.kt`, `SessionScreen.kt`, `SessionViewModel.kt`
+- **Questions**:
+  1. Both Content Writer string changes applied? YES — "Session complete", "To cover other apps"
+  2. Privacy label visible at bottom of Home? YES — Space Grotesk, 10sp, uppercase, TextMuted, clickable → Settings
+  3. Graduated exit sheet before emergency exit? YES — ShowGraduatedExit → GraduatedExitSheet → EmergencyExitSheet
+  4. "Keep going" extends by 5 min? YES — calls sessionManager.extendSession(EXTEND_DURATION_MS)
+  5. "I need to leave" proceeds to affirmation phrase flow? YES — ProceedToEmergencyExit atomically transitions
+  6. All 4 toolbar icons replaced? YES — HeroPhone, HeroContacts, HeroSms, HeroXMark
+  7. Unused Material icon imports removed? YES
+  8. New strings in strings.xml? YES — privacy_label, graduated_exit_title, graduated_exit_keep_going, graduated_exit_leave
+  9. No hardcoded strings? YES — all use stringResource()
+  10. File ownership respected? YES — only ui/ and res/ modified
+- **Result**: PASSED
+
+### Entry R5-4: Test Engineer — 10 New Tests
+- **Layer**: 1 (Self) + 3 (Lead)
+- **Files**: `SessionManagerImplTest.kt`, `SessionViewModelTest.kt`, `FakeSessionRepository.kt`, `MainDispatcherRule.kt`
+- **Questions**:
+  1. Happy path for extendSession covered? YES — 2 tests (duration increase, state snapshot)
+  2. Edge cases covered? YES — Idle, Completing, zero, negative
+  3. Graduated exit flow covered? YES — show, dismiss, extend, proceed
+  4. AAA pattern used? YES — all tests use Arrange/Act/Assert
+  5. Fakes implement interfaces? YES — FakeSessionRepository, FakeSessionManager
+  6. Coroutine testing correct? YES — runTest, advanceUntilIdle, MainDispatcherRule
+- **Result**: PASSED
+- **Note**: Build verification (`assembleDebug` + `testDebugUnitTest`) blocked by sandbox network restrictions in this session. Manual build verification recommended.

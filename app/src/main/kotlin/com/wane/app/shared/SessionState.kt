@@ -1,7 +1,6 @@
 package com.wane.app.shared
 
 sealed class SessionState {
-
     data object Idle : SessionState()
 
     data class Running(

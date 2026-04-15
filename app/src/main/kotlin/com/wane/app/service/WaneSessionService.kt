@@ -15,16 +15,15 @@ import com.wane.app.MainActivity
 import com.wane.app.R
 import com.wane.app.shared.SessionState
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WaneSessionService : LifecycleService() {
-
     @Inject
     lateinit var sessionManager: SessionManager
 
@@ -40,7 +39,11 @@ class WaneSessionService : LifecycleService() {
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         super.onStartCommand(intent, flags, startId)
         return try {
             when (intent?.action) {
@@ -56,6 +59,7 @@ class WaneSessionService : LifecycleService() {
                     stopSelf()
                     START_NOT_STICKY
                 }
+
                 ACTION_START, null -> {
                     ensureNotificationChannel()
                     val running = sessionManager.sessionState.value as? SessionState.Running
@@ -67,7 +71,10 @@ class WaneSessionService : LifecycleService() {
                     startNotificationUpdates()
                     START_STICKY
                 }
-                else -> START_STICKY
+
+                else -> {
+                    START_STICKY
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "onStartCommand failed", e)
@@ -89,11 +96,12 @@ class WaneSessionService : LifecycleService() {
         if (channelCreated) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val mgr = getSystemService(NotificationManager::class.java)
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW,
-            )
+            val channel =
+                NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_LOW,
+                )
             mgr.createNotificationChannel(channel)
         }
         channelCreated = true
@@ -101,36 +109,43 @@ class WaneSessionService : LifecycleService() {
 
     private fun startNotificationUpdates() {
         notificationUpdateJob?.cancel()
-        notificationUpdateJob = lifecycleScope.launch {
-            while (isActive) {
-                delay(NOTIFICATION_UPDATE_INTERVAL_MS)
-                try {
-                    when (val s = sessionManager.sessionState.value) {
-                        is SessionState.Running -> {
-                            val mgr = getSystemService(NotificationManager::class.java)
-                            mgr.notify(NOTIFICATION_ID, buildNotification(s.remainingMs))
+        notificationUpdateJob =
+            lifecycleScope.launch {
+                while (isActive) {
+                    delay(NOTIFICATION_UPDATE_INTERVAL_MS)
+                    try {
+                        when (val s = sessionManager.sessionState.value) {
+                            is SessionState.Running -> {
+                                val mgr = getSystemService(NotificationManager::class.java)
+                                mgr.notify(NOTIFICATION_ID, buildNotification(s.remainingMs))
+                            }
+
+                            else -> {
+                                Unit
+                            }
                         }
-                        else -> Unit
+                    } catch (e: Exception) {
+                        Log.e(TAG, "notification tick failed", e)
                     }
-                } catch (e: Exception) {
-                    Log.e(TAG, "notification tick failed", e)
                 }
             }
-        }
     }
 
     private fun buildNotification(remainingMs: Long): Notification {
-        val launch = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        val pending = PendingIntent.getActivity(
-            this,
-            0,
-            launch,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
+        val launch =
+            Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+        val pending =
+            PendingIntent.getActivity(
+                this,
+                0,
+                launch,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
         val timeLabel = formatRemaining(remainingMs)
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat
+            .Builder(this, CHANNEL_ID)
             .setContentTitle("Focus session active")
             .setContentText(timeLabel)
             .setSmallIcon(R.mipmap.ic_launcher)

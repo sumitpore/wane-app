@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FocusSessionDao {
-
     @Query(
         """
         SELECT * FROM focus_sessions
@@ -36,6 +35,18 @@ interface FocusSessionDao {
         endTime: Long,
         actualDurationMs: Long,
         status: CompletionStatus,
+    )
+
+    @Query(
+        """
+        UPDATE focus_sessions
+        SET plannedDurationMs = :plannedDurationMs
+        WHERE id = :sessionId
+        """,
+    )
+    suspend fun updatePlannedDuration(
+        sessionId: Long,
+        plannedDurationMs: Long,
     )
 
     @Query("DELETE FROM focus_sessions")

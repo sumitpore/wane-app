@@ -17,53 +17,77 @@ data class AutoLockUiState(
 )
 
 sealed interface AutoLockUiEvent {
-    data class SetEnabled(val enabled: Boolean) : AutoLockUiEvent
-    data class SetDuration(val minutes: Int) : AutoLockUiEvent
-    data class SetGracePeriod(val seconds: Int) : AutoLockUiEvent
+    data class SetEnabled(
+        val enabled: Boolean,
+    ) : AutoLockUiEvent
+
+    data class SetDuration(
+        val minutes: Int,
+    ) : AutoLockUiEvent
+
+    data class SetGracePeriod(
+        val seconds: Int,
+    ) : AutoLockUiEvent
+
     data class SetSkipWindow(
         val startHour: Int?,
         val startMinute: Int?,
         val endHour: Int?,
         val endMinute: Int?,
     ) : AutoLockUiEvent
-    data class SetSkipWhileCharging(val skip: Boolean) : AutoLockUiEvent
+
+    data class SetSkipWhileCharging(
+        val skip: Boolean,
+    ) : AutoLockUiEvent
 }
 
 @HiltViewModel
-class AutoLockViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
-) : ViewModel() {
-
-    val uiState: StateFlow<AutoLockUiState> =
-        preferencesRepository.observeAutoLockConfig()
-            .map { AutoLockUiState(config = it) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = AutoLockUiState(),
-            )
-
-    fun onEvent(event: AutoLockUiEvent) {
-        val current = uiState.value.config
-        val updated = when (event) {
-            is AutoLockUiEvent.SetEnabled ->
-                current.copy(enabled = event.enabled)
-            is AutoLockUiEvent.SetDuration ->
-                current.copy(durationMinutes = event.minutes.coerceIn(5, 120))
-            is AutoLockUiEvent.SetGracePeriod ->
-                current.copy(gracePeriodSeconds = event.seconds.coerceIn(0, 60))
-            is AutoLockUiEvent.SetSkipWindow ->
-                current.copy(
-                    skipStartHour = event.startHour,
-                    skipStartMinute = event.startMinute,
-                    skipEndHour = event.endHour,
-                    skipEndMinute = event.endMinute,
+class AutoLockViewModel
+    @Inject
+    constructor(
+        private val preferencesRepository: PreferencesRepository,
+    ) : ViewModel() {
+        val uiState: StateFlow<AutoLockUiState> =
+            preferencesRepository
+                .observeAutoLockConfig()
+                .map { AutoLockUiState(config = it) }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = AutoLockUiState(),
                 )
-            is AutoLockUiEvent.SetSkipWhileCharging ->
-                current.copy(skipWhileCharging = event.skip)
-        }
-        viewModelScope.launch {
-            preferencesRepository.setAutoLockConfig(updated)
+
+        fun onEvent(event: AutoLockUiEvent) {
+            val current = uiState.value.config
+            val updated =
+                when (event) {
+                    is AutoLockUiEvent.SetEnabled -> {
+                        current.copy(enabled = event.enabled)
+                    }
+
+                    is AutoLockUiEvent.SetDuration -> {
+                        current.copy(durationMinutes = event.minutes.coerceIn(5, 120))
+                    }
+
+                    is AutoLockUiEvent.SetGracePeriod -> {
+                        current.copy(gracePeriodSeconds = event.seconds.coerceIn(0, 60))
+                    }
+
+                    is AutoLockUiEvent.SetSkipWindow -> {
+                        current.copy(
+                            skipStartHour = event.startHour,
+                            skipStartMinute = event.startMinute,
+                            skipEndHour = event.endHour,
+                            skipEndMinute = event.endMinute,
+                        )
+                    }
+
+                    is AutoLockUiEvent.SetSkipWhileCharging -> {
+                        current.copy(skipWhileCharging = event.skip)
+                    }
+                }
+            viewModelScope.launch {
+                preferencesRepository.setAutoLockConfig(updated)
+            }
         }
     }
-}

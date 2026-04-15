@@ -6,7 +6,6 @@ import android.os.Build
 import android.service.notification.StatusBarNotification
 
 object NotificationUtils {
-
     fun extractCallerNumber(sbn: StatusBarNotification): String? {
         val extras = sbn.notification.extras ?: return null
 
@@ -42,8 +41,8 @@ object NotificationUtils {
         return null
     }
 
-    private fun extractNumberFromTelUri(uriString: String): String? {
-        return try {
+    private fun extractNumberFromTelUri(uriString: String): String? =
+        try {
             val uri = Uri.parse(uriString)
             if (uri.scheme.equals("tel", ignoreCase = true)) {
                 uri.schemeSpecificPart?.trim()
@@ -53,5 +52,4 @@ object NotificationUtils {
         } catch (_: Exception) {
             null
         }
-    }
 }

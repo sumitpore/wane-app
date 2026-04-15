@@ -40,10 +40,11 @@ fun PageIndicator(
             )
 
             Box(
-                modifier = Modifier
-                    .size(width = width, height = 8.dp)
-                    .clip(CircleShape)
-                    .background(if (isActive) AccentPrimary else DotInactive),
+                modifier =
+                    Modifier
+                        .size(width = width, height = 8.dp)
+                        .clip(CircleShape)
+                        .background(if (isActive) AccentPrimary else DotInactive),
             )
         }
     }

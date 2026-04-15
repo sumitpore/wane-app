@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class EmergencySafetyTest {
-
     @Test
     fun `known never-block packages are identified`() {
         for (pkg in EmergencySafety.NEVER_BLOCK_PACKAGES) {
@@ -28,20 +27,21 @@ class EmergencySafetyTest {
 
     @Test
     fun `never-block packages set contains expected entries`() {
-        val expected = setOf(
-            "com.android.dialer",
-            "com.google.android.dialer",
-            "com.samsung.android.dialer",
-            "com.android.phone",
-            "com.android.server.telecom",
-            "com.android.systemui",
-            "com.android.settings",
-            "com.android.emergency",
-            "android",
-            "com.android.internal.app",
-            "com.google.android.permissioncontroller",
-            "com.samsung.android.app.resolver",
-        )
+        val expected =
+            setOf(
+                "com.android.dialer",
+                "com.google.android.dialer",
+                "com.samsung.android.dialer",
+                "com.android.phone",
+                "com.android.server.telecom",
+                "com.android.systemui",
+                "com.android.settings",
+                "com.android.emergency",
+                "android",
+                "com.android.internal.app",
+                "com.google.android.permissioncontroller",
+                "com.samsung.android.app.resolver",
+            )
         assertTrue(EmergencySafety.NEVER_BLOCK_PACKAGES.containsAll(expected))
     }
 

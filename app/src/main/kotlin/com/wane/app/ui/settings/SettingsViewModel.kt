@@ -22,53 +22,57 @@ data class SettingsUiState(
 )
 
 sealed interface SettingsUiEvent {
-    data class SetDefaultDuration(val minutes: Int) : SettingsUiEvent
     data object ShowClearConfirmation : SettingsUiEvent
+
     data object DismissClearConfirmation : SettingsUiEvent
+
     data object ConfirmClearSessions : SettingsUiEvent
 }
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
-    private val sessionRepository: SessionRepository,
-) : ViewModel() {
+class SettingsViewModel
+    @Inject
+    constructor(
+        private val preferencesRepository: PreferencesRepository,
+        private val sessionRepository: SessionRepository,
+    ) : ViewModel() {
+        private val localState = MutableStateFlow(LocalSettingsState())
 
-    private val localState = MutableStateFlow(LocalSettingsState())
+        val uiState: StateFlow<SettingsUiState> =
+            combine(
+                preferencesRepository.observeDefaultDuration(),
+                sessionRepository.observeStreakInfo(),
+                localState,
+            ) { duration, streak, local ->
+                SettingsUiState(
+                    defaultDuration = duration,
+                    streakInfo = streak,
+                    showClearConfirmation = local.showClearConfirmation,
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SettingsUiState(),
+            )
 
-    val uiState: StateFlow<SettingsUiState> = combine(
-        preferencesRepository.observeDefaultDuration(),
-        sessionRepository.observeStreakInfo(),
-        localState,
-    ) { duration, streak, local ->
-        SettingsUiState(
-            defaultDuration = duration,
-            streakInfo = streak,
-            showClearConfirmation = local.showClearConfirmation,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SettingsUiState(),
-    )
+        fun onEvent(event: SettingsUiEvent) {
+            when (event) {
+                SettingsUiEvent.ShowClearConfirmation -> {
+                    localState.update { it.copy(showClearConfirmation = true) }
+                }
 
-    fun onEvent(event: SettingsUiEvent) {
-        when (event) {
-            is SettingsUiEvent.SetDefaultDuration -> viewModelScope.launch {
-                preferencesRepository.setDefaultDuration(event.minutes.coerceIn(5, 120))
-            }
-            SettingsUiEvent.ShowClearConfirmation ->
-                localState.update { it.copy(showClearConfirmation = true) }
-            SettingsUiEvent.DismissClearConfirmation ->
-                localState.update { it.copy(showClearConfirmation = false) }
-            SettingsUiEvent.ConfirmClearSessions -> {
-                localState.update { it.copy(showClearConfirmation = false) }
-                viewModelScope.launch { sessionRepository.clearAllSessions() }
+                SettingsUiEvent.DismissClearConfirmation -> {
+                    localState.update { it.copy(showClearConfirmation = false) }
+                }
+
+                SettingsUiEvent.ConfirmClearSessions -> {
+                    localState.update { it.copy(showClearConfirmation = false) }
+                    viewModelScope.launch { sessionRepository.clearAllSessions() }
+                }
             }
         }
-    }
 
-    private data class LocalSettingsState(
-        val showClearConfirmation: Boolean = false,
-    )
-}
+        private data class LocalSettingsState(
+            val showClearConfirmation: Boolean = false,
+        )
+    }

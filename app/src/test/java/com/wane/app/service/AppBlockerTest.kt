@@ -19,7 +19,6 @@ import org.junit.Test
  *   - unknown third-party apps get blocked
  */
 class AppBlockerTest {
-
     private val fakeSessionManager = FakeSessionManager()
     private val blocker = AppBlockerShim(fakeSessionManager)
 
@@ -62,12 +61,13 @@ class AppBlockerTest {
     @Test
     fun `running state does not block system resolver and chooser`() {
         fakeSessionManager.setState(runningState())
-        val resolverPackages = listOf(
-            "android",
-            "com.android.internal.app",
-            "com.google.android.permissioncontroller",
-            "com.samsung.android.app.resolver",
-        )
+        val resolverPackages =
+            listOf(
+                "android",
+                "com.android.internal.app",
+                "com.google.android.permissioncontroller",
+                "com.samsung.android.app.resolver",
+            )
         for (pkg in resolverPackages) {
             assertFalse("Expected resolver $pkg to not be blocked", blocker.shouldBlockApp(pkg))
         }
@@ -98,12 +98,13 @@ class AppBlockerTest {
 
     // ── Helpers ───────────────────────────────────────────────────────
 
-    private fun runningState() = SessionState.Running(
-        sessionId = 1L,
-        totalDurationMs = 25 * 60_000L,
-        remainingMs = 20 * 60_000L,
-        waterLevel = 0.2f,
-    )
+    private fun runningState() =
+        SessionState.Running(
+            sessionId = 1L,
+            totalDurationMs = 25 * 60_000L,
+            remainingMs = 20 * 60_000L,
+            waterLevel = 0.2f,
+        )
 }
 
 /**
@@ -112,8 +113,9 @@ class AppBlockerTest {
  * Runtime-resolved packages (dialer, contacts, SMS, IME) require Android
  * Context and are intentionally excluded — they are tested via instrumentation.
  */
-private class AppBlockerShim(private val sessionManager: FakeSessionManager) {
-
+private class AppBlockerShim(
+    private val sessionManager: FakeSessionManager,
+) {
     fun shouldBlockApp(packageName: String): Boolean {
         if (EmergencySafety.isNeverBlockPackage(packageName)) return false
         if (sessionManager.sessionState.value !is SessionState.Running) return false
@@ -122,10 +124,11 @@ private class AppBlockerShim(private val sessionManager: FakeSessionManager) {
     }
 
     companion object {
-        val STATIC_ALLOWLIST: Set<String> = buildSet {
-            addAll(EmergencySafety.NEVER_BLOCK_PACKAGES)
-            add("com.wane.app")
-        }
+        val STATIC_ALLOWLIST: Set<String> =
+            buildSet {
+                addAll(EmergencySafety.NEVER_BLOCK_PACKAGES)
+                add("com.wane.app")
+            }
     }
 }
 

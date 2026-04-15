@@ -52,8 +52,11 @@ fun OnboardingScreen(
         snapshotFlow { pagerState.currentPage }.collect { page ->
             if (page != uiState.currentPage) {
                 viewModel.onEvent(
-                    if (page > uiState.currentPage) OnboardingUiEvent.NextPage
-                    else OnboardingUiEvent.PreviousPage,
+                    if (page > uiState.currentPage) {
+                        OnboardingUiEvent.NextPage
+                    } else {
+                        OnboardingUiEvent.PreviousPage
+                    },
                 )
             }
         }
@@ -64,41 +67,56 @@ fun OnboardingScreen(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(BackgroundDeep, BackgroundDeepMid, BackgroundDeepEnd),
-                ),
-            )
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(BackgroundDeep, BackgroundDeepMid, BackgroundDeepEnd),
+                    ),
+                ).statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
         ) { page ->
             when (page) {
-                0 -> WelcomeStep()
-                1 -> DurationStep(
-                    selectedDuration = uiState.selectedDuration,
-                    onDurationChange = { viewModel.onEvent(OnboardingUiEvent.SetDuration(it)) },
-                )
-                2 -> AutoLockStep(
-                    autoLockEnabled = uiState.autoLockEnabled,
-                    onToggle = { viewModel.onEvent(OnboardingUiEvent.ToggleAutoLock(it)) },
-                )
-                3 -> NotificationStep()
-                4 -> AccessibilityStep()
+                0 -> {
+                    WelcomeStep()
+                }
+
+                1 -> {
+                    DurationStep(
+                        selectedDuration = uiState.selectedDuration,
+                        onDurationChange = { viewModel.onEvent(OnboardingUiEvent.SetDuration(it)) },
+                    )
+                }
+
+                2 -> {
+                    AutoLockStep(
+                        autoLockEnabled = uiState.autoLockEnabled,
+                        onToggle = { viewModel.onEvent(OnboardingUiEvent.ToggleAutoLock(it)) },
+                    )
+                }
+
+                3 -> {
+                    NotificationStep()
+                }
+
+                4 -> {
+                    AccessibilityStep()
+                }
             }
         }
 
         PageIndicator(
             pageCount = PAGE_COUNT,
             currentPage = uiState.currentPage,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 140.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 140.dp),
         )
 
         val buttonAlpha by animateFloatAsState(
@@ -108,11 +126,12 @@ fun OnboardingScreen(
         )
 
         WaneButton(
-            text = when (uiState.currentPage) {
-                0 -> stringResource(R.string.begin)
-                PAGE_COUNT - 1 -> stringResource(R.string.start)
-                else -> stringResource(R.string.next)
-            },
+            text =
+                when (uiState.currentPage) {
+                    0 -> stringResource(R.string.begin)
+                    PAGE_COUNT - 1 -> stringResource(R.string.start)
+                    else -> stringResource(R.string.next)
+                },
             onClick = {
                 if (uiState.currentPage < PAGE_COUNT - 1) {
                     viewModel.onEvent(OnboardingUiEvent.NextPage)
@@ -121,10 +140,11 @@ fun OnboardingScreen(
                     onOnboardingComplete()
                 }
             },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 40.dp, vertical = 40.dp)
-                .graphicsLayer { alpha = buttonAlpha },
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 40.dp, vertical = 40.dp)
+                    .graphicsLayer { alpha = buttonAlpha },
         )
     }
 }

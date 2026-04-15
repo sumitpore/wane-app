@@ -39,10 +39,11 @@
     <string name="wane_logo">Wane</string>
     <string name="day_streak">day streak</string>
     <string name="start_session">Start Session</string>
-    <string name="accessibility_prompt_message">To block distracting apps during focus sessions, Wane needs Accessibility access. It only detects and redirects app launches — no personal data is collected. Wane is open source; verify at github.com/sumitpore/wane-app.</string>
+    <string name="accessibility_prompt_message">To cover other apps during focus sessions, Wane needs Accessibility access. It only detects and redirects app launches — no personal data is collected. Wane is open source; verify at github.com/sumitpore/wane-app.</string>
     <string name="notification_prompt_message">To silence distracting notifications during focus sessions, Wane needs Notification access. It only temporarily snoozes non-essential notifications. Wane is open source; verify at github.com/sumitpore/wane-app.</string>
 
     <string name="no_streak_yet">Begin your first session</string>
+    <string name="privacy_label">100% on-device</string>
 
     <!-- Session -->
     <string name="end_session">End</string>
@@ -50,7 +51,10 @@
     <string name="emergency_exit_instruction">Type the phrase below to end your session early</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
-    <string name="session_complete_title">Well done</string>
+    <string name="graduated_exit_title">5 more minutes?</string>
+    <string name="graduated_exit_keep_going">Keep going</string>
+    <string name="graduated_exit_leave">I need to leave</string>
+    <string name="session_complete_title">Session complete</string>
     <string name="session_complete_message">You focused for %d minutes</string>
     <string name="session_phone">Phone</string>
     <string name="session_contacts">Contacts</string>

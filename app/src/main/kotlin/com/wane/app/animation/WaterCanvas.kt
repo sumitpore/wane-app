@@ -3,9 +3,9 @@ package com.wane.app.animation
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,7 +23,6 @@ fun WaterCanvas(
     waterLevel: Float,
     tiltState: TiltState,
     themeVisuals: WaterThemeVisuals,
-    onTouch: ((x: Float, y: Float) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val level = waterLevel.coerceIn(0f, 1f)
@@ -40,14 +39,12 @@ fun WaterCanvas(
                 onShaderFailedChanged = { failed ->
                     if (failed) shaderFailed = true
                 }
-                onTouchNormalized = onTouch
                 updateWaterLevel(level)
                 updateTiltState(tiltState)
                 updateThemeVisuals(themeVisuals)
             }
         },
         update = { view ->
-            view.onTouchNormalized = onTouch
             view.updateWaterLevel(level)
             view.updateTiltState(tiltState)
             view.updateThemeVisuals(themeVisuals)

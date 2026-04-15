@@ -24,139 +24,154 @@ import javax.inject.Inject
 
 data class HomeUiState(
     val defaultDuration: Int = 25,
-    val selectedThemeId: String = "calm_blue",
     val accessibilityDisabled: Boolean = false,
     val notificationListenerDisabled: Boolean = false,
 )
 
 sealed interface HomeUiEvent {
-    data class StartSession(val durationMs: Long) : HomeUiEvent
+    data class StartSession(
+        val durationMs: Long,
+    ) : HomeUiEvent
+
     data object IncreaseDuration : HomeUiEvent
+
     data object DecreaseDuration : HomeUiEvent
+
     data object DismissAccessibilityPrompt : HomeUiEvent
+
     data object OpenAccessibilitySettings : HomeUiEvent
+
     data object DismissNotificationPrompt : HomeUiEvent
+
     data object OpenNotificationSettings : HomeUiEvent
+
     data object RefreshPermissions : HomeUiEvent
 }
 
 sealed interface HomeEffect {
     data object NavigateToSession : HomeEffect
-    data class ShowError(val error: SessionError) : HomeEffect
+
+    data class ShowError(
+        val error: SessionError,
+    ) : HomeEffect
 }
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val application: Application,
-    private val sessionManager: SessionManager,
-    private val preferencesRepository: PreferencesRepository,
-) : ViewModel() {
+class HomeViewModel
+    @Inject
+    constructor(
+        private val application: Application,
+        private val sessionManager: SessionManager,
+        private val preferencesRepository: PreferencesRepository,
+    ) : ViewModel() {
+        private val _effects = MutableSharedFlow<HomeEffect>(extraBufferCapacity = 1)
+        val effects = _effects.asSharedFlow()
 
-    private val _effects = MutableSharedFlow<HomeEffect>(extraBufferCapacity = 1)
-    val effects = _effects.asSharedFlow()
+        private val _accessibilityDisabled = MutableStateFlow(false)
+        private val _notificationListenerDisabled = MutableStateFlow(false)
 
-    private val _accessibilityDisabled = MutableStateFlow(false)
-    private val _notificationListenerDisabled = MutableStateFlow(false)
+        val uiState: StateFlow<HomeUiState> =
+            combine(
+                preferencesRepository.observeDefaultDuration(),
+                _accessibilityDisabled,
+                _notificationListenerDisabled,
+            ) { duration, accessibilityDisabled, notificationListenerDisabled ->
+                HomeUiState(
+                    defaultDuration = duration,
+                    accessibilityDisabled = accessibilityDisabled,
+                    notificationListenerDisabled = notificationListenerDisabled,
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = HomeUiState(),
+            )
 
-    val uiState: StateFlow<HomeUiState> = combine(
-        preferencesRepository.observeDefaultDuration(),
-        preferencesRepository.observeSelectedThemeId(),
-        _accessibilityDisabled,
-        _notificationListenerDisabled,
-    ) { duration, themeId, accessibilityDisabled, notificationListenerDisabled ->
-        HomeUiState(
-            defaultDuration = duration,
-            selectedThemeId = themeId,
-            accessibilityDisabled = accessibilityDisabled,
-            notificationListenerDisabled = notificationListenerDisabled,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = HomeUiState(),
-    )
-
-    init {
-        collectErrorEvents()
-    }
-
-    fun onEvent(event: HomeUiEvent) {
-        when (event) {
-            is HomeUiEvent.StartSession -> startSession(event.durationMs)
-            is HomeUiEvent.IncreaseDuration -> cycleDuration(forward = true)
-            is HomeUiEvent.DecreaseDuration -> cycleDuration(forward = false)
-            is HomeUiEvent.DismissAccessibilityPrompt -> _accessibilityDisabled.update { false }
-            is HomeUiEvent.OpenAccessibilitySettings -> openAccessibilitySettings()
-            is HomeUiEvent.DismissNotificationPrompt -> _notificationListenerDisabled.update { false }
-            is HomeUiEvent.OpenNotificationSettings -> openNotificationSettings()
-            is HomeUiEvent.RefreshPermissions -> refreshPermissions()
+        init {
+            collectErrorEvents()
         }
-    }
 
-    private fun startSession(durationMs: Long) {
-        if (!AccessibilityUtils.isAccessibilityServiceEnabled(application)) {
-            _accessibilityDisabled.update { true }
-            return
-        }
-        if (!NotificationListenerUtils.isNotificationListenerEnabled(application)) {
-            _notificationListenerDisabled.update { true }
-            return
-        }
-        viewModelScope.launch {
-            val themeId = uiState.value.selectedThemeId
-            sessionManager.startSession(durationMs, themeId)
-            _effects.emit(HomeEffect.NavigateToSession)
-        }
-    }
-
-    private fun refreshPermissions() {
-        val accessibilityEnabled = AccessibilityUtils.isAccessibilityServiceEnabled(application)
-        if (accessibilityEnabled) {
-            _accessibilityDisabled.update { false }
-        }
-        val notificationEnabled = NotificationListenerUtils.isNotificationListenerEnabled(application)
-        if (notificationEnabled) {
-            _notificationListenerDisabled.update { false }
-        }
-    }
-
-    private fun openAccessibilitySettings() {
-        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        application.startActivity(intent)
-    }
-
-    private fun openNotificationSettings() {
-        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        application.startActivity(intent)
-    }
-
-    private fun cycleDuration(forward: Boolean) {
-        val current = uiState.value.defaultDuration
-        val currentIndex = DURATION_OPTIONS.indexOfFirst { it >= current }
-            .takeIf { it >= 0 } ?: 0
-        val nextIndex = if (forward) {
-            (currentIndex + 1).coerceAtMost(DURATION_OPTIONS.lastIndex)
-        } else {
-            (currentIndex - 1).coerceAtLeast(0)
-        }
-        viewModelScope.launch {
-            preferencesRepository.setDefaultDuration(DURATION_OPTIONS[nextIndex])
-        }
-    }
-
-    private fun collectErrorEvents() {
-        viewModelScope.launch {
-            sessionManager.errorEvents.collect { error ->
-                _effects.emit(HomeEffect.ShowError(error))
+        fun onEvent(event: HomeUiEvent) {
+            when (event) {
+                is HomeUiEvent.StartSession -> startSession(event.durationMs)
+                is HomeUiEvent.IncreaseDuration -> cycleDuration(forward = true)
+                is HomeUiEvent.DecreaseDuration -> cycleDuration(forward = false)
+                is HomeUiEvent.DismissAccessibilityPrompt -> _accessibilityDisabled.update { false }
+                is HomeUiEvent.OpenAccessibilitySettings -> openAccessibilitySettings()
+                is HomeUiEvent.DismissNotificationPrompt -> _notificationListenerDisabled.update { false }
+                is HomeUiEvent.OpenNotificationSettings -> openNotificationSettings()
+                is HomeUiEvent.RefreshPermissions -> refreshPermissions()
             }
         }
-    }
 
-    companion object {
-        val DURATION_OPTIONS = listOf(5, 10, 15, 20, 25, 30, 45, 60, 90, 120)
+        private fun startSession(durationMs: Long) {
+            if (!AccessibilityUtils.isAccessibilityServiceEnabled(application)) {
+                _accessibilityDisabled.update { true }
+                return
+            }
+            if (!NotificationListenerUtils.isNotificationListenerEnabled(application)) {
+                _notificationListenerDisabled.update { true }
+                return
+            }
+            viewModelScope.launch {
+                sessionManager.startSession(durationMs, "default")
+                _effects.emit(HomeEffect.NavigateToSession)
+            }
+        }
+
+        private fun refreshPermissions() {
+            val accessibilityEnabled = AccessibilityUtils.isAccessibilityServiceEnabled(application)
+            if (accessibilityEnabled) {
+                _accessibilityDisabled.update { false }
+            }
+            val notificationEnabled = NotificationListenerUtils.isNotificationListenerEnabled(application)
+            if (notificationEnabled) {
+                _notificationListenerDisabled.update { false }
+            }
+        }
+
+        private fun openAccessibilitySettings() {
+            val intent =
+                Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+            application.startActivity(intent)
+        }
+
+        private fun openNotificationSettings() {
+            val intent =
+                Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+            application.startActivity(intent)
+        }
+
+        private fun cycleDuration(forward: Boolean) {
+            val current = uiState.value.defaultDuration
+            val currentIndex =
+                DURATION_OPTIONS
+                    .indexOfFirst { it >= current }
+                    .takeIf { it >= 0 } ?: 0
+            val nextIndex =
+                if (forward) {
+                    (currentIndex + 1).coerceAtMost(DURATION_OPTIONS.lastIndex)
+                } else {
+                    (currentIndex - 1).coerceAtLeast(0)
+                }
+            viewModelScope.launch {
+                preferencesRepository.setDefaultDuration(DURATION_OPTIONS[nextIndex])
+            }
+        }
+
+        private fun collectErrorEvents() {
+            viewModelScope.launch {
+                sessionManager.errorEvents.collect { error ->
+                    _effects.emit(HomeEffect.ShowError(error))
+                }
+            }
+        }
+
+        companion object {
+            val DURATION_OPTIONS = listOf(5, 10, 15, 20, 25, 30, 45, 60, 90, 120)
+        }
     }
-}

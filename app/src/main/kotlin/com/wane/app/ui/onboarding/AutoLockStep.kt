@@ -80,13 +80,14 @@ private fun AutoLockToggleRow(
     onToggle: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 40.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(SurfaceGlass)
-            .clickable(role = Role.Switch) { onToggle(!enabled) }
-            .padding(horizontal = 20.dp, vertical = 18.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(SurfaceGlass)
+                .clickable(role = Role.Switch) { onToggle(!enabled) }
+                .padding(horizontal = 20.dp, vertical = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -111,19 +112,21 @@ private fun WaneToggle(checked: Boolean) {
     val trackColor = if (checked) AccentPrimary else DotInactive
 
     Box(
-        modifier = Modifier
-            .size(width = 48.dp, height = 28.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(trackColor),
+        modifier =
+            Modifier
+                .size(width = 48.dp, height = 28.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(trackColor),
         contentAlignment = Alignment.CenterStart,
     ) {
         Box(
-            modifier = Modifier
-                .padding(horizontal = 3.dp)
-                .size(22.dp)
-                .graphicsLayer { translationX = thumbOffset * (48.dp.toPx() - 28.dp.toPx()) }
-                .clip(RoundedCornerShape(11.dp))
-                .background(TextSecondary),
+            modifier =
+                Modifier
+                    .padding(horizontal = 3.dp)
+                    .size(22.dp)
+                    .graphicsLayer { translationX = thumbOffset * (48.dp.toPx() - 28.dp.toPx()) }
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(TextSecondary),
         )
     }
 }

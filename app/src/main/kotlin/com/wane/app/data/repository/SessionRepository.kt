@@ -6,9 +6,6 @@ import com.wane.app.shared.StreakInfo
 import kotlinx.coroutines.flow.Flow
 
 interface SessionRepository {
-
-    fun observeCurrentStreak(): Flow<Int>
-
     fun observeStreakInfo(): Flow<StreakInfo>
 
     suspend fun recordSession(session: FocusSession): Long
@@ -18,6 +15,11 @@ interface SessionRepository {
         endTime: Long,
         actualDurationMs: Long,
         status: CompletionStatus,
+    )
+
+    suspend fun updateSessionPlannedDuration(
+        sessionId: Long,
+        plannedDurationMs: Long,
     )
 
     suspend fun clearAllSessions()

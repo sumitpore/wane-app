@@ -116,10 +116,11 @@ private fun RoundControlButton(
     Surface(
         shape = CircleShape,
         color = SurfaceGlass,
-        modifier = Modifier
-            .size(56.dp)
-            .alpha(if (enabled) 1f else 0.4f)
-            .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+        modifier =
+            Modifier
+                .size(56.dp)
+                .alpha(if (enabled) 1f else 0.4f)
+                .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(

@@ -15,26 +15,27 @@ data class FocusSessionEntity(
     val completionStatus: CompletionStatus,
     val themeId: String,
 ) {
-
-    fun toShared(): FocusSession = FocusSession(
-        id = id,
-        startTime = startTime,
-        endTime = endTime,
-        plannedDurationMs = plannedDurationMs,
-        actualDurationMs = actualDurationMs,
-        completionStatus = completionStatus,
-        themeId = themeId,
-    )
+    fun toShared(): FocusSession =
+        FocusSession(
+            id = id,
+            startTime = startTime,
+            endTime = endTime,
+            plannedDurationMs = plannedDurationMs,
+            actualDurationMs = actualDurationMs,
+            completionStatus = completionStatus,
+            themeId = themeId,
+        )
 
     companion object {
-        fun fromShared(session: FocusSession): FocusSessionEntity = FocusSessionEntity(
-            id = session.id,
-            startTime = session.startTime,
-            endTime = session.endTime,
-            plannedDurationMs = session.plannedDurationMs,
-            actualDurationMs = session.actualDurationMs,
-            completionStatus = session.completionStatus,
-            themeId = session.themeId,
-        )
+        fun fromShared(session: FocusSession): FocusSessionEntity =
+            FocusSessionEntity(
+                id = session.id,
+                startTime = session.startTime,
+                endTime = session.endTime,
+                plannedDurationMs = session.plannedDurationMs,
+                actualDurationMs = session.actualDurationMs,
+                completionStatus = session.completionStatus,
+                themeId = session.themeId,
+            )
     }
 }

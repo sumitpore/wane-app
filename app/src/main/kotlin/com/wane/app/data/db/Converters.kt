@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.wane.app.shared.CompletionStatus
 
 class Converters {
-
     @TypeConverter
     fun fromCompletionStatus(status: CompletionStatus): String = status.name
 

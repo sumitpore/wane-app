@@ -51,22 +51,24 @@ fun WaneButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                this.translationY = translationY * density
-            },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    this.translationY = translationY * density
+                },
         enabled = enabled,
         shape = RoundedCornerShape(28.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            disabledContainerColor = containerColor.copy(alpha = 0.4f),
-            disabledContentColor = contentColor.copy(alpha = 0.4f),
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+                disabledContainerColor = containerColor.copy(alpha = 0.4f),
+                disabledContentColor = contentColor.copy(alpha = 0.4f),
+            ),
         contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
         interactionSource = interactionSource,
     ) {

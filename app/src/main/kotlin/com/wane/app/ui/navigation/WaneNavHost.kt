@@ -22,58 +22,76 @@ fun WaneNavHost(startRoute: WaneRoute) {
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-        ),
+        entryDecorators =
+            listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
         entryProvider = { route ->
             when (route) {
-                WaneRoute.Onboarding -> NavEntry(route) {
-                    OnboardingScreen(
-                        onOnboardingComplete = dropUnlessResumed {
-                            backStack.clear()
-                            backStack.add(WaneRoute.Home)
-                        },
-                    )
+                WaneRoute.Onboarding -> {
+                    NavEntry(route) {
+                        OnboardingScreen(
+                            onOnboardingComplete =
+                                dropUnlessResumed {
+                                    backStack.clear()
+                                    backStack.add(WaneRoute.Home)
+                                },
+                        )
+                    }
                 }
 
-                WaneRoute.Home -> NavEntry(route) {
-                    HomeScreen(
-                        onNavigateToSession = dropUnlessResumed {
-                            backStack.add(WaneRoute.Session)
-                        },
-                        onNavigateToSettings = dropUnlessResumed {
-                            backStack.add(WaneRoute.Settings)
-                        },
-                    )
+                WaneRoute.Home -> {
+                    NavEntry(route) {
+                        HomeScreen(
+                            onNavigateToSession =
+                                dropUnlessResumed {
+                                    backStack.add(WaneRoute.Session)
+                                },
+                            onNavigateToSettings =
+                                dropUnlessResumed {
+                                    backStack.add(WaneRoute.Settings)
+                                },
+                        )
+                    }
                 }
 
-                WaneRoute.Session -> NavEntry(route) {
-                    SessionScreen(
-                        onSessionEnd = dropUnlessResumed {
-                            backStack.clear()
-                            backStack.add(WaneRoute.Home)
-                        },
-                    )
+                WaneRoute.Session -> {
+                    NavEntry(route) {
+                        SessionScreen(
+                            onSessionEnd =
+                                dropUnlessResumed {
+                                    backStack.clear()
+                                    backStack.add(WaneRoute.Home)
+                                },
+                        )
+                    }
                 }
 
-                WaneRoute.Settings -> NavEntry(route) {
-                    SettingsScreen(
-                        onNavigateBack = dropUnlessResumed {
-                            backStack.removeLastOrNull()
-                        },
-                        onNavigateToAutoLock = dropUnlessResumed {
-                            backStack.add(WaneRoute.AutoLockSettings)
-                        },
-                    )
+                WaneRoute.Settings -> {
+                    NavEntry(route) {
+                        SettingsScreen(
+                            onNavigateBack =
+                                dropUnlessResumed {
+                                    backStack.removeLastOrNull()
+                                },
+                            onNavigateToAutoLock =
+                                dropUnlessResumed {
+                                    backStack.add(WaneRoute.AutoLockSettings)
+                                },
+                        )
+                    }
                 }
 
-                WaneRoute.AutoLockSettings -> NavEntry(route) {
-                    AutoLockSettingsScreen(
-                        onNavigateBack = dropUnlessResumed {
-                            backStack.removeLastOrNull()
-                        },
-                    )
+                WaneRoute.AutoLockSettings -> {
+                    NavEntry(route) {
+                        AutoLockSettingsScreen(
+                            onNavigateBack =
+                                dropUnlessResumed {
+                                    backStack.removeLastOrNull()
+                                },
+                        )
+                    }
                 }
             }
         },

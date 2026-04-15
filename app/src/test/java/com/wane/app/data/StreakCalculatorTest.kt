@@ -4,8 +4,6 @@ import com.wane.app.data.db.dao.FocusSessionDao
 import com.wane.app.data.db.entity.FocusSessionEntity
 import com.wane.app.shared.CompletionStatus
 import com.wane.app.shared.StreakInfo
-import java.time.LocalDate
-import java.time.ZoneId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -13,9 +11,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
+import java.time.ZoneId
 
 class StreakCalculatorTest {
-
     private lateinit var fakeDao: FakeFocusSessionDao
     private lateinit var calculator: StreakCalculator
 
@@ -26,96 +25,107 @@ class StreakCalculatorTest {
     }
 
     @Test
-    fun `empty sessions yields streak of 0`() = runTest {
-        fakeDao.setCompletedSessions(emptyList())
-        assertEquals(0, calculator.observeCurrentStreak().first())
-    }
+    fun `empty sessions yields streak of 0`() =
+        runTest {
+            fakeDao.setCompletedSessions(emptyList())
+            assertEquals(0, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `single session today yields streak of 1`() = runTest {
-        fakeDao.setCompletedSessions(listOf(sessionOnDate(today())))
-        assertEquals(1, calculator.observeCurrentStreak().first())
-    }
+    fun `single session today yields streak of 1`() =
+        runTest {
+            fakeDao.setCompletedSessions(listOf(sessionOnDate(today())))
+            assertEquals(1, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `sessions today and yesterday yields streak of 2`() = runTest {
-        fakeDao.setCompletedSessions(
-            listOf(sessionOnDate(today()), sessionOnDate(today().minusDays(1))),
-        )
-        assertEquals(2, calculator.observeCurrentStreak().first())
-    }
+    fun `sessions today and yesterday yields streak of 2`() =
+        runTest {
+            fakeDao.setCompletedSessions(
+                listOf(sessionOnDate(today()), sessionOnDate(today().minusDays(1))),
+            )
+            assertEquals(2, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `gap in sessions returns streak of 1`() = runTest {
-        fakeDao.setCompletedSessions(
-            listOf(sessionOnDate(today()), sessionOnDate(today().minusDays(3))),
-        )
-        assertEquals(1, calculator.observeCurrentStreak().first())
-    }
+    fun `gap in sessions returns streak of 1`() =
+        runTest {
+            fakeDao.setCompletedSessions(
+                listOf(sessionOnDate(today()), sessionOnDate(today().minusDays(3))),
+            )
+            assertEquals(1, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `session yesterday only yields streak of 1`() = runTest {
-        fakeDao.setCompletedSessions(listOf(sessionOnDate(today().minusDays(1))))
-        assertEquals(1, calculator.observeCurrentStreak().first())
-    }
+    fun `session yesterday only yields streak of 1`() =
+        runTest {
+            fakeDao.setCompletedSessions(listOf(sessionOnDate(today().minusDays(1))))
+            assertEquals(1, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `session two days ago only yields streak of 0`() = runTest {
-        fakeDao.setCompletedSessions(listOf(sessionOnDate(today().minusDays(2))))
-        assertEquals(0, calculator.observeCurrentStreak().first())
-    }
+    fun `session two days ago only yields streak of 0`() =
+        runTest {
+            fakeDao.setCompletedSessions(listOf(sessionOnDate(today().minusDays(2))))
+            assertEquals(0, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `multiple sessions on same day count as one streak day`() = runTest {
-        fakeDao.setCompletedSessions(
-            listOf(
-                sessionOnDate(today(), hourOfDay = 9),
-                sessionOnDate(today(), hourOfDay = 14),
-                sessionOnDate(today(), hourOfDay = 20),
-            ),
-        )
-        assertEquals(1, calculator.observeCurrentStreak().first())
-    }
+    fun `multiple sessions on same day count as one streak day`() =
+        runTest {
+            fakeDao.setCompletedSessions(
+                listOf(
+                    sessionOnDate(today(), hourOfDay = 9),
+                    sessionOnDate(today(), hourOfDay = 14),
+                    sessionOnDate(today(), hourOfDay = 20),
+                ),
+            )
+            assertEquals(1, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `consecutive five day streak`() = runTest {
-        val sessions = (0L..4L).map { daysAgo -> sessionOnDate(today().minusDays(daysAgo)) }
-        fakeDao.setCompletedSessions(sessions)
-        assertEquals(5, calculator.observeCurrentStreak().first())
-    }
+    fun `consecutive five day streak`() =
+        runTest {
+            val sessions = (0L..4L).map { daysAgo -> sessionOnDate(today().minusDays(daysAgo)) }
+            fakeDao.setCompletedSessions(sessions)
+            assertEquals(5, calculator.observeStreakInfo().first().currentStreak)
+        }
 
     @Test
-    fun `observeStreakInfo returns correct aggregate data`() = runTest {
-        val sessions = listOf(
-            sessionOnDate(today(), durationMs = 60_000L),
-            sessionOnDate(today().minusDays(1), durationMs = 120_000L),
-        )
-        fakeDao.setCompletedSessions(sessions)
-        fakeDao.longestStreakDays = 3
-        fakeDao.totalSessionCount = 10
-        fakeDao.totalCompletedDurationMs = 600_000L
+    fun `observeStreakInfo returns correct aggregate data`() =
+        runTest {
+            val sessions =
+                listOf(
+                    sessionOnDate(today(), durationMs = 60_000L),
+                    sessionOnDate(today().minusDays(1), durationMs = 120_000L),
+                )
+            fakeDao.setCompletedSessions(sessions)
+            fakeDao.longestStreakDays = 3
+            fakeDao.totalSessionCount = 10
+            fakeDao.totalCompletedDurationMs = 600_000L
 
-        val info: StreakInfo = calculator.observeStreakInfo().first()
+            val info: StreakInfo = calculator.observeStreakInfo().first()
 
-        assertEquals(2, info.currentStreak)
-        assertEquals(3, info.longestStreak)
-        assertEquals(10, info.totalSessions)
-        assertEquals(10L, info.totalMinutes)
-    }
+            assertEquals(2, info.currentStreak)
+            assertEquals(3, info.longestStreak)
+            assertEquals(10, info.totalSessions)
+            assertEquals(10L, info.totalMinutes)
+        }
 
     @Test
-    fun `observeStreakInfo longestStreak is max of sql and current`() = runTest {
-        val sessions = (0L..6L).map { daysAgo -> sessionOnDate(today().minusDays(daysAgo)) }
-        fakeDao.setCompletedSessions(sessions)
-        fakeDao.longestStreakDays = 3
-        fakeDao.totalSessionCount = 7
-        fakeDao.totalCompletedDurationMs = 0L
+    fun `observeStreakInfo longestStreak is max of sql and current`() =
+        runTest {
+            val sessions = (0L..6L).map { daysAgo -> sessionOnDate(today().minusDays(daysAgo)) }
+            fakeDao.setCompletedSessions(sessions)
+            fakeDao.longestStreakDays = 3
+            fakeDao.totalSessionCount = 7
+            fakeDao.totalCompletedDurationMs = 0L
 
-        val info = calculator.observeStreakInfo().first()
+            val info = calculator.observeStreakInfo().first()
 
-        assertEquals(7, info.currentStreak)
-        assertEquals(7, info.longestStreak)
-    }
+            assertEquals(7, info.currentStreak)
+            assertEquals(7, info.longestStreak)
+        }
 
     private fun today(): LocalDate = LocalDate.now(ZoneId.systemDefault())
 
@@ -124,10 +134,12 @@ class StreakCalculatorTest {
         hourOfDay: Int = 12,
         durationMs: Long = 25 * 60_000L,
     ): FocusSessionEntity {
-        val startMillis = date.atTime(hourOfDay, 0)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
+        val startMillis =
+            date
+                .atTime(hourOfDay, 0)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
         return FocusSessionEntity(
             id = 0,
             startTime = startMillis,
@@ -141,7 +153,6 @@ class StreakCalculatorTest {
 }
 
 private class FakeFocusSessionDao : FocusSessionDao {
-
     private val completedSessions = MutableStateFlow<List<FocusSessionEntity>>(emptyList())
     var longestStreakDays: Int = 0
     var totalSessionCount: Int = 0
@@ -162,14 +173,16 @@ private class FakeFocusSessionDao : FocusSessionDao {
         status: CompletionStatus,
     ) = Unit
 
+    override suspend fun updatePlannedDuration(
+        sessionId: Long,
+        plannedDurationMs: Long,
+    ) = Unit
+
     override suspend fun deleteAll() = Unit
 
-    override fun observeLongestCompletionStreakDays(): Flow<Int> =
-        MutableStateFlow(longestStreakDays)
+    override fun observeLongestCompletionStreakDays(): Flow<Int> = MutableStateFlow(longestStreakDays)
 
-    override fun observeTotalSessionCount(): Flow<Int> =
-        MutableStateFlow(totalSessionCount)
+    override fun observeTotalSessionCount(): Flow<Int> = MutableStateFlow(totalSessionCount)
 
-    override fun observeTotalCompletedDurationMs(): Flow<Long> =
-        MutableStateFlow(totalCompletedDurationMs)
+    override fun observeTotalCompletedDurationMs(): Flow<Long> = MutableStateFlow(totalCompletedDurationMs)
 }

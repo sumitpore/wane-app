@@ -10,7 +10,6 @@ import com.wane.app.util.EmergencySafety
 import dagger.hilt.android.EntryPointAccessors
 
 class WaneAccessibilityService : AccessibilityService() {
-
     private lateinit var appBlocker: AppBlocker
 
     private var imePackageCache: Set<String> = emptySet()
@@ -19,10 +18,11 @@ class WaneAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         try {
-            val entryPoint = EntryPointAccessors.fromApplication(
-                applicationContext,
-                AccessibilityServiceEntryPoint::class.java,
-            )
+            val entryPoint =
+                EntryPointAccessors.fromApplication(
+                    applicationContext,
+                    AccessibilityServiceEntryPoint::class.java,
+                )
             appBlocker = entryPoint.appBlocker()
             refreshImeCache()
             Log.d(TAG, "Accessibility service connected")
@@ -59,7 +59,8 @@ class WaneAccessibilityService : AccessibilityService() {
     private fun refreshImeCache() {
         try {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-            imePackageCache = imm?.enabledInputMethodList
+            imePackageCache = imm
+                ?.enabledInputMethodList
                 ?.mapNotNull { it.packageName }
                 ?.toSet()
                 ?: emptySet()

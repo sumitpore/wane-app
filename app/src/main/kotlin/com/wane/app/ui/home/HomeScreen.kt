@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,13 +24,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -39,17 +39,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -61,6 +59,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wane.app.R
 import com.wane.app.service.SessionError
@@ -96,7 +96,10 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is HomeEffect.NavigateToSession -> onNavigateToSession()
+                is HomeEffect.NavigateToSession -> {
+                    onNavigateToSession()
+                }
+
                 is HomeEffect.ShowError -> {
                     when (effect.error) {
                         is SessionError.ForegroundServiceBlocked -> {
@@ -133,35 +136,39 @@ private fun HomeContent(
     onOpenAccessibilitySettings: () -> Unit = {},
     onOpenNotificationSettings: () -> Unit = {},
 ) {
-    val currentIndex = DURATION_OPTIONS.indexOfFirst { it >= uiState.defaultDuration }
-        .takeIf { it >= 0 } ?: 0
+    val currentIndex =
+        DURATION_OPTIONS
+            .indexOfFirst { it >= uiState.defaultDuration }
+            .takeIf { it >= 0 } ?: 0
     val canIncrease = currentIndex < DURATION_OPTIONS.lastIndex
     val canDecrease = currentIndex > 0
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(BackgroundDeep, BackgroundDeepMid, BackgroundDeepEnd),
-                ),
-            )
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(BackgroundDeep, BackgroundDeepMid, BackgroundDeepEnd),
+                    ),
+                ).statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         // Ambient glow behind center area
         Canvas(modifier = Modifier.fillMaxSize()) {
             val glowCenter = Offset(size.width / 2f, size.height * 0.52f)
             val glowRadius = 150.dp.toPx()
             drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        AccentPrimary.copy(alpha = 0.08f),
-                        Color.Transparent,
+                brush =
+                    Brush.radialGradient(
+                        colors =
+                            listOf(
+                                AccentPrimary.copy(alpha = 0.08f),
+                                Color.Transparent,
+                            ),
+                        center = glowCenter,
+                        radius = glowRadius,
                     ),
-                    center = glowCenter,
-                    radius = glowRadius,
-                ),
                 radius = glowRadius,
                 center = glowCenter,
             )
@@ -169,10 +176,11 @@ private fun HomeContent(
 
         // Settings gear — top right
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(end = 8.dp, top = 4.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(end = 8.dp, top = 4.dp),
             horizontalArrangement = Arrangement.End,
         ) {
             IconButton(onClick = onSettings) {
@@ -186,9 +194,10 @@ private fun HomeContent(
 
         // Main vertical layout: logo -> duration picker -> start button -> micro label
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.weight(0.15f))
@@ -239,6 +248,24 @@ private fun HomeContent(
                 )
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(R.string.privacy_label).uppercase(),
+                fontFamily = SpaceGrotesk,
+                fontWeight = FontWeight.Normal,
+                fontSize = 10.sp,
+                color = TextMuted,
+                letterSpacing = 3.sp,
+                textAlign = TextAlign.Center,
+                modifier =
+                    Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onSettings,
+                    ),
+            )
+
             Spacer(modifier = Modifier.weight(0.22f))
         }
     }
@@ -255,51 +282,53 @@ private fun WaneLogo() {
 }
 
 @Composable
-private fun AccessibilityPromptBanner(
-    onEnableClick: () -> Unit,
-) {
+private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
     val uriHandler = LocalUriHandler.current
     val fullText = stringResource(R.string.accessibility_prompt_message)
     val linkDisplay = "github.com/sumitpore/wane-app"
     val linkUrl = stringResource(R.string.open_source_url)
     val linkStart = fullText.indexOf(linkDisplay)
-    val annotatedMessage = buildAnnotatedString {
-        append(fullText)
-        addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
-        if (linkStart >= 0) {
-            addStyle(
-                SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
-                linkStart,
-                linkStart + linkDisplay.length,
-            )
-            addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+    val annotatedMessage =
+        buildAnnotatedString {
+            append(fullText)
+            addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
+            if (linkStart >= 0) {
+                addStyle(
+                    SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
+                    linkStart,
+                    linkStart + linkDisplay.length,
+                )
+                addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+            }
         }
-    }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = SurfaceGlass,
-                shape = RoundedCornerShape(16.dp),
-            )
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = SurfaceGlass,
+                    shape = RoundedCornerShape(16.dp),
+                ).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ClickableText(
             text = annotatedMessage,
             style = WaneTypography.bodyMedium.copy(textAlign = TextAlign.Center),
             onClick = { offset ->
-                annotatedMessage.getStringAnnotations("URL", offset, offset)
-                    .firstOrNull()?.let { uriHandler.openUri(it.item) }
+                annotatedMessage
+                    .getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()
+                    ?.let { uriHandler.openUri(it.item) }
             },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = onEnableClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AccentPrimary,
-            ),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = AccentPrimary,
+                ),
             shape = RoundedCornerShape(12.dp),
         ) {
             Text(
@@ -311,51 +340,53 @@ private fun AccessibilityPromptBanner(
 }
 
 @Composable
-private fun NotificationPromptBanner(
-    onEnableClick: () -> Unit,
-) {
+private fun NotificationPromptBanner(onEnableClick: () -> Unit) {
     val uriHandler = LocalUriHandler.current
     val fullText = stringResource(R.string.notification_prompt_message)
     val linkDisplay = "github.com/sumitpore/wane-app"
     val linkUrl = stringResource(R.string.open_source_url)
     val linkStart = fullText.indexOf(linkDisplay)
-    val annotatedMessage = buildAnnotatedString {
-        append(fullText)
-        addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
-        if (linkStart >= 0) {
-            addStyle(
-                SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
-                linkStart,
-                linkStart + linkDisplay.length,
-            )
-            addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+    val annotatedMessage =
+        buildAnnotatedString {
+            append(fullText)
+            addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
+            if (linkStart >= 0) {
+                addStyle(
+                    SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
+                    linkStart,
+                    linkStart + linkDisplay.length,
+                )
+                addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+            }
         }
-    }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = SurfaceGlass,
-                shape = RoundedCornerShape(16.dp),
-            )
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = SurfaceGlass,
+                    shape = RoundedCornerShape(16.dp),
+                ).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ClickableText(
             text = annotatedMessage,
             style = WaneTypography.bodyMedium.copy(textAlign = TextAlign.Center),
             onClick = { offset ->
-                annotatedMessage.getStringAnnotations("URL", offset, offset)
-                    .firstOrNull()?.let { uriHandler.openUri(it.item) }
+                annotatedMessage
+                    .getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()
+                    ?.let { uriHandler.openUri(it.item) }
             },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = onEnableClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AccentPrimary,
-            ),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = AccentPrimary,
+                ),
             shape = RoundedCornerShape(12.dp),
         ) {
             Text(
@@ -441,26 +472,24 @@ private fun StartButton(onClick: () -> Unit) {
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(80.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.20f),
-                shape = CircleShape,
-            )
-            .background(
-                color = Color.White.copy(alpha = 0.05f),
-                shape = CircleShape,
-            )
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick,
-            ),
+        modifier =
+            Modifier
+                .size(80.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }.border(
+                    width = 1.dp,
+                    color = Color.White.copy(alpha = 0.20f),
+                    shape = CircleShape,
+                ).background(
+                    color = Color.White.copy(alpha = 0.05f),
+                    shape = CircleShape,
+                ).clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onClick,
+                ),
     ) {
         Icon(
             imageVector = Icons.Filled.PlayArrow,

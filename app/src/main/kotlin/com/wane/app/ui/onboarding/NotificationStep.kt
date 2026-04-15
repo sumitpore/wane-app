@@ -3,8 +3,8 @@ package com.wane.app.ui.onboarding
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -22,9 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,26 +90,29 @@ fun NotificationStep(modifier: Modifier = Modifier) {
         val linkDisplay = "github.com/sumitpore/wane-app"
         val linkUrl = stringResource(R.string.open_source_url)
         val linkStart = fullText.indexOf(linkDisplay)
-        val annotatedDescription = buildAnnotatedString {
-            append(fullText)
-            addStyle(SpanStyle(color = BodyText), 0, fullText.length)
-            if (linkStart >= 0) {
-                addStyle(
-                    SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
-                    linkStart,
-                    linkStart + linkDisplay.length,
-                )
-                addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+        val annotatedDescription =
+            buildAnnotatedString {
+                append(fullText)
+                addStyle(SpanStyle(color = BodyText), 0, fullText.length)
+                if (linkStart >= 0) {
+                    addStyle(
+                        SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
+                        linkStart,
+                        linkStart + linkDisplay.length,
+                    )
+                    addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+                }
             }
-        }
 
         ClickableText(
             text = annotatedDescription,
             style = WaneTypography.bodyLarge.copy(textAlign = TextAlign.Center),
             modifier = Modifier.padding(horizontal = 40.dp),
             onClick = { offset ->
-                annotatedDescription.getStringAnnotations("URL", offset, offset)
-                    .firstOrNull()?.let { uriHandler.openUri(it.item) }
+                annotatedDescription
+                    .getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()
+                    ?.let { uriHandler.openUri(it.item) }
             },
         )
 
@@ -127,17 +130,19 @@ fun NotificationStep(modifier: Modifier = Modifier) {
                     label = "checkmark-scale",
                 )
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 40.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 40.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Box(
-                        modifier = Modifier
-                            .scale(scale)
-                            .size(56.dp)
-                            .clip(CircleShape)
-                            .background(GrantedGreen),
+                        modifier =
+                            Modifier
+                                .scale(scale)
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(GrantedGreen),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
@@ -150,15 +155,15 @@ fun NotificationStep(modifier: Modifier = Modifier) {
                 }
             } else {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 40.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(SurfaceGlass)
-                        .clickable {
-                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-                        }
-                        .padding(horizontal = 20.dp, vertical = 18.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 40.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(SurfaceGlass)
+                            .clickable {
+                                context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                            }.padding(horizontal = 20.dp, vertical = 18.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

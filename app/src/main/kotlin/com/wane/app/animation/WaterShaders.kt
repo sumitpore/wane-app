@@ -7,7 +7,6 @@ package com.wane.app.animation
  * Uniform naming: `u_camelCase` (mediump floats in fragment unless noted).
  */
 object WaterShaders {
-
     /**
      * Fullscreen clip-space quad. [a_position] is in NDC [-1, 1].
      *

@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import com.wane.app.data.repository.PreferencesRepository
 import com.wane.app.service.di.NotificationListenerEntryPoint
 import com.wane.app.shared.SessionState
 import com.wane.app.util.NotificationUtils
@@ -20,14 +19,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class WaneNotificationListener : NotificationListenerService() {
-
     private lateinit var sessionManager: SessionManager
-    private lateinit var preferencesRepository: PreferencesRepository
     private lateinit var repeatedCallerTracker: RepeatedCallerTracker
 
     private var serviceScope: CoroutineScope? = null
     private val snoozedKeys = mutableSetOf<String>()
-    private var emergencyContacts: List<String> = emptyList()
 
     private val phoneAndSmsPackages: Set<String> by lazy {
         buildSet {
@@ -40,22 +36,16 @@ class WaneNotificationListener : NotificationListenerService() {
     override fun onListenerConnected() {
         super.onListenerConnected()
         try {
-            val entryPoint = EntryPointAccessors.fromApplication(
-                applicationContext,
-                NotificationListenerEntryPoint::class.java,
-            )
+            val entryPoint =
+                EntryPointAccessors.fromApplication(
+                    applicationContext,
+                    NotificationListenerEntryPoint::class.java,
+                )
             sessionManager = entryPoint.sessionManager()
-            preferencesRepository = entryPoint.preferencesRepository()
             repeatedCallerTracker = entryPoint.repeatedCallerTracker()
 
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
             serviceScope = scope
-
-            scope.launch {
-                preferencesRepository.observeEmergencyContacts().collectLatest { contacts ->
-                    emergencyContacts = contacts
-                }
-            }
 
             scope.launch {
                 sessionManager.sessionState.collectLatest { state ->
@@ -89,8 +79,6 @@ class WaneNotificationListener : NotificationListenerService() {
             if (!::sessionManager.isInitialized) return
 
             val callerNumber = NotificationUtils.extractCallerNumber(sbn)
-
-            if (callerNumber != null && isEmergencyContact(callerNumber)) return
 
             if (callerNumber != null) {
                 repeatedCallerTracker.recordCall(callerNumber)
@@ -128,14 +116,6 @@ class WaneNotificationListener : NotificationListenerService() {
         }
     }
 
-    private fun isEmergencyContact(number: String): Boolean {
-        val digits = number.filter { it.isDigit() }
-        return emergencyContacts.any { contact ->
-            val contactDigits = contact.filter { it.isDigit() }
-            contactDigits.isNotEmpty() && (digits.endsWith(contactDigits) || contactDigits.endsWith(digits))
-        }
-    }
-
     private fun unsnoozeAll() {
         val keysToUnsnooze: Set<String>
         synchronized(snoozedKeys) {
@@ -154,25 +134,29 @@ class WaneNotificationListener : NotificationListenerService() {
     private fun showRepeatedCallerNotification(callerNumber: String) {
         try {
             val nm = getSystemService(NotificationManager::class.java) ?: return
-            val channel = NotificationChannel(
-                CHANNEL_REPEATED_CALLER,
-                "Repeated Caller Alerts",
-                NotificationManager.IMPORTANCE_HIGH,
-            )
+            val channel =
+                NotificationChannel(
+                    CHANNEL_REPEATED_CALLER,
+                    "Repeated Caller Alerts",
+                    NotificationManager.IMPORTANCE_HIGH,
+                )
             nm.createNotificationChannel(channel)
 
-            val maskedNumber = if (callerNumber.length > 4) {
-                "***${callerNumber.takeLast(4)}"
-            } else {
-                callerNumber
-            }
+            val maskedNumber =
+                if (callerNumber.length > 4) {
+                    "***${callerNumber.takeLast(4)}"
+                } else {
+                    callerNumber
+                }
 
-            val notification = Notification.Builder(this, CHANNEL_REPEATED_CALLER)
-                .setSmallIcon(android.R.drawable.ic_menu_call)
-                .setContentTitle("Repeated caller")
-                .setContentText("$maskedNumber called 3+ times in 5 minutes")
-                .setAutoCancel(true)
-                .build()
+            val notification =
+                Notification
+                    .Builder(this, CHANNEL_REPEATED_CALLER)
+                    .setSmallIcon(android.R.drawable.ic_menu_call)
+                    .setContentTitle("Repeated caller")
+                    .setContentText("$maskedNumber called 3+ times in 5 minutes")
+                    .setAutoCancel(true)
+                    .build()
 
             nm.notify(NOTIFICATION_ID_REPEATED_CALLER, notification)
         } catch (e: Exception) {

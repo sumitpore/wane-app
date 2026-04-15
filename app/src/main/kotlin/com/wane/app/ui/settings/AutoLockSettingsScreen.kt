@@ -56,19 +56,21 @@ fun AutoLockSettingsScreen(
     val config = uiState.config
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundSettings)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(BackgroundSettings)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         AutoLockTopBar(onBack = onNavigateBack)
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Spacer(modifier = Modifier.height(4.dp))
@@ -144,9 +146,10 @@ fun AutoLockSettingsScreen(
 @Composable
 private fun AutoLockTopBar(onBack: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onBack) {
@@ -167,11 +170,12 @@ private fun AutoLockTopBar(onBack: () -> Unit) {
 @Composable
 private fun AutoLockCard(content: @Composable () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(SurfaceGlass)
-            .animateContentSize(animationSpec = spring(stiffness = 100f, dampingRatio = 0.85f)),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(SurfaceGlass)
+                .animateContentSize(animationSpec = spring(stiffness = 100f, dampingRatio = 0.85f)),
     ) {
         Column(modifier = Modifier.padding(vertical = 4.dp)) {
             content()
@@ -187,9 +191,10 @@ private fun AutoLockToggleRow(
     enabled: Boolean = true,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -202,12 +207,13 @@ private fun AutoLockToggleRow(
             checked = checked,
             onCheckedChange = onCheckedChange,
             enabled = enabled,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = AccentPrimary,
-                checkedTrackColor = AccentPrimary.copy(alpha = 0.3f),
-                uncheckedThumbColor = TextStatus,
-                uncheckedTrackColor = SurfaceDim,
-            ),
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = AccentPrimary,
+                    checkedTrackColor = AccentPrimary.copy(alpha = 0.3f),
+                    uncheckedThumbColor = TextStatus,
+                    uncheckedTrackColor = SurfaceDim,
+                ),
         )
     }
 }
@@ -223,9 +229,10 @@ private fun SliderRow(
     enabled: Boolean,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -252,14 +259,15 @@ private fun SliderRow(
             valueRange = range,
             steps = steps,
             enabled = enabled,
-            colors = SliderDefaults.colors(
-                thumbColor = AccentPrimary,
-                activeTrackColor = AccentPrimary,
-                inactiveTrackColor = SurfaceDim,
-                disabledThumbColor = TextMuted,
-                disabledActiveTrackColor = TextMuted,
-                disabledInactiveTrackColor = SurfaceDim,
-            ),
+            colors =
+                SliderDefaults.colors(
+                    thumbColor = AccentPrimary,
+                    activeTrackColor = AccentPrimary,
+                    inactiveTrackColor = SurfaceDim,
+                    disabledThumbColor = TextMuted,
+                    disabledActiveTrackColor = TextMuted,
+                    disabledInactiveTrackColor = SurfaceDim,
+                ),
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -276,9 +284,10 @@ private fun SkipWindowRow(
     onToggle: (Boolean) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -294,25 +303,27 @@ private fun SkipWindowRow(
                 checked = hasWindow,
                 onCheckedChange = onToggle,
                 enabled = enabled,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = AccentPrimary,
-                    checkedTrackColor = AccentPrimary.copy(alpha = 0.3f),
-                    uncheckedThumbColor = TextStatus,
-                    uncheckedTrackColor = SurfaceDim,
-                ),
+                colors =
+                    SwitchDefaults.colors(
+                        checkedThumbColor = AccentPrimary,
+                        checkedTrackColor = AccentPrimary.copy(alpha = 0.3f),
+                        uncheckedThumbColor = TextStatus,
+                        uncheckedTrackColor = SurfaceDim,
+                    ),
             )
         }
 
         if (hasWindow && startHour != null && endHour != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(
-                    R.string.autolock_skip_window_range,
-                    startHour,
-                    startMinute ?: 0,
-                    endHour,
-                    endMinute ?: 0,
-                ),
+                text =
+                    stringResource(
+                        R.string.autolock_skip_window_range,
+                        startHour,
+                        startMinute ?: 0,
+                        endHour,
+                        endMinute ?: 0,
+                    ),
                 style = WaneTypography.bodyMedium,
                 color = TextStatus,
             )

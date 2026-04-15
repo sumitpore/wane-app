@@ -66,3 +66,6 @@ fastlane/test_output
 
 # Version catalog must remain tracked even if *.toml patterns are added later
 !gradle/libs.versions.toml
+
+UX-MINIMALIST-ROADMAP.md
+UX-REFACTORING-PRINCIPLES-ROADMAP.md

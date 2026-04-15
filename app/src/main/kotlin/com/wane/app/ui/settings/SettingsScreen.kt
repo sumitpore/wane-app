@@ -56,19 +56,21 @@ fun SettingsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundSettings)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(BackgroundSettings)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         SettingsTopBar(onBack = onNavigateBack)
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Spacer(modifier = Modifier.height(4.dp))
@@ -94,10 +96,11 @@ fun SettingsScreen(
                 )
                 SettingsRowValue(
                     label = stringResource(R.string.settings_total_focus_time),
-                    value = stringResource(
-                        R.string.settings_hours_format,
-                        uiState.streakInfo.totalMinutes / 60,
-                    ),
+                    value =
+                        stringResource(
+                            R.string.settings_hours_format,
+                            uiState.streakInfo.totalMinutes / 60,
+                        ),
                 )
                 SettingsRowDanger(
                     label = stringResource(R.string.clear_sessions),
@@ -163,9 +166,10 @@ fun SettingsScreen(
 @Composable
 private fun SettingsTopBar(onBack: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onBack) {
@@ -197,11 +201,12 @@ private fun SettingsSection(
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(SurfaceGlass)
-                .animateContentSize(animationSpec = spring(stiffness = 100f, dampingRatio = 0.85f)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(SurfaceGlass)
+                    .animateContentSize(animationSpec = spring(stiffness = 100f, dampingRatio = 0.85f)),
         ) {
             Column(
                 modifier = Modifier.padding(vertical = 4.dp),
@@ -218,9 +223,10 @@ private fun SettingsRowValue(
     value: String,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -243,10 +249,11 @@ private fun SettingsRowNavigation(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -270,10 +277,11 @@ private fun SettingsRowDanger(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
     ) {
         Text(
             text = label,

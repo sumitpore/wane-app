@@ -2,7 +2,6 @@ package com.wane.app.data.datastore
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 
 object PreferenceKeys {
     val DEFAULT_DURATION_MINUTES = intPreferencesKey("default_duration_minutes")
@@ -14,7 +13,5 @@ object PreferenceKeys {
     val AUTO_LOCK_SKIP_END_HOUR = intPreferencesKey("auto_lock_skip_end_hour")
     val AUTO_LOCK_SKIP_END_MINUTE = intPreferencesKey("auto_lock_skip_end_minute")
     val AUTO_LOCK_SKIP_WHILE_CHARGING = booleanPreferencesKey("auto_lock_skip_while_charging")
-    val SELECTED_THEME_ID = stringPreferencesKey("selected_theme_id")
-    val EMERGENCY_CONTACTS_JSON = stringPreferencesKey("emergency_contacts_json")
     val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
 }

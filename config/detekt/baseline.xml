@@ -3,11 +3,20 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:PreferencesRepositoryImpl.kt:PreferencesRepositoryImpl$sh !in HOUR_RANGE || sm !in MINUTE_RANGE || eh !in HOUR_RANGE || em !in MINUTE_RANGE</ID>
+    <ID>ComplexCondition:PreferencesRepositoryImplTest.kt:PreferencesRepositoryImplTest.Companion$sh !in HOUR_RANGE || sm !in MINUTE_RANGE || eh !in HOUR_RANGE || em !in MINUTE_RANGE</ID>
     <ID>CyclomaticComplexMethod:AutoLockScheduler.kt:AutoLockScheduler$fun onScreenUnlocked</ID>
     <ID>CyclomaticComplexMethod:PreferencesRepositoryImpl.kt:PreferencesRepositoryImpl$private fun readAutoLockConfig: AutoLockConfig</ID>
-    <ID>DestructuringDeclarationWithTooManyEntries:PreferencesRepositoryImpl.kt:PreferencesRepositoryImpl$val (skipH, skipSm, skipEh, skipEm) = when { sh == SKIP_SENTINEL &amp;&amp; sm == SKIP_SENTINEL &amp;&amp; eh == SKIP_SENTINEL &amp;&amp; em == SKIP_SENTINEL -&gt; Quad(null, null, null, null) sh != SKIP_SENTINEL &amp;&amp; sm != SKIP_SENTINEL &amp;&amp; eh != SKIP_SENTINEL &amp;&amp; em != SKIP_SENTINEL -&gt; Quad(sh, sm, eh, em) else -&gt; Quad(null, null, null, null) }</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:PreferencesRepositoryImpl.kt:PreferencesRepositoryImpl$val (skipH, skipSm, skipEh, skipEm) = when { sh == SKIP_SENTINEL &amp;&amp; sm == SKIP_SENTINEL &amp;&amp; eh == SKIP_SENTINEL &amp;&amp; em == SKIP_SENTINEL -&gt; { Quad(null, null, null, null) } sh != SKIP_SENTINEL &amp;&amp; sm != SKIP_SENTINEL &amp;&amp; eh != SKIP_SENTINEL &amp;&amp; em != SKIP_SENTINEL -&gt; { Quad(sh, sm, eh, em) } else -&gt; { Quad(null, null, null, null) } }</ID>
     <ID>EmptyFunctionBlock:AutoLockScheduler.kt:AutoLockScheduler.&lt;no name provided&gt;${}</ID>
     <ID>EmptyFunctionBlock:TiltSensorManager.kt:TiltSensorManager.&lt;no name provided&gt;${}</ID>
+    <ID>FunctionNaming:AccessibilityStep.kt:@Composable fun AccessibilityStep</ID>
+    <ID>FunctionNaming:AccessibilityStep.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun AccessibilityStepPreview</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable fun AutoLockSettingsScreen</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun AutoLockCard</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun AutoLockToggleRow</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun AutoLockTopBar</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun SkipWindowRow</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun SliderRow</ID>
     <ID>FunctionNaming:AutoLockStep.kt:@Composable fun AutoLockStep</ID>
     <ID>FunctionNaming:AutoLockStep.kt:@Composable private fun AutoLockToggleRow</ID>
     <ID>FunctionNaming:AutoLockStep.kt:@Composable private fun WaneToggle</ID>
@@ -17,54 +26,237 @@
     <ID>FunctionNaming:DurationStep.kt:@Composable private fun RoundControlButton</ID>
     <ID>FunctionNaming:DurationStep.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun DurationStepPreview</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable fun HomeScreen</ID>
-    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun DurationLabel</ID>
+    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun AccessibilityPromptBanner</ID>
+    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun DurationPicker</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable private fun HomeContent</ID>
+    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun NotificationPromptBanner</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable private fun StartButton</ID>
-    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun StreakDisplay</ID>
-    <ID>FunctionNaming:HomeScreen.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun HomeContentNoStreakPreview</ID>
+    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun WaneLogo</ID>
+    <ID>FunctionNaming:HomeScreen.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun HomeContentDurationBoundaryPreview</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun HomeContentPreview</ID>
+    <ID>FunctionNaming:NotificationStep.kt:@Composable fun NotificationStep</ID>
+    <ID>FunctionNaming:NotificationStep.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun NotificationStepPreview</ID>
     <ID>FunctionNaming:OnboardingScreen.kt:@Composable fun OnboardingScreen</ID>
     <ID>FunctionNaming:OnboardingScreen.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun OnboardingScreenPreview</ID>
     <ID>FunctionNaming:PageIndicator.kt:@Composable fun PageIndicator</ID>
     <ID>FunctionNaming:PageIndicator.kt:@Preview @Composable private fun PageIndicatorPreview</ID>
+    <ID>FunctionNaming:SessionScreen.kt:@Composable private fun BottomToolbar</ID>
+    <ID>FunctionNaming:SessionScreen.kt:@Composable private fun SessionCompleteOverlay</ID>
+    <ID>FunctionNaming:SessionScreen.kt:@Composable private fun ToolbarIconButton</ID>
+    <ID>FunctionNaming:SessionScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SessionScreen</ID>
+    <ID>FunctionNaming:SessionScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable private fun EmergencyExitSheet</ID>
+    <ID>FunctionNaming:SessionScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable private fun GraduatedExitSheet</ID>
+    <ID>FunctionNaming:SettingsScreen.kt:@Composable fun SettingsScreen</ID>
+    <ID>FunctionNaming:SettingsScreen.kt:@Composable private fun SettingsRowDanger</ID>
+    <ID>FunctionNaming:SettingsScreen.kt:@Composable private fun SettingsRowNavigation</ID>
+    <ID>FunctionNaming:SettingsScreen.kt:@Composable private fun SettingsRowValue</ID>
+    <ID>FunctionNaming:SettingsScreen.kt:@Composable private fun SettingsSection</ID>
+    <ID>FunctionNaming:SettingsScreen.kt:@Composable private fun SettingsTopBar</ID>
     <ID>FunctionNaming:WaneButton.kt:@Composable fun WaneButton</ID>
     <ID>FunctionNaming:WaneButton.kt:@Preview @Composable private fun WaneButtonPreview</ID>
+    <ID>FunctionNaming:WaneNavHost.kt:@Composable fun WaneNavHost</ID>
     <ID>FunctionNaming:WaneTheme.kt:@Composable fun WaneTheme</ID>
     <ID>FunctionNaming:WaterCanvas.kt:@Composable fun WaterCanvas</ID>
     <ID>FunctionNaming:WaterCanvas.kt:@Composable private fun StaticWaterFallback</ID>
     <ID>FunctionNaming:WelcomeStep.kt:@Composable fun WelcomeStep</ID>
     <ID>FunctionNaming:WelcomeStep.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun WelcomeStepPreview</ID>
-    <ID>LongMethod:HomeScreen.kt:@Composable private fun StartButton</ID>
+    <ID>LongMethod:AccessibilityStep.kt:@Composable fun AccessibilityStep</ID>
+    <ID>LongMethod:AutoLockSettingsScreen.kt:@Composable fun AutoLockSettingsScreen</ID>
+    <ID>LongMethod:HomeScreen.kt:@Composable private fun HomeContent</ID>
+    <ID>LongMethod:NotificationStep.kt:@Composable fun NotificationStep</ID>
     <ID>LongMethod:OnboardingScreen.kt:@Composable fun OnboardingScreen</ID>
     <ID>LongMethod:SessionManagerImpl.kt:SessionManagerImpl$override suspend fun startSession</ID>
+    <ID>LongMethod:SessionScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SessionScreen</ID>
+    <ID>LongMethod:SessionScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable private fun EmergencyExitSheet</ID>
+    <ID>LongMethod:SettingsScreen.kt:@Composable fun SettingsScreen</ID>
+    <ID>LongMethod:WaneNavHost.kt:@Composable fun WaneNavHost</ID>
     <ID>LongMethod:WaterRenderer.kt:WaterRenderer$private fun onDrawFrameInner</ID>
+    <ID>MagicNumber:AccessibilityStep.kt:0xFF4CAF50</ID>
     <ID>MagicNumber:AutoLockScheduler.kt:AutoLockScheduler$1000L</ID>
     <ID>MagicNumber:AutoLockScheduler.kt:AutoLockScheduler$30</ID>
     <ID>MagicNumber:AutoLockScheduler.kt:AutoLockScheduler$60</ID>
     <ID>MagicNumber:AutoLockScheduler.kt:AutoLockScheduler$60_000L</ID>
-    <ID>MagicNumber:Color.kt:0xCC151F32</ID>
-    <ID>MagicNumber:Color.kt:0xFF050C16</ID>
+    <ID>MagicNumber:AutoLockSettingsScreen.kt:22</ID>
+    <ID>MagicNumber:AutoLockSettingsScreen.kt:7</ID>
+    <ID>MagicNumber:AutoLockViewModel.kt:AutoLockViewModel$120</ID>
+    <ID>MagicNumber:AutoLockViewModel.kt:AutoLockViewModel$5</ID>
+    <ID>MagicNumber:AutoLockViewModel.kt:AutoLockViewModel$5_000</ID>
+    <ID>MagicNumber:AutoLockViewModel.kt:AutoLockViewModel$60</ID>
     <ID>MagicNumber:Color.kt:0xFF060E1A</ID>
     <ID>MagicNumber:Color.kt:0xFF0A1628</ID>
     <ID>MagicNumber:Color.kt:0xFF0D1F3C</ID>
     <ID>MagicNumber:Color.kt:0xFF0F1624</ID>
     <ID>MagicNumber:Color.kt:0xFF38A3DC</ID>
     <ID>MagicNumber:Color.kt:0xFF484C51</ID>
-    <ID>MagicNumber:Color.kt:0xFF64B8E8</ID>
-    <ID>MagicNumber:Color.kt:0xFF888E96</ID>
     <ID>MagicNumber:Color.kt:0xFFA8ADB2</ID>
     <ID>MagicNumber:Color.kt:0xFFF4F6FA</ID>
     <ID>MagicNumber:DurationStep.kt:0.4f</ID>
     <ID>MagicNumber:HomeScreen.kt:0.15f</ID>
-    <ID>MagicNumber:HomeScreen.kt:0.2f</ID>
-    <ID>MagicNumber:HomeScreen.kt:0.3f</ID>
-    <ID>MagicNumber:HomeViewModel.kt:HomeViewModel$120</ID>
-    <ID>MagicNumber:HomeViewModel.kt:HomeViewModel$5</ID>
+    <ID>MagicNumber:HomeScreen.kt:0.18f</ID>
+    <ID>MagicNumber:HomeScreen.kt:0.22f</ID>
+    <ID>MagicNumber:HomeScreen.kt:0.52f</ID>
     <ID>MagicNumber:HomeViewModel.kt:HomeViewModel$5_000</ID>
-    <ID>MagicNumber:Motion.kt:WaneMotion$200L</ID>
-    <ID>MagicNumber:Motion.kt:WaneMotion$50L</ID>
+    <ID>MagicNumber:NotificationStep.kt:0xFF4CAF50</ID>
+    <ID>MagicNumber:OnboardingScreen.kt:3</ID>
+    <ID>MagicNumber:OnboardingScreen.kt:4</ID>
     <ID>MagicNumber:OnboardingViewModel.kt:OnboardingViewModel$120</ID>
+    <ID>MagicNumber:OnboardingViewModel.kt:OnboardingViewModel$4</ID>
     <ID>MagicNumber:OnboardingViewModel.kt:OnboardingViewModel$5</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.001f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.004f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.012f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.027f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.031f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.037f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.052f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.055f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.072f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.075f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.094f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.095f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.11f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.137f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.14f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.162f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.163f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.194f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.209f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.225f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.242f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.271f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.282f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.284f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.34f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.351f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.363f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.376f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.38f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.402f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.417f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.441f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.447f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.44f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.46f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.476f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.477f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.479f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.516f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.527f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.542f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.576f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.577f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.666f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.68f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.734f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.769f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.825f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.837f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.847f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.852f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.884f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.8f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.902f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.928f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.941f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.94f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.966f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0.97f</ID>
+    <ID>MagicNumber:SessionScreen.kt:0xFFE04848</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.02f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.057f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.091f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.106f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.125f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.128f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.131f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.136f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.152f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.155f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.157f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.173f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.21f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.293f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.354f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.372f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.584f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.58f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.5f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.608f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.614f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.621f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.74f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.951f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.976f</ID>
+    <ID>MagicNumber:SessionScreen.kt:1.98f</ID>
+    <ID>MagicNumber:SessionScreen.kt:11.25f</ID>
+    <ID>MagicNumber:SessionScreen.kt:11.944f</ID>
+    <ID>MagicNumber:SessionScreen.kt:12.035f</ID>
+    <ID>MagicNumber:SessionScreen.kt:12.75f</ID>
+    <ID>MagicNumber:SessionScreen.kt:12f</ID>
+    <ID>MagicNumber:SessionScreen.kt:15f</ID>
+    <ID>MagicNumber:SessionScreen.kt:18.719f</ID>
+    <ID>MagicNumber:SessionScreen.kt:18.72f</ID>
+    <ID>MagicNumber:SessionScreen.kt:18f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.097f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.115f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.126f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.17f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.192f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.193f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.1f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.25f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.694f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.72f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.76f</ID>
+    <ID>MagicNumber:SessionScreen.kt:2.772f</ID>
+    <ID>MagicNumber:SessionScreen.kt:20.25f</ID>
+    <ID>MagicNumber:SessionScreen.kt:21f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.026f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.091f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.102f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.197f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.198f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.235f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.741f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3.74f</ID>
+    <ID>MagicNumber:SessionScreen.kt:3f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.02f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.155f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.198f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.207f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.286f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.423f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.5f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.681f</ID>
+    <ID>MagicNumber:SessionScreen.kt:4.682f</ID>
+    <ID>MagicNumber:SessionScreen.kt:48.455f</ID>
+    <ID>MagicNumber:SessionScreen.kt:48.64f</ID>
+    <ID>MagicNumber:SessionScreen.kt:5.058f</ID>
+    <ID>MagicNumber:SessionScreen.kt:5.963f</ID>
+    <ID>MagicNumber:SessionScreen.kt:5.971f</ID>
+    <ID>MagicNumber:SessionScreen.kt:5.995f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.062f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.226f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.24f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.637f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.716f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.75f</ID>
+    <ID>MagicNumber:SessionScreen.kt:6.963f</ID>
+    <ID>MagicNumber:SessionScreen.kt:60_000</ID>
+    <ID>MagicNumber:SessionScreen.kt:6f</ID>
+    <ID>MagicNumber:SessionScreen.kt:7.143f</ID>
+    <ID>MagicNumber:SessionScreen.kt:7.5f</ID>
+    <ID>MagicNumber:SessionScreen.kt:8.048f</ID>
+    <ID>MagicNumber:SessionScreen.kt:8.284f</ID>
+    <ID>MagicNumber:SessionScreen.kt:8.334f</ID>
+    <ID>MagicNumber:SessionScreen.kt:8.511f</ID>
+    <ID>MagicNumber:SessionScreen.kt:8.986f</ID>
+    <ID>MagicNumber:SessionScreen.kt:9.094f</ID>
+    <ID>MagicNumber:SessionScreen.kt:9.345f</ID>
+    <ID>MagicNumber:SessionScreen.kt:9.75f</ID>
+    <ID>MagicNumber:SessionViewModel.kt:SessionViewModel$5_000</ID>
+    <ID>MagicNumber:SettingsScreen.kt:60</ID>
+    <ID>MagicNumber:SettingsViewModel.kt:SettingsViewModel$5_000</ID>
     <ID>MagicNumber:TiltSensorManager.kt:TiltSensorManager$0.01f</ID>
     <ID>MagicNumber:TiltSensorManager.kt:TiltSensorManager$6</ID>
     <ID>MagicNumber:TiltSensorManager.kt:TiltSensorManager$7</ID>
@@ -73,73 +265,35 @@
     <ID>MagicNumber:WaneNotificationListener.kt:WaneNotificationListener$4</ID>
     <ID>MagicNumber:WaneSessionService.kt:WaneSessionService$1000L</ID>
     <ID>MagicNumber:WaneSessionService.kt:WaneSessionService$60L</ID>
-    <ID>MagicNumber:WaterRenderer.kt:0xFF</ID>
-    <ID>MagicNumber:WaterRenderer.kt:16</ID>
-    <ID>MagicNumber:WaterRenderer.kt:24</ID>
-    <ID>MagicNumber:WaterRenderer.kt:255f</ID>
-    <ID>MagicNumber:WaterRenderer.kt:8</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.001f</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.016f</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.02f</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.06f</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.12f</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.1f</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0.5f</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$0xFF</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$100</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$15</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$16</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$1_000_000_000f</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$24</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$255f</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$3</ID>
     <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$4</ID>
+    <ID>MagicNumber:WaterRenderer.kt:WaterRenderer$8</ID>
     <ID>MagicNumber:WaterSurfaceView.kt:WaterSurfaceView$0x00030000</ID>
     <ID>MagicNumber:WaterSurfaceView.kt:WaterSurfaceView$3</ID>
     <ID>MagicNumber:WaterSurfaceView.kt:WaterSurfaceView.&lt;no name provided&gt;$100</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.012f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.014f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.018f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.024f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.026f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.028f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.02f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.032f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.035f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.045f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.45f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.4f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.55f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.65f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.7f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.85f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.95f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0.9f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x3318A878</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x3368A0C8</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x33906010</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x44184870</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x4420C8A0</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x4478B0D8</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x44B87818</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x55206088</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x5590C8E8</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x6630E8C8</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x66D4A020</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$0x882E8CBC</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.1f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.25f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.2f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.5f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.6f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.7f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$1.8f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$2.1f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$2.2f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$2.4f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$2.6f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$2.8f</ID>
-    <ID>MagicNumber:WaterThemeCatalog.kt:WaterThemeCatalog$3.0f</ID>
     <ID>MatchingDeclarationName:Motion.kt:WaneMotion</ID>
-    <ID>MayBeConstant:Motion.kt:WaneMotion$val StaggerIntervalHome = 200L</ID>
-    <ID>MayBeConstant:Motion.kt:WaneMotion$val StaggerIntervalSettings = 50L</ID>
+    <ID>ReturnCount:AccessibilityUtils.kt:AccessibilityUtils$fun isAccessibilityServiceEnabled: Boolean</ID>
     <ID>ReturnCount:AppBlocker.kt:AppBlocker$fun shouldBlockApp: Boolean</ID>
+    <ID>ReturnCount:AppBlockerTest.kt:AppBlockerShim$fun shouldBlockApp: Boolean</ID>
     <ID>ReturnCount:AutoLockScheduler.kt:AutoLockScheduler$fun onScreenUnlocked</ID>
     <ID>ReturnCount:AutoLockScheduler.kt:AutoLockScheduler$private fun isInSkipWindow: Boolean</ID>
     <ID>ReturnCount:NotificationUtils.kt:NotificationUtils$fun extractCallerNumber: String?</ID>
     <ID>ReturnCount:PreferencesRepositoryImpl.kt:PreferencesRepositoryImpl$private fun isValidAutoLockConfig: Boolean</ID>
+    <ID>ReturnCount:PreferencesRepositoryImplTest.kt:PreferencesRepositoryImplTest.Companion$private fun isValidAutoLockConfig: Boolean</ID>
     <ID>ReturnCount:StreakCalculator.kt:StreakCalculator$private fun computeCurrentStreak: Int</ID>
     <ID>ReturnCount:WaneAccessibilityService.kt:WaneAccessibilityService$override fun onAccessibilityEvent</ID>
     <ID>ReturnCount:WaneNotificationListener.kt:WaneNotificationListener$override fun onNotificationPosted</ID>
@@ -152,8 +306,6 @@
     <ID>TooGenericExceptionCaught:WaneNotificationListener.kt:WaneNotificationListener$e: Exception</ID>
     <ID>TooGenericExceptionCaught:WaneSessionService.kt:WaneSessionService$e: Exception</ID>
     <ID>TooGenericExceptionCaught:WaterRenderer.kt:WaterRenderer$t: Throwable</ID>
-    <ID>TooManyFunctions:PreferencesRepository.kt:PreferencesRepository</ID>
-    <ID>TooManyFunctions:PreferencesRepositoryImpl.kt:PreferencesRepositoryImpl : PreferencesRepository</ID>
     <ID>TooManyFunctions:WaterRenderer.kt:WaterRenderer : Renderer</ID>
   </CurrentIssues>
 </SmellBaseline>

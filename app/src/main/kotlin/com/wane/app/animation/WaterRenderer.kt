@@ -20,7 +20,6 @@ import kotlin.math.max
  * synchronized blocks on per-frame data.
  */
 class WaterRenderer : GLSurfaceView.Renderer {
-
     private val waterLevel = AtomicReference(0.5f)
     private val tiltX = AtomicReference(0f)
     private val tiltY = AtomicReference(0f)
@@ -87,6 +86,7 @@ class WaterRenderer : GLSurfaceView.Renderer {
                 tiltX.set(0f)
                 tiltY.set(0f)
             }
+
             is TiltState.Available -> {
                 tiltX.set(state.tiltX)
                 tiltY.set(state.tiltY)
@@ -102,7 +102,10 @@ class WaterRenderer : GLSurfaceView.Renderer {
      * Records a new touch in UV space; the GL thread assigns [touchTime] to the current [timeSeconds]
      * on the next frame so it stays aligned with [u_time].
      */
-    fun notifyTouch(uvX: Float, uvY: Float) {
+    fun notifyTouch(
+        uvX: Float,
+        uvY: Float,
+    ) {
         try {
             touchX.set(uvX.coerceIn(0f, 1f))
             touchY.set(uvY.coerceIn(0f, 1f))
@@ -116,7 +119,10 @@ class WaterRenderer : GLSurfaceView.Renderer {
         batteryPercent.set(percent.coerceIn(0, 100))
     }
 
-    override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+    override fun onSurfaceCreated(
+        gl: GL10?,
+        config: EGLConfig?,
+    ) {
         try {
             onSurfaceCreatedInner()
         } catch (t: Throwable) {
@@ -165,12 +171,17 @@ class WaterRenderer : GLSurfaceView.Renderer {
 
         cacheUniformLocations()
 
-        val quad = floatArrayOf(
-            -1f, -1f,
-            1f, -1f,
-            -1f, 1f,
-            1f, 1f,
-        )
+        val quad =
+            floatArrayOf(
+                -1f,
+                -1f,
+                1f,
+                -1f,
+                -1f,
+                1f,
+                1f,
+                1f,
+            )
         val bb = ByteBuffer.allocateDirect(quad.size * 4).order(ByteOrder.nativeOrder())
         val fb = bb.asFloatBuffer()
         fb.put(quad)
@@ -220,7 +231,11 @@ class WaterRenderer : GLSurfaceView.Renderer {
         uCausticRadiusOscillation = GLES20.glGetUniformLocation(program, "u_causticRadiusOscillation")
     }
 
-    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+    override fun onSurfaceChanged(
+        gl: GL10?,
+        width: Int,
+        height: Int,
+    ) {
         try {
             viewportW = max(1, width)
             viewportH = max(1, height)
@@ -248,8 +263,12 @@ class WaterRenderer : GLSurfaceView.Renderer {
         }
 
         val now = System.nanoTime()
-        val dt = if (lastFrameNanos == 0L) 0.016f
-                 else ((now - lastFrameNanos) / 1_000_000_000f).coerceIn(0.001f, 0.1f)
+        val dt =
+            if (lastFrameNanos == 0L) {
+                0.016f
+            } else {
+                ((now - lastFrameNanos) / 1_000_000_000f).coerceIn(0.001f, 0.1f)
+            }
         lastFrameNanos = now
         timeSeconds += dt
         if (timeSeconds > TIME_WRAP) {
@@ -330,7 +349,10 @@ class WaterRenderer : GLSurfaceView.Renderer {
         return colorScratch
     }
 
-    private fun compileShader(type: Int, source: String): Int {
+    private fun compileShader(
+        type: Int,
+        source: String,
+    ): Int {
         val shader = GLES20.glCreateShader(type)
         GLES20.glShaderSource(shader, source)
         GLES20.glCompileShader(shader)

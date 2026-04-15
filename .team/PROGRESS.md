@@ -1,11 +1,11 @@
 # Progress: Wane
 
-**Last Updated**: 2026-04-13
+**Last Updated**: 2026-04-15
 
 ## Current Status
 
 - **Current Phase**: Phase 4: Implementation
-- **Current Round**: COMPLETE — All implementation rounds finished
+- **Current Round**: Round 5 COMPLETE — UX Minimalist Roadmap changes implemented
 
 ## HIL Gate Status
 
@@ -76,14 +76,20 @@
 ### Phase 4: Implementation
 - Status: COMPLETED
 - Started: 2026-04-13
-- Completed: 2026-04-13
+- Completed: 2026-04-15
 - Summary:
   - Round 1: Data Layer + Core Services + Water Animation (3 parallel agents) — 30 files
   - Round 2: System Services + Core UI + DevOps (3 parallel agents) — 14 files
   - Round 3: Session/Settings Screens + Navigation (2 parallel agents) — 8 files
   - Round 4: Tests (69 tests) + Security Audit (CONDITIONAL PASS) + User Persona Validation (CONDITIONAL PASS)
   - Integration: Cross-module (10/10 PASS) + Requirements (16/17 PASS, 1 PARTIAL)
-  - Total: ~66 Kotlin source files, 5 test files, 3 CI workflows, build passes with 0 errors
+  - Round 5 (UX Minimalist Roadmap — 2026-04-15):
+    - Content Writer: Language audit — 2 XML string changes + accessibility prompt fix
+    - Backend Developer: `extendSession()` added to SessionManager (AtomicLong timer, DB persist)
+    - Frontend Developer: 4 UI changes (language softening, privacy micro-label, graduated exit sheet, Heroicon toolbar icons)
+    - Test Engineer: 10 new tests (6 SessionManagerImpl + 4 SessionViewModel)
+    - Data layer: DAO + Repository updated for `updatePlannedDuration`
+  - Total: ~70 Kotlin source files, 9 test files, 3 CI workflows
 
 ## Key Decisions
 
@@ -105,6 +111,12 @@
 13. **No application-level encryption** -- Android FBE sufficient; no PII stored
 14. **Single-module architecture** -- No multi-module split for v1; revisit if codebase exceeds ~200 files
 
+### Phase 4 Round 5 Decisions (2026-04-15)
+15. **EXIT_PHRASES kept as self-affirmations** — Content Writer flagged them as evaluative but they serve a deliberate UX friction purpose (typing challenge), not evaluative copy about session outcomes. Roadmap scope was limited to completion overlay language, not exit friction mechanism.
+16. **Privacy micro-label uses TextMuted opacity** — "100% ON-DEVICE" at bottom of Home navigates to Settings on tap
+17. **Graduated exit before emergency exit** — New ModalBottomSheet ("5 more minutes?") inserts before the affirmation phrase challenge; "Keep going" extends session by 5 min via AtomicLong
+18. **Heroicons replace Material icons** — Phone, SMS, Contacts, X-Mark rendered as ImageVector with SVG stroke paths (1.5f width, round caps/joins)
+
 ## Next Steps
 
 1. POST_NOTIFICATIONS runtime permission request (Android 13+ compatibility)
@@ -112,6 +124,7 @@
 3. Ambient sound playback engine (toggle exists, audio not implemented)
 4. Baseline Profiles + Macrobenchmark (requires physical device)
 5. Play Store listing preparation and first release
+6. Run full `assembleDebug` + `testDebugUnitTest` build (blocked by sandbox in this session)
 
 ## Active Teammates
 

@@ -6,7 +6,6 @@ import org.junit.Before
 import org.junit.Test
 
 class RepeatedCallerTrackerTest {
-
     private lateinit var tracker: RepeatedCallerTracker
 
     @Before

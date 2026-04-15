@@ -4,16 +4,11 @@ import com.wane.app.shared.AutoLockConfig
 import kotlinx.coroutines.flow.Flow
 
 interface PreferencesRepository {
-
     // Read operations (Flow-based, reactive)
 
     fun observeDefaultDuration(): Flow<Int>
 
     fun observeAutoLockConfig(): Flow<AutoLockConfig>
-
-    fun observeSelectedThemeId(): Flow<String>
-
-    fun observeEmergencyContacts(): Flow<List<String>>
 
     fun observeOnboardingCompleted(): Flow<Boolean>
 
