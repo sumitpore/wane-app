@@ -20,7 +20,7 @@ A focus session app for Android that helps you stay off your phone by blocking d
 ```bash
 # Clone the repository
 git clone https://github.com/sumitpore/wane-app.git
-cd limit-mobile-control-app
+cd wane-app
 
 # Build the debug APK
 ./gradlew assembleDebug
@@ -35,6 +35,8 @@ app/build/outputs/apk/debug/app-debug.apk
 ## Installing on a Device (Sideload)
 
 Since the app is not yet published on Google Play, you need to sideload it via USB.
+
+> **Want to test without building?** Download the pre-built debug APK directly from [here](https://github.com/sumitpore/wane-app/blob/main/app/build/outputs/apk/debug/app-debug.apk) and skip to [Step 1](#step-1-enable-developer-options-on-your-android-device) below.
 
 ### Step 1: Enable Developer Options on your Android device
 
