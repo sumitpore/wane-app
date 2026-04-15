@@ -112,14 +112,6 @@ class WaterRenderer : GLSurfaceView.Renderer {
         }
     }
 
-    fun clearTouch() {
-        try {
-            touchTime.set(-1f)
-            touchPending.set(false)
-        } catch (_: Throwable) {
-        }
-    }
-
     fun setBatteryPercent(percent: Int) {
         batteryPercent.set(percent.coerceIn(0, 100))
     }

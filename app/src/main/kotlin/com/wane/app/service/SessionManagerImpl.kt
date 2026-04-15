@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.wane.app.data.repository.PreferencesRepository
 import com.wane.app.data.repository.SessionRepository
 import com.wane.app.shared.CompletionStatus
 import com.wane.app.shared.FocusSession
@@ -35,7 +34,6 @@ annotation class ApplicationScope
 @Singleton
 class SessionManagerImpl @Inject constructor(
     private val sessionRepository: SessionRepository,
-    @Suppress("unused") private val preferencesRepository: PreferencesRepository,
     private val repeatedCallerTracker: RepeatedCallerTracker,
     @ApplicationContext private val context: Context,
     @ApplicationScope private val scope: CoroutineScope,

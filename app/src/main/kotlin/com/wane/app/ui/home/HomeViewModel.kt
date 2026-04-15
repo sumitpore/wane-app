@@ -6,10 +6,8 @@ import android.provider.Settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wane.app.data.repository.PreferencesRepository
-import com.wane.app.data.repository.SessionRepository
 import com.wane.app.service.SessionError
 import com.wane.app.service.SessionManager
-import com.wane.app.shared.SessionState
 import com.wane.app.util.AccessibilityUtils
 import com.wane.app.util.NotificationListenerUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,9 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HomeUiState(
-    val currentStreak: Int = 0,
     val defaultDuration: Int = 25,
-    val isSessionActive: Boolean = false,
     val selectedThemeId: String = "calm_blue",
     val accessibilityDisabled: Boolean = false,
     val notificationListenerDisabled: Boolean = false,
@@ -35,7 +31,6 @@ data class HomeUiState(
 
 sealed interface HomeUiEvent {
     data class StartSession(val durationMs: Long) : HomeUiEvent
-    data class ChangeDuration(val minutes: Int) : HomeUiEvent
     data object IncreaseDuration : HomeUiEvent
     data object DecreaseDuration : HomeUiEvent
     data object DismissAccessibilityPrompt : HomeUiEvent
@@ -54,7 +49,6 @@ sealed interface HomeEffect {
 class HomeViewModel @Inject constructor(
     private val application: Application,
     private val sessionManager: SessionManager,
-    private val sessionRepository: SessionRepository,
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
@@ -65,24 +59,13 @@ class HomeViewModel @Inject constructor(
     private val _notificationListenerDisabled = MutableStateFlow(false)
 
     val uiState: StateFlow<HomeUiState> = combine(
-        sessionRepository.observeCurrentStreak(),
         preferencesRepository.observeDefaultDuration(),
-        sessionManager.sessionState,
         preferencesRepository.observeSelectedThemeId(),
         _accessibilityDisabled,
         _notificationListenerDisabled,
-    ) { values ->
-        @Suppress("UNCHECKED_CAST")
-        val streak = values[0] as Int
-        val duration = values[1] as Int
-        val sessionState = values[2] as SessionState
-        val themeId = values[3] as String
-        val accessibilityDisabled = values[4] as Boolean
-        val notificationListenerDisabled = values[5] as Boolean
+    ) { duration, themeId, accessibilityDisabled, notificationListenerDisabled ->
         HomeUiState(
-            currentStreak = streak,
             defaultDuration = duration,
-            isSessionActive = sessionState is SessionState.Running,
             selectedThemeId = themeId,
             accessibilityDisabled = accessibilityDisabled,
             notificationListenerDisabled = notificationListenerDisabled,
@@ -100,7 +83,6 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.StartSession -> startSession(event.durationMs)
-            is HomeUiEvent.ChangeDuration -> changeDuration(event.minutes)
             is HomeUiEvent.IncreaseDuration -> cycleDuration(forward = true)
             is HomeUiEvent.DecreaseDuration -> cycleDuration(forward = false)
             is HomeUiEvent.DismissAccessibilityPrompt -> _accessibilityDisabled.update { false }
@@ -150,13 +132,6 @@ class HomeViewModel @Inject constructor(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         application.startActivity(intent)
-    }
-
-    private fun changeDuration(minutes: Int) {
-        val clamped = minutes.coerceIn(DURATION_OPTIONS.first(), DURATION_OPTIONS.last())
-        viewModelScope.launch {
-            preferencesRepository.setDefaultDuration(clamped)
-        }
     }
 
     private fun cycleDuration(forward: Boolean) {

@@ -69,24 +69,10 @@ object WaneTypography {
         fontSize = 16.sp,
     )
 
-    val labelMedium = TextStyle(
-        fontFamily = SpaceGrotesk,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        letterSpacing = 0.5.sp,
-    )
-
     val labelSmall = TextStyle(
         fontFamily = SpaceGrotesk,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         letterSpacing = 0.8.sp,
-    )
-
-    val labelMicro = TextStyle(
-        fontFamily = SpaceGrotesk,
-        fontWeight = FontWeight.Normal,
-        fontSize = 10.sp,
-        letterSpacing = 1.2.sp,
     )
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wane.app.data.repository.PreferencesRepository
 import com.wane.app.data.repository.SessionRepository
-import com.wane.app.data.repository.ThemeRepository
 import com.wane.app.shared.StreakInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +31,6 @@ sealed interface SettingsUiEvent {
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val themeRepository: ThemeRepository,
     private val sessionRepository: SessionRepository,
 ) : ViewModel() {
 

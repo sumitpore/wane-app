@@ -97,8 +97,6 @@ object WaterThemeCatalog {
 
     fun getVisuals(themeId: String): WaterThemeVisuals? = ALL_THEMES[themeId]
 
-    fun getAllVisuals(): List<WaterThemeVisuals> = ALL_THEMES.values.toList()
-
     private val ALL_THEMES: Map<String, WaterThemeVisuals> = listOf(
         stillWater,
         monsoon,

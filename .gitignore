@@ -1,13 +1,22 @@
 # ── Gradle ──
 .gradle/
 **/build/
-/build/
-app/build/
 local.properties
 /Focus Mode App/
 
 # Wrapper JAR must stay tracked (do not blanket-ignore *.jar at repo root)
 !gradle/wrapper/gradle-wrapper.jar
+
+# ── Allow the debug APK through ──
+!app/build/
+app/build/*
+!app/build/outputs/
+app/build/outputs/*
+!app/build/outputs/apk/
+app/build/outputs/apk/*
+!app/build/outputs/apk/debug/
+app/build/outputs/apk/debug/*
+!app/build/outputs/apk/debug/app-debug.apk
 
 # ── Android / Kotlin ──
 *.apk
@@ -22,6 +31,9 @@ captures/
 .externalNativeBuild/
 .cxx/
 *.hprof
+
+# Re-allow the debug APK (overrides *.apk above)
+!app/build/outputs/apk/debug/app-debug.apk
 
 # ── IDE — Android Studio / IntelliJ ──
 .idea/
@@ -54,6 +66,3 @@ fastlane/test_output
 
 # Version catalog must remain tracked even if *.toml patterns are added later
 !gradle/libs.versions.toml
-
-# ── Allow access to last generated APK ──
-!app/build/outputs/apk/debug/

@@ -5,7 +5,6 @@
   <!-- Permissions -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
   <!-- OpenGL ES 3.0 (not required — graceful fallback if unavailable) -->

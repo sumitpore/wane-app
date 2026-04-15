@@ -80,25 +80,6 @@ class PreferencesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun setSelectedThemeId(themeId: String) {
-        if (themeId.isBlank()) return
-        try {
-            dataStore.edit { it[PreferenceKeys.SELECTED_THEME_ID] = themeId.trim() }
-        } catch (_: Exception) {
-            // no-op
-        }
-    }
-
-    override suspend fun setEmergencyContacts(contacts: List<String>) {
-        val cleaned = contacts.map { it.trim() }.filter { it.isNotEmpty() }
-        try {
-            val encoded = json.encodeToString(stringListSerializer, cleaned)
-            dataStore.edit { it[PreferenceKeys.EMERGENCY_CONTACTS_JSON] = encoded }
-        } catch (_: Exception) {
-            // no-op
-        }
-    }
-
     override suspend fun setOnboardingCompleted(completed: Boolean) {
         try {
             dataStore.edit { it[PreferenceKeys.ONBOARDING_COMPLETED] = completed }

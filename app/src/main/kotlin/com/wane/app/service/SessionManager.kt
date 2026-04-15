@@ -19,5 +19,4 @@ interface SessionManager {
 
 sealed class SessionError {
     data object ForegroundServiceBlocked : SessionError()
-    data object AccessibilityServiceDisabled : SessionError()
 }

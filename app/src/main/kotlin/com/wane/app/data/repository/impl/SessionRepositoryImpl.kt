@@ -10,27 +10,12 @@ import com.wane.app.shared.StreakInfo
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 
 @Singleton
 class SessionRepositoryImpl @Inject constructor(
     private val focusSessionDao: FocusSessionDao,
     private val streakCalculator: StreakCalculator,
 ) : SessionRepository {
-
-    override fun observeAllSessions(): Flow<List<FocusSession>> =
-        focusSessionDao.getAllSessions()
-            .map { list -> list.map(FocusSessionEntity::toShared) }
-            .catch { emit(emptyList()) }
-
-    override fun observeRecentSessions(limit: Int): Flow<List<FocusSession>> {
-        if (limit <= 0) return flowOf(emptyList())
-        return focusSessionDao.getRecentSessions(limit)
-            .map { list -> list.map(FocusSessionEntity::toShared) }
-            .catch { emit(emptyList()) }
-    }
 
     override fun observeCurrentStreak(): Flow<Int> =
         streakCalculator.observeCurrentStreak()

@@ -151,10 +151,6 @@ private class FakeFocusSessionDao : FocusSessionDao {
         completedSessions.value = sessions
     }
 
-    override fun getAllSessions(): Flow<List<FocusSessionEntity>> = completedSessions
-
-    override fun getRecentSessions(limit: Int): Flow<List<FocusSessionEntity>> = completedSessions
-
     override fun observeCompletedSessions(): Flow<List<FocusSessionEntity>> = completedSessions
 
     override suspend fun insert(session: FocusSessionEntity): Long = 1L

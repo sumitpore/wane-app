@@ -98,7 +98,6 @@ fun HomeScreen(
                             val message = context.getString(R.string.error_foreground_service)
                             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                         }
-                        is SessionError.AccessibilityServiceDisabled -> { /* handled inline */ }
                     }
                 }
             }

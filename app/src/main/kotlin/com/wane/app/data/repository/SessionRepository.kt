@@ -7,10 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface SessionRepository {
 
-    fun observeAllSessions(): Flow<List<FocusSession>>
-
-    fun observeRecentSessions(limit: Int): Flow<List<FocusSession>>
-
     fun observeCurrentStreak(): Flow<Int>
 
     fun observeStreakInfo(): Flow<StreakInfo>

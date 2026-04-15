@@ -9,7 +9,6 @@ import android.util.Log
 import com.wane.app.data.repository.PreferencesRepository
 import com.wane.app.service.di.NotificationListenerEntryPoint
 import com.wane.app.shared.SessionState
-import com.wane.app.util.EmergencySafety
 import com.wane.app.util.NotificationUtils
 import com.wane.app.util.PackageUtils
 import dagger.hilt.android.EntryPointAccessors
@@ -90,8 +89,6 @@ class WaneNotificationListener : NotificationListenerService() {
             if (!::sessionManager.isInitialized) return
 
             val callerNumber = NotificationUtils.extractCallerNumber(sbn)
-
-            if (callerNumber != null && EmergencySafety.isEmergencyNumber(callerNumber)) return
 
             if (callerNumber != null && isEmergencyContact(callerNumber)) return
 

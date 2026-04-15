@@ -23,9 +23,5 @@ interface PreferencesRepository {
 
     suspend fun setAutoLockConfig(config: AutoLockConfig)
 
-    suspend fun setSelectedThemeId(themeId: String)
-
-    suspend fun setEmergencyContacts(contacts: List<String>)
-
     suspend fun setOnboardingCompleted(completed: Boolean)
 }
