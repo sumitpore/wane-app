@@ -3,6 +3,7 @@ package com.wane.app.service
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.os.BatteryManager
 import android.os.Bundle
 import android.util.Log
@@ -14,7 +15,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,9 +33,6 @@ class AutoLockScheduler
 
         @Volatile
         private var latestConfig: AutoLockConfig = AutoLockConfig()
-
-        @Volatile
-        private var defaultDurationMinutes: Int = 30
 
         @Volatile
         private var graceActive: Boolean = false
@@ -83,15 +80,8 @@ class AutoLockScheduler
             app.registerActivityLifecycleCallbacks(lifecycleCallbacks)
             scope.launch {
                 try {
-                    combine(
-                        preferencesRepository.observeAutoLockConfig(),
-                        preferencesRepository.observeDefaultDuration(),
-                    ) { cfg: AutoLockConfig, minutes: Int ->
-                        Pair(cfg, minutes)
-                    }.collect { (cfg, minutes) ->
-                        latestConfig = cfg
-                        defaultDurationMinutes = minutes
-                    }
+                    preferencesRepository.observeAutoLockConfig()
+                        .collect { cfg -> latestConfig = cfg }
                 } catch (e: Exception) {
                     Log.e(TAG, "Preference collection failed", e)
                 }
@@ -110,7 +100,6 @@ class AutoLockScheduler
                     graceJob?.cancel()
                     graceActive = true
                     val snapshotConfig = latestConfig
-                    val snapshotMinutes = defaultDurationMinutes
                     graceJob =
                         scope.launch {
                             try {
@@ -124,9 +113,7 @@ class AutoLockScheduler
                                 if (sessionManager.sessionState.value !is SessionState.Idle) return@launch
                                 if (isInSkipWindow(cfg)) return@launch
                                 if (cfg.skipWhileCharging && isDeviceCharging()) return@launch
-                                val durationMs = snapshotMinutes * 60_000L
-                                if (durationMs <= 0L) return@launch
-                                sessionManager.startSession(durationMs, "default")
+                                openApp()
                             } catch (e: Exception) {
                                 Log.e(TAG, "Grace period completion failed", e)
                             }
@@ -146,6 +133,17 @@ class AutoLockScheduler
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "onScreenLocked failed", e)
+            }
+        }
+
+        private fun openApp() {
+            try {
+                val intent = Intent(app, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
+                app.startActivity(intent)
+            } catch (e: Exception) {
+                Log.e(TAG, "openApp failed", e)
             }
         }
 

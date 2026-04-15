@@ -29,8 +29,8 @@
 
     <!-- Onboarding: Auto-Start -->
     <string name="auto_lock_title">Focus, on its own</string>
-    <string name="auto_lock_description">When enabled, a focus session starts quietly a few seconds after you unlock your phone — no need to open Wane.</string>
-    <string name="auto_lock_toggle_label">Start focus on unlock</string>
+    <string name="auto_lock_description">When enabled, Wane opens automatically a few seconds after you unlock your phone — ready for you to start a session.</string>
+    <string name="auto_lock_toggle_label">Open Wane on unlock</string>
 
     <!-- Home -->
     <string name="minutes_format">%d min</string>
@@ -48,7 +48,7 @@
     <!-- Session -->
     <string name="end_session">End</string>
     <string name="emergency_exit_title">Are you sure?</string>
-    <string name="emergency_exit_instruction">Type the phrase below to end your session early</string>
+    <string name="emergency_exit_instruction">Type the phrase below to end your session early. It\'s not case-sensitive.</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
     <string name="graduated_exit_title">5 more minutes?</string>

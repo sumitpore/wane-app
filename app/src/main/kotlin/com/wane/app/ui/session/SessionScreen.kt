@@ -263,7 +263,7 @@ private fun EmergencyExitSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "\"$exitPhrase\"",
+                text = exitPhrase,
                 style = WaneTypography.bodyLarge,
                 color = AccentPrimary,
                 textAlign = TextAlign.Center,

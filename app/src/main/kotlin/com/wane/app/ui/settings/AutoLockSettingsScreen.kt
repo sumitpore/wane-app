@@ -85,18 +85,6 @@ fun AutoLockSettingsScreen(
 
             AutoLockCard {
                 SliderRow(
-                    label = stringResource(R.string.auto_lock_duration),
-                    value = config.durationMinutes.toFloat(),
-                    valueLabel = stringResource(R.string.minutes_format, config.durationMinutes),
-                    range = 5f..120f,
-                    steps = 22,
-                    onValueChange = { viewModel.onEvent(AutoLockUiEvent.SetDuration(it.roundToInt())) },
-                    enabled = config.enabled,
-                )
-            }
-
-            AutoLockCard {
-                SliderRow(
                     label = stringResource(R.string.grace_period),
                     value = config.gracePeriodSeconds.toFloat(),
                     valueLabel = stringResource(R.string.autolock_seconds_format, config.gracePeriodSeconds),
