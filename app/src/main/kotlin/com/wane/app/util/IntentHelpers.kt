@@ -28,16 +28,39 @@ object IntentHelpers {
     }
 
     fun openSms(context: Context, number: String? = null) {
-        val uri = if (!number.isNullOrBlank()) {
-            Uri.parse("smsto:${Uri.encode(number)}")
-        } else {
-            Uri.parse("smsto:")
+        if (!number.isNullOrBlank()) {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("smsto:${Uri.encode(number)}")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.safeStartActivity(intent)
+            return
         }
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = uri
+
+        // No number — open the conversation list rather than the compose screen.
+        // CATEGORY_APP_MESSAGING launches the SMS app's main activity, giving a
+        // more natural entry point that avoids auto-focusing the text field (and
+        // thus avoids the keyboard from appearing immediately).
+        val messagingIntent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_APP_MESSAGING)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.safeStartActivity(intent)
+        if (!context.tryStartActivity(messagingIntent)) {
+            val fallbackIntent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("smsto:")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.safeStartActivity(fallbackIntent)
+        }
+    }
+
+    private fun Context.tryStartActivity(intent: Intent): Boolean {
+        return try {
+            startActivity(intent)
+            true
+        } catch (_: ActivityNotFoundException) {
+            false
+        }
     }
 
     private fun Context.safeStartActivity(intent: Intent) {
