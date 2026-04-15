@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +38,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -80,12 +85,32 @@ fun NotificationStep(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = stringResource(R.string.notification_description),
-            style = WaneTypography.bodyLarge,
-            color = BodyText,
-            textAlign = TextAlign.Center,
+        val uriHandler = LocalUriHandler.current
+        val fullText = stringResource(R.string.notification_description)
+        val linkDisplay = "github.com/sumitpore/wane-app"
+        val linkUrl = stringResource(R.string.open_source_url)
+        val linkStart = fullText.indexOf(linkDisplay)
+        val annotatedDescription = buildAnnotatedString {
+            append(fullText)
+            addStyle(SpanStyle(color = BodyText), 0, fullText.length)
+            if (linkStart >= 0) {
+                addStyle(
+                    SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
+                    linkStart,
+                    linkStart + linkDisplay.length,
+                )
+                addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+            }
+        }
+
+        ClickableText(
+            text = annotatedDescription,
+            style = WaneTypography.bodyLarge.copy(textAlign = TextAlign.Center),
             modifier = Modifier.padding(horizontal = 40.dp),
+            onClick = { offset ->
+                annotatedDescription.getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()?.let { uriHandler.openUri(it.item) }
+            },
         )
 
         Spacer(modifier = Modifier.height(48.dp))

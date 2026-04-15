@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -47,11 +48,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -253,6 +258,24 @@ private fun WaneLogo() {
 private fun AccessibilityPromptBanner(
     onEnableClick: () -> Unit,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val fullText = stringResource(R.string.accessibility_prompt_message)
+    val linkDisplay = "github.com/sumitpore/wane-app"
+    val linkUrl = stringResource(R.string.open_source_url)
+    val linkStart = fullText.indexOf(linkDisplay)
+    val annotatedMessage = buildAnnotatedString {
+        append(fullText)
+        addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
+        if (linkStart >= 0) {
+            addStyle(
+                SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
+                linkStart,
+                linkStart + linkDisplay.length,
+            )
+            addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -263,11 +286,13 @@ private fun AccessibilityPromptBanner(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = stringResource(R.string.accessibility_prompt_message),
-            style = WaneTypography.bodyMedium,
-            color = TextPrimary,
-            textAlign = TextAlign.Center,
+        ClickableText(
+            text = annotatedMessage,
+            style = WaneTypography.bodyMedium.copy(textAlign = TextAlign.Center),
+            onClick = { offset ->
+                annotatedMessage.getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()?.let { uriHandler.openUri(it.item) }
+            },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Button(
@@ -289,6 +314,24 @@ private fun AccessibilityPromptBanner(
 private fun NotificationPromptBanner(
     onEnableClick: () -> Unit,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val fullText = stringResource(R.string.notification_prompt_message)
+    val linkDisplay = "github.com/sumitpore/wane-app"
+    val linkUrl = stringResource(R.string.open_source_url)
+    val linkStart = fullText.indexOf(linkDisplay)
+    val annotatedMessage = buildAnnotatedString {
+        append(fullText)
+        addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
+        if (linkStart >= 0) {
+            addStyle(
+                SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
+                linkStart,
+                linkStart + linkDisplay.length,
+            )
+            addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -299,11 +342,13 @@ private fun NotificationPromptBanner(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = stringResource(R.string.notification_prompt_message),
-            style = WaneTypography.bodyMedium,
-            color = TextPrimary,
-            textAlign = TextAlign.Center,
+        ClickableText(
+            text = annotatedMessage,
+            style = WaneTypography.bodyMedium.copy(textAlign = TextAlign.Center),
+            onClick = { offset ->
+                annotatedMessage.getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()?.let { uriHandler.openUri(it.item) }
+            },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Button(

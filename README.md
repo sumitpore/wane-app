@@ -19,7 +19,7 @@ A focus session app for Android that helps you stay off your phone by blocking d
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/sumitpore/wane-app.git
 cd limit-mobile-control-app
 
 # Build the debug APK
@@ -114,3 +114,7 @@ app/src/main/kotlin/com/wane/app/
 │   └── theme/       # Colors, typography, motion
 └── util/            # Accessibility, notification, and intent helpers
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Wane</string>
-    <string name="accessibility_service_description">Wane uses this service to gently cover other apps with a calming water animation during focus sessions. It only detects which app is in the foreground — it never reads screen content, passwords, or personal information.</string>
+    <string name="accessibility_service_description">Wane uses this service to gently cover other apps with a calming water animation during focus sessions. It only detects which app is in the foreground — it never reads screen content, passwords, or personal information. The full source is public: https://github.com/sumitpore/wane-app.git</string>
+    <string name="open_source_url" translatable="false">https://github.com/sumitpore/wane-app</string>
 
     <!-- Onboarding: Welcome -->
     <string name="welcome_title">Wane</string>
@@ -18,12 +19,12 @@
 
     <!-- Onboarding: Accessibility -->
     <string name="accessibility_title">Stay focused</string>
-    <string name="accessibility_description">Wane gently covers other apps during your focus session. Enable accessibility access to activate this.</string>
+    <string name="accessibility_description">Wane gently covers other apps during your focus session. Enable accessibility access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
     <string name="enable_accessibility">Open Settings</string>
 
     <!-- Onboarding: Notification -->
     <string name="notification_title">Silence distractions</string>
-    <string name="notification_description">Wane can temporarily snooze notifications during your focus session, so nothing breaks your flow. Enable notification access to activate this.</string>
+    <string name="notification_description">Wane can temporarily snooze notifications during your focus session, so nothing breaks your flow. Enable notification access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
     <string name="enable_notification_access">Open Settings</string>
 
     <!-- Onboarding: Auto-Start -->
@@ -38,8 +39,8 @@
     <string name="wane_logo">Wane</string>
     <string name="day_streak">day streak</string>
     <string name="start_session">Start Session</string>
-    <string name="accessibility_prompt_message">To block distracting apps during focus sessions, Wane needs Accessibility access. This permission is only used to detect and redirect app launches — no personal data is collected.</string>
-    <string name="notification_prompt_message">To silence distracting notifications during focus sessions, Wane needs Notification access. This permission is only used to temporarily snooze non-essential notifications.</string>
+    <string name="accessibility_prompt_message">To block distracting apps during focus sessions, Wane needs Accessibility access. It only detects and redirects app launches — no personal data is collected. Wane is open source; verify at github.com/sumitpore/wane-app.</string>
+    <string name="notification_prompt_message">To silence distracting notifications during focus sessions, Wane needs Notification access. It only temporarily snoozes non-essential notifications. Wane is open source; verify at github.com/sumitpore/wane-app.</string>
 
     <string name="no_streak_yet">Begin your first session</string>
 
