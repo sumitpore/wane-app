@@ -8,6 +8,7 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import com.wane.app.service.di.NotificationListenerEntryPoint
 import com.wane.app.shared.SessionState
+import com.wane.app.util.EmergencySafety
 import com.wane.app.util.NotificationUtils
 import com.wane.app.util.PackageUtils
 import dagger.hilt.android.EntryPointAccessors
@@ -16,11 +17,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class WaneNotificationListener : NotificationListenerService() {
     private lateinit var sessionManager: SessionManager
     private lateinit var repeatedCallerTracker: RepeatedCallerTracker
+    private lateinit var appBlocker: AppBlocker
 
     private var serviceScope: CoroutineScope? = null
     private val snoozedKeys = mutableSetOf<String>()
@@ -43,16 +47,22 @@ class WaneNotificationListener : NotificationListenerService() {
                 )
             sessionManager = entryPoint.sessionManager()
             repeatedCallerTracker = entryPoint.repeatedCallerTracker()
+            appBlocker = entryPoint.appBlocker()
 
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
             serviceScope = scope
 
             scope.launch {
-                sessionManager.sessionState.collectLatest { state ->
-                    if (state !is SessionState.Running) {
-                        unsnoozeAll()
+                sessionManager.sessionState
+                    .map { it is SessionState.Running }
+                    .distinctUntilChanged()
+                    .collectLatest { isRunning ->
+                        if (isRunning) {
+                            snoozeExistingNotifications()
+                        } else {
+                            unsnoozeAll()
+                        }
                     }
-                }
             }
 
             Log.d(TAG, "Notification listener connected")
@@ -91,6 +101,17 @@ class WaneNotificationListener : NotificationListenerService() {
             if (sessionManager.sessionState.value !is SessionState.Running) return
 
             if (sbn.packageName in phoneAndSmsPackages) return
+            if (sbn.packageName in EmergencySafety.NEVER_BLOCK_PACKAGES) return
+            if (sbn.packageName == "com.wane.app") return
+            if (sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE != 0) return
+
+            if (sbn.notification.fullScreenIntent != null) {
+                val category = sbn.notification.category
+                if (category in FULL_SCREEN_EXEMPT_CATEGORIES) {
+                    appBlocker.addFullScreenExemption(sbn.key, sbn.packageName)
+                    return
+                }
+            }
 
             try {
                 snoozeNotification(sbn.key, Long.MAX_VALUE)
@@ -111,6 +132,9 @@ class WaneNotificationListener : NotificationListenerService() {
             synchronized(snoozedKeys) {
                 snoozedKeys.remove(sbn.key)
             }
+            if (::appBlocker.isInitialized) {
+                appBlocker.removeFullScreenExemption(sbn.key)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "onNotificationRemoved error", e)
         }
@@ -128,6 +152,32 @@ class WaneNotificationListener : NotificationListenerService() {
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to unsnooze notification $key", e)
             }
+        }
+        if (::appBlocker.isInitialized) {
+            appBlocker.clearFullScreenExemptions()
+        }
+    }
+
+    private fun snoozeExistingNotifications() {
+        try {
+            val active = getActiveNotifications() ?: return
+            for (sbn in active) {
+                if (sbn.packageName in phoneAndSmsPackages) continue
+                if (sbn.packageName in EmergencySafety.NEVER_BLOCK_PACKAGES) continue
+                if (sbn.packageName == "com.wane.app") continue
+                if (sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE != 0) continue
+                if (sbn.notification.fullScreenIntent != null) continue
+                try {
+                    snoozeNotification(sbn.key, Long.MAX_VALUE)
+                    synchronized(snoozedKeys) {
+                        snoozedKeys.add(sbn.key)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to snooze existing notification ${sbn.key}", e)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "snoozeExistingNotifications error", e)
         }
     }
 
@@ -168,5 +218,13 @@ class WaneNotificationListener : NotificationListenerService() {
         private const val TAG = "WaneNotifListener"
         private const val CHANNEL_REPEATED_CALLER = "repeated_caller"
         private const val NOTIFICATION_ID_REPEATED_CALLER = 9001
+
+        private val FULL_SCREEN_EXEMPT_CATEGORIES =
+            setOf(
+                Notification.CATEGORY_CALL,
+                Notification.CATEGORY_ALARM,
+                Notification.CATEGORY_REMINDER,
+                Notification.CATEGORY_NAVIGATION,
+            )
     }
 }

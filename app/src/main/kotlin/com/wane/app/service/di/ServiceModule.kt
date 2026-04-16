@@ -35,6 +35,8 @@ interface NotificationListenerEntryPoint {
     fun sessionManager(): SessionManager
 
     fun repeatedCallerTracker(): RepeatedCallerTracker
+
+    fun appBlocker(): AppBlocker
 }
 
 @Module

@@ -8,6 +8,7 @@ import com.wane.app.shared.SessionState
 import com.wane.app.util.EmergencySafety
 import com.wane.app.util.PackageUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,6 +22,8 @@ class AppBlocker
         @Volatile private var cachedAllowlist: Set<String> = emptySet()
 
         @Volatile private var cacheElapsedMs: Long = 0L
+
+        private val fullScreenExemptions = ConcurrentHashMap<String, FullScreenExemption>()
 
         private fun getSessionAllowlist(): Set<String> {
             val now = SystemClock.elapsedRealtime()
@@ -45,7 +48,35 @@ class AppBlocker
             if (EmergencySafety.isNeverBlockPackage(packageName)) return false
             if (sessionManager.sessionState.value !is SessionState.Running) return false
             if (packageName in getSessionAllowlist()) return false
+            if (isFullScreenExempt(packageName)) return false
             return true
+        }
+
+        fun addFullScreenExemption(notificationKey: String, packageName: String) {
+            val expiration = SystemClock.elapsedRealtime() + FULL_SCREEN_EXEMPTION_TTL_MS
+            fullScreenExemptions.putIfAbsent(notificationKey, FullScreenExemption(packageName, expiration))
+        }
+
+        fun removeFullScreenExemption(notificationKey: String) {
+            fullScreenExemptions.remove(notificationKey)
+        }
+
+        fun clearFullScreenExemptions() {
+            fullScreenExemptions.clear()
+        }
+
+        private fun isFullScreenExempt(packageName: String): Boolean {
+            val now = SystemClock.elapsedRealtime()
+            val iterator = fullScreenExemptions.entries.iterator()
+            while (iterator.hasNext()) {
+                val entry = iterator.next()
+                if (entry.value.expirationElapsedMs < now) {
+                    iterator.remove()
+                } else if (entry.value.packageName == packageName) {
+                    return true
+                }
+            }
+            return false
         }
 
         fun redirectToWane() {
@@ -56,7 +87,13 @@ class AppBlocker
             context.startActivity(intent)
         }
 
+        private data class FullScreenExemption(
+            val packageName: String,
+            val expirationElapsedMs: Long,
+        )
+
         companion object {
             private const val ALLOWLIST_TTL_MS = 30_000L
+            private const val FULL_SCREEN_EXEMPTION_TTL_MS = 60_000L
         }
     }
