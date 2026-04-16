@@ -35,9 +35,6 @@ object PackageUtils {
     fun resolveSmsPackages(context: Context): Set<String> =
         buildSet {
             resolveDefaultSmsPackage(context)?.let { add(it) }
-            addAll(resolvePackages(context, Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"))))
-            addAll(resolvePackages(context, Intent(Intent.ACTION_VIEW, Uri.parse("sms:"))))
-            addAll(resolvePackages(context, Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_MESSAGING)))
         }
 
     fun resolveImePackages(context: Context): Set<String> =
