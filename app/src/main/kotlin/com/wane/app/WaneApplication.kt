@@ -12,11 +12,12 @@ class WaneApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val filter = IntentFilter().apply {
-            addAction(Intent.ACTION_SCREEN_OFF)
-            addAction(Intent.ACTION_SCREEN_ON)
-            addAction(Intent.ACTION_USER_PRESENT)
-        }
+        val filter =
+            IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_OFF)
+                addAction(Intent.ACTION_SCREEN_ON)
+                addAction(Intent.ACTION_USER_PRESENT)
+            }
         registerReceiver(screenLockReceiver, filter)
     }
 }

@@ -52,7 +52,10 @@ class AppBlocker
             return true
         }
 
-        fun addFullScreenExemption(notificationKey: String, packageName: String) {
+        fun addFullScreenExemption(
+            notificationKey: String,
+            packageName: String,
+        ) {
             val expiration = SystemClock.elapsedRealtime() + FULL_SCREEN_EXEMPTION_TTL_MS
             fullScreenExemptions.putIfAbsent(notificationKey, FullScreenExemption(packageName, expiration))
         }

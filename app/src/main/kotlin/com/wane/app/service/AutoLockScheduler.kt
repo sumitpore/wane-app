@@ -80,7 +80,8 @@ class AutoLockScheduler
             app.registerActivityLifecycleCallbacks(lifecycleCallbacks)
             scope.launch {
                 try {
-                    preferencesRepository.observeAutoLockConfig()
+                    preferencesRepository
+                        .observeAutoLockConfig()
                         .collect { cfg -> latestConfig = cfg }
                 } catch (e: Exception) {
                     Log.e(TAG, "Preference collection failed", e)
@@ -138,9 +139,10 @@ class AutoLockScheduler
 
         private fun openApp() {
             try {
-                val intent = Intent(app, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                }
+                val intent =
+                    Intent(app, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    }
                 app.startActivity(intent)
             } catch (e: Exception) {
                 Log.e(TAG, "openApp failed", e)

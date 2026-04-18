@@ -2,11 +2,11 @@ package com.wane.app.service
 
 import com.wane.app.shared.SessionState
 import com.wane.app.util.EmergencySafety
-import java.util.concurrent.ConcurrentHashMap
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Tests the blocking decision logic in isolation.
@@ -166,8 +166,10 @@ class AppBlockerTest {
         assertFalse(blocker.shouldBlockApp("com.phone.app"))
 
         blocker.removeFullScreenExemption("key_notif_1")
-        assertFalse("Second exemption should still protect the package",
-            blocker.shouldBlockApp("com.phone.app"))
+        assertFalse(
+            "Second exemption should still protect the package",
+            blocker.shouldBlockApp("com.phone.app"),
+        )
 
         blocker.removeFullScreenExemption("key_notif_2")
         assertTrue(blocker.shouldBlockApp("com.phone.app"))
@@ -179,8 +181,10 @@ class AppBlockerTest {
         blocker.addFullScreenExemption("key_call", "com.phone.app")
 
         assertFalse(blocker.shouldBlockApp("com.phone.app"))
-        assertTrue("Unrelated package should still be blocked",
-            blocker.shouldBlockApp("com.twitter.android"))
+        assertTrue(
+            "Unrelated package should still be blocked",
+            blocker.shouldBlockApp("com.twitter.android"),
+        )
         assertTrue(blocker.shouldBlockApp("com.instagram.android"))
     }
 
@@ -224,8 +228,10 @@ class AppBlockerTest {
         expiryBlocker.addFullScreenExemption("key_call", "com.phone.app")
 
         fakeNow = 1_000_000L + AppBlockerShim.FULL_SCREEN_EXEMPTION_TTL_MS + 1
-        assertTrue("Update should not have refreshed TTL",
-            expiryBlocker.shouldBlockApp("com.phone.app"))
+        assertTrue(
+            "Update should not have refreshed TTL",
+            expiryBlocker.shouldBlockApp("com.phone.app"),
+        )
     }
 
     @Test
@@ -237,8 +243,10 @@ class AppBlockerTest {
         expiryBlocker.addFullScreenExemption("key_call", "com.phone.app")
 
         fakeNow = 1_000_000L + AppBlockerShim.FULL_SCREEN_EXEMPTION_TTL_MS
-        assertFalse("Exemption at exact TTL boundary should still protect",
-            expiryBlocker.shouldBlockApp("com.phone.app"))
+        assertFalse(
+            "Exemption at exact TTL boundary should still protect",
+            expiryBlocker.shouldBlockApp("com.phone.app"),
+        )
     }
 
     // ── Helpers ───────────────────────────────────────────────────────
@@ -275,7 +283,10 @@ private class AppBlockerShim(
         return true
     }
 
-    fun addFullScreenExemption(notificationKey: String, packageName: String) {
+    fun addFullScreenExemption(
+        notificationKey: String,
+        packageName: String,
+    ) {
         val expiration = clock() + FULL_SCREEN_EXEMPTION_TTL_MS
         fullScreenExemptions.putIfAbsent(notificationKey, FullScreenExemption(packageName, expiration))
     }

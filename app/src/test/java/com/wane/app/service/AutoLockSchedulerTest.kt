@@ -28,7 +28,6 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AutoLockSchedulerTest {
-
     private fun mockContext(): Pair<Context, Application> {
         val app = mock<Application>()
         val context = mock<Context>()
@@ -36,9 +35,7 @@ class AutoLockSchedulerTest {
         return Pair(context, app)
     }
 
-    private fun fakePreferencesRepository(
-        autoLockConfig: AutoLockConfig = AutoLockConfig(),
-    ): PreferencesRepository {
+    private fun fakePreferencesRepository(autoLockConfig: AutoLockConfig = AutoLockConfig()): PreferencesRepository {
         val repo = mock<PreferencesRepository>()
         whenever(repo.observeAutoLockConfig()).thenReturn(MutableStateFlow(autoLockConfig))
         whenever(repo.observeDefaultDuration()).thenReturn(MutableStateFlow(30))
@@ -47,220 +44,242 @@ class AutoLockSchedulerTest {
     }
 
     @Test
-    fun `onScreenUnlocked opens app after grace period`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = true,
-            durationMinutes = 45,
-            gracePeriodSeconds = 5,
-        )
-        val sessionManager = RecordingSessionManager()
-        val (context, app) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
+    fun `onScreenUnlocked opens app after grace period`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = true,
+                    durationMinutes = 45,
+                    gracePeriodSeconds = 5,
+                )
+            val sessionManager = RecordingSessionManager()
+            val (context, app) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
 
-        // Act
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(6_000L)
-        advanceUntilIdle()
+            // Act
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(6_000L)
+            advanceUntilIdle()
 
-        // Assert -- app is opened, no session started
-        verify(app).startActivity(any<Intent>())
-        assertTrue(sessionManager.startSessionCalls.isEmpty())
-        schedulerScope.cancel()
-    }
-
-    @Test
-    fun `onScreenUnlocked does not start a session`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = true,
-            durationMinutes = 45,
-            gracePeriodSeconds = 5,
-        )
-        val sessionManager = RecordingSessionManager()
-        val (context, _) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
-
-        // Act
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(6_000L)
-        advanceUntilIdle()
-
-        // Assert -- no session auto-started
-        assertTrue(sessionManager.startSessionCalls.isEmpty())
-        schedulerScope.cancel()
-    }
+            // Assert -- app is opened, no session started
+            verify(app).startActivity(any<Intent>())
+            assertTrue(sessionManager.startSessionCalls.isEmpty())
+            schedulerScope.cancel()
+        }
 
     @Test
-    fun `onScreenUnlocked is no-op when config is disabled`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = false,
-            durationMinutes = 45,
-            gracePeriodSeconds = 5,
-        )
-        val sessionManager = RecordingSessionManager()
-        val (context, app) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
+    fun `onScreenUnlocked does not start a session`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = true,
+                    durationMinutes = 45,
+                    gracePeriodSeconds = 5,
+                )
+            val sessionManager = RecordingSessionManager()
+            val (context, _) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
 
-        // Act
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(10_000L)
-        advanceUntilIdle()
+            // Act
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(6_000L)
+            advanceUntilIdle()
 
-        // Assert
-        verify(app, never()).startActivity(any<Intent>())
-        assertTrue(sessionManager.startSessionCalls.isEmpty())
-        schedulerScope.cancel()
-    }
-
-    @Test
-    fun `onScreenUnlocked is no-op when session already running`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = true,
-            durationMinutes = 45,
-            gracePeriodSeconds = 5,
-        )
-        val sessionState = MutableStateFlow<SessionState>(
-            SessionState.Running(
-                sessionId = 1L,
-                totalDurationMs = 60_000L,
-                remainingMs = 50_000L,
-                waterLevel = 50_000f / 60_000f,
-            ),
-        )
-        val sessionManager = RecordingSessionManager(sessionState)
-        val (context, app) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
-
-        // Act
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(10_000L)
-        advanceUntilIdle()
-
-        // Assert
-        verify(app, never()).startActivity(any<Intent>())
-        assertTrue(sessionManager.startSessionCalls.isEmpty())
-        schedulerScope.cancel()
-    }
+            // Assert -- no session auto-started
+            assertTrue(sessionManager.startSessionCalls.isEmpty())
+            schedulerScope.cancel()
+        }
 
     @Test
-    fun `onScreenLocked cancels pending grace period`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = true,
-            durationMinutes = 30,
-            gracePeriodSeconds = 10,
-        )
-        val sessionManager = RecordingSessionManager()
-        val (context, app) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
+    fun `onScreenUnlocked is no-op when config is disabled`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = false,
+                    durationMinutes = 45,
+                    gracePeriodSeconds = 5,
+                )
+            val sessionManager = RecordingSessionManager()
+            val (context, app) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
 
-        // Act
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(3_000L)
-        scheduler.onScreenLocked()
-        advanceTimeBy(10_000L)
-        advanceUntilIdle()
+            // Act
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(10_000L)
+            advanceUntilIdle()
 
-        // Assert
-        verify(app, never()).startActivity(any<Intent>())
-        schedulerScope.cancel()
-    }
-
-    @Test
-    fun `onScreenUnlocked does not open app before grace period elapses`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = true,
-            durationMinutes = 30,
-            gracePeriodSeconds = 10,
-        )
-        val sessionManager = RecordingSessionManager()
-        val (context, app) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
-
-        // Act -- advance partway through grace, assert app not opened yet
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(9_999L)
-        verify(app, never()).startActivity(any<Intent>())
-
-        // Advance past grace period
-        advanceTimeBy(2L)
-        verify(app).startActivity(any<Intent>())
-        schedulerScope.cancel()
-    }
+            // Assert
+            verify(app, never()).startActivity(any<Intent>())
+            assertTrue(sessionManager.startSessionCalls.isEmpty())
+            schedulerScope.cancel()
+        }
 
     @Test
-    fun `consecutive onScreenUnlocked calls cancel previous grace and restart`() = runTest {
-        // Arrange
-        val config = AutoLockConfig(
-            enabled = true,
-            durationMinutes = 15,
-            gracePeriodSeconds = 10,
-        )
-        val sessionManager = RecordingSessionManager()
-        val (context, app) = mockContext()
-        val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-        val scheduler = AutoLockScheduler(
-            preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
-            sessionManager = sessionManager,
-            context = context,
-            scope = schedulerScope,
-        )
+    fun `onScreenUnlocked is no-op when session already running`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = true,
+                    durationMinutes = 45,
+                    gracePeriodSeconds = 5,
+                )
+            val sessionState =
+                MutableStateFlow<SessionState>(
+                    SessionState.Running(
+                        sessionId = 1L,
+                        totalDurationMs = 60_000L,
+                        remainingMs = 50_000L,
+                        waterLevel = 50_000f / 60_000f,
+                    ),
+                )
+            val sessionManager = RecordingSessionManager(sessionState)
+            val (context, app) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
 
-        // Act -- first unlock, then a second unlock 5s later restarts the grace period
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(5_000L)
-        scheduler.onScreenUnlocked()
-        advanceTimeBy(5_000L)
+            // Act
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(10_000L)
+            advanceUntilIdle()
 
-        // Assert -- second grace period hasn't finished
-        verify(app, never()).startActivity(any<Intent>())
+            // Assert
+            verify(app, never()).startActivity(any<Intent>())
+            assertTrue(sessionManager.startSessionCalls.isEmpty())
+            schedulerScope.cancel()
+        }
 
-        advanceTimeBy(6_000L)
+    @Test
+    fun `onScreenLocked cancels pending grace period`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = true,
+                    durationMinutes = 30,
+                    gracePeriodSeconds = 10,
+                )
+            val sessionManager = RecordingSessionManager()
+            val (context, app) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
 
-        // Now the second grace period has elapsed, app should open
-        verify(app).startActivity(any<Intent>())
-        schedulerScope.cancel()
-    }
+            // Act
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(3_000L)
+            scheduler.onScreenLocked()
+            advanceTimeBy(10_000L)
+            advanceUntilIdle()
+
+            // Assert
+            verify(app, never()).startActivity(any<Intent>())
+            schedulerScope.cancel()
+        }
+
+    @Test
+    fun `onScreenUnlocked does not open app before grace period elapses`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = true,
+                    durationMinutes = 30,
+                    gracePeriodSeconds = 10,
+                )
+            val sessionManager = RecordingSessionManager()
+            val (context, app) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
+
+            // Act -- advance partway through grace, assert app not opened yet
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(9_999L)
+            verify(app, never()).startActivity(any<Intent>())
+
+            // Advance past grace period
+            advanceTimeBy(2L)
+            verify(app).startActivity(any<Intent>())
+            schedulerScope.cancel()
+        }
+
+    @Test
+    fun `consecutive onScreenUnlocked calls cancel previous grace and restart`() =
+        runTest {
+            // Arrange
+            val config =
+                AutoLockConfig(
+                    enabled = true,
+                    durationMinutes = 15,
+                    gracePeriodSeconds = 10,
+                )
+            val sessionManager = RecordingSessionManager()
+            val (context, app) = mockContext()
+            val schedulerScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val scheduler =
+                AutoLockScheduler(
+                    preferencesRepository = fakePreferencesRepository(autoLockConfig = config),
+                    sessionManager = sessionManager,
+                    context = context,
+                    scope = schedulerScope,
+                )
+
+            // Act -- first unlock, then a second unlock 5s later restarts the grace period
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(5_000L)
+            scheduler.onScreenUnlocked()
+            advanceTimeBy(5_000L)
+
+            // Assert -- second grace period hasn't finished
+            verify(app, never()).startActivity(any<Intent>())
+
+            advanceTimeBy(6_000L)
+
+            // Now the second grace period has elapsed, app should open
+            verify(app).startActivity(any<Intent>())
+            schedulerScope.cancel()
+        }
 }
 
 private class RecordingSessionManager(
@@ -270,7 +289,10 @@ private class RecordingSessionManager(
 
     val startSessionCalls = mutableListOf<Pair<Long, String>>()
 
-    override suspend fun startSession(durationMs: Long, themeId: String) {
+    override suspend fun startSession(
+        durationMs: Long,
+        themeId: String,
+    ) {
         startSessionCalls.add(Pair(durationMs, themeId))
     }
 
