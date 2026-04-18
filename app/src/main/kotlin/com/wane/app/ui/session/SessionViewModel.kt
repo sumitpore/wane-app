@@ -166,7 +166,7 @@ class SessionViewModel
 
                 SessionUiEvent.ConfirmEmergencyExit -> {
                     val local = localState.value
-                    if (local.exitInput.equals(local.exitPhrase, ignoreCase = true)) {
+                    if (local.exitInput.trim().equals(local.exitPhrase, ignoreCase = true)) {
                         sessionManager.requestEmergencyExit()
                         localState.update { it.copy(isExitSheetVisible = false, exitInput = "") }
                     }

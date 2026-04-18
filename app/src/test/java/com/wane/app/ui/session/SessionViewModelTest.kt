@@ -139,6 +139,55 @@ class SessionViewModelTest {
             job.cancel()
         }
 
+    @Test
+    fun onEvent_confirmEmergencyExit_succeedsWithTrimmedInput() =
+        runTest {
+            val sessionManager = FakeSessionManager(MutableStateFlow(runningSession))
+            val tilt = mockTiltSensorManager()
+            val viewModel = SessionViewModel(sessionManager, tilt)
+            val job = launch { viewModel.uiState.collect { } }
+            advanceUntilIdle()
+
+            viewModel.onEvent(SessionUiEvent.ShowGraduatedExit)
+            advanceUntilIdle()
+            viewModel.onEvent(SessionUiEvent.ProceedToEmergencyExit)
+            advanceUntilIdle()
+
+            val phrase = viewModel.uiState.value.exitPhrase
+            viewModel.onEvent(SessionUiEvent.UpdateExitInput("  $phrase  "))
+            advanceUntilIdle()
+
+            viewModel.onEvent(SessionUiEvent.ConfirmEmergencyExit)
+            advanceUntilIdle()
+
+            assertFalse(viewModel.uiState.value.isExitSheetVisible)
+            job.cancel()
+        }
+
+    @Test
+    fun onEvent_confirmEmergencyExit_rejectedWhenInputDoesNotMatch() =
+        runTest {
+            val sessionManager = FakeSessionManager(MutableStateFlow(runningSession))
+            val tilt = mockTiltSensorManager()
+            val viewModel = SessionViewModel(sessionManager, tilt)
+            val job = launch { viewModel.uiState.collect { } }
+            advanceUntilIdle()
+
+            viewModel.onEvent(SessionUiEvent.ShowGraduatedExit)
+            advanceUntilIdle()
+            viewModel.onEvent(SessionUiEvent.ProceedToEmergencyExit)
+            advanceUntilIdle()
+
+            viewModel.onEvent(SessionUiEvent.UpdateExitInput("wrong phrase"))
+            advanceUntilIdle()
+
+            viewModel.onEvent(SessionUiEvent.ConfirmEmergencyExit)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.isExitSheetVisible)
+            job.cancel()
+        }
+
     private fun mockTiltSensorManager(): TiltSensorManager {
         val tilt = mock<TiltSensorManager>()
         whenever(tilt.tiltFlow).thenReturn(flowOf(TiltState.Unavailable))

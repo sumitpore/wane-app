@@ -319,7 +319,7 @@ private fun EmergencyExitSheet(
                     text = stringResource(R.string.end_session),
                     onClick = onConfirm,
                     modifier = Modifier.weight(1f),
-                    enabled = exitInput.equals(exitPhrase, ignoreCase = true),
+                    enabled = exitInput.trim().equals(exitPhrase, ignoreCase = true),
                     containerColor = Color(0xFFE04848),
                 )
             }
