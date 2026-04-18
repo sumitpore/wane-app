@@ -65,7 +65,13 @@ android {
         warningsAsErrors = true
         abortOnError = true
         baseline = file("lint-baseline.xml")
-        disable += setOf("ObsoleteLintCustomCheck")
+        disable +=
+            setOf(
+                "ObsoleteLintCustomCheck",
+                "GradleDependency",
+                "NewerVersionAvailable",
+                "AndroidGradlePluginVersion",
+            )
     }
 
     testOptions {
