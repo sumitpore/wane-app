@@ -81,7 +81,6 @@
     <string name="about_section">About</string>
     <string name="auto_lock_settings_title">Focus on Unlock</string>
     <string name="auto_lock_enabled">Start focus on unlock</string>
-    <string name="auto_lock_duration">Duration</string>
     <string name="grace_period">Grace period</string>
     <string name="skip_window">Skip window</string>
     <string name="skip_while_charging">Skip while charging</string>
