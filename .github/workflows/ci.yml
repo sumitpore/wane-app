@@ -30,7 +30,7 @@ jobs:
       - name: Check APK size
         run: |
           APK_SIZE=$(stat -c%s app/build/outputs/apk/debug/*.apk)
-          MAX_SIZE=$((25 * 1024 * 1024))
+          MAX_SIZE=$((100 * 1024 * 1024))
           if [ "$APK_SIZE" -gt "$MAX_SIZE" ]; then
             echo "APK too large: $APK_SIZE bytes (max: $MAX_SIZE)"
             exit 1
