@@ -105,47 +105,7 @@ fun AutoLockSettingsScreen(
                 )
             }
 
-            AutoLockCard {
-                SkipWindowRow(
-                    hasWindow = config.skipStartHour != null,
-                    startHour = config.skipStartHour,
-                    startMinute = config.skipStartMinute,
-                    endHour = config.skipEndHour,
-                    endMinute = config.skipEndMinute,
-                    enabled = config.enabled,
-                    onToggle = { enabled ->
-                        if (enabled) {
-                            viewModel.onEvent(
-                                AutoLockUiEvent.SetSkipWindow(22, 0, 7, 0),
-                            )
-                        } else {
-                            viewModel.onEvent(
-                                AutoLockUiEvent.SetSkipWindow(null, null, null, null),
-                            )
-                        }
-                    },
-                    onStartTimeChanged = { hour, minute ->
-                        viewModel.onEvent(
-                            AutoLockUiEvent.SetSkipWindow(
-                                hour,
-                                minute,
-                                config.skipEndHour,
-                                config.skipEndMinute,
-                            ),
-                        )
-                    },
-                    onEndTimeChanged = { hour, minute ->
-                        viewModel.onEvent(
-                            AutoLockUiEvent.SetSkipWindow(
-                                config.skipStartHour,
-                                config.skipStartMinute,
-                                hour,
-                                minute,
-                            ),
-                        )
-                    },
-                )
-            }
+            SkipWindowSection(config = config, viewModel = viewModel)
 
             AutoLockCard {
                 AutoLockToggleRow(
@@ -291,7 +251,64 @@ private fun SliderRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SkipWindowSection(
+    config: com.wane.app.shared.AutoLockConfig,
+    viewModel: AutoLockViewModel,
+) {
+    var showStartPicker by remember { mutableStateOf(false) }
+    var showEndPicker by remember { mutableStateOf(false) }
+    val hasWindow = config.skipStartHour != null
+
+    AutoLockCard {
+        SkipWindowRow(
+            hasWindow = hasWindow,
+            startHour = config.skipStartHour,
+            startMinute = config.skipStartMinute,
+            endHour = config.skipEndHour,
+            endMinute = config.skipEndMinute,
+            enabled = config.enabled,
+            onToggle = { enabled ->
+                if (enabled) {
+                    viewModel.onEvent(AutoLockUiEvent.SetSkipWindow(22, 0, 7, 0))
+                } else {
+                    viewModel.onEvent(AutoLockUiEvent.SetSkipWindow(null, null, null, null))
+                }
+            },
+            onStartTimeClick = { showStartPicker = true },
+            onEndTimeClick = { showEndPicker = true },
+        )
+    }
+
+    if (showStartPicker && hasWindow) {
+        WaneTimePickerDialog(
+            initialHour = config.skipStartHour!!,
+            initialMinute = config.skipStartMinute ?: 0,
+            onConfirm = { h, m ->
+                viewModel.onEvent(
+                    AutoLockUiEvent.SetSkipWindow(h, m, config.skipEndHour, config.skipEndMinute),
+                )
+                showStartPicker = false
+            },
+            onDismiss = { showStartPicker = false },
+        )
+    }
+
+    if (showEndPicker && hasWindow) {
+        WaneTimePickerDialog(
+            initialHour = config.skipEndHour!!,
+            initialMinute = config.skipEndMinute ?: 0,
+            onConfirm = { h, m ->
+                viewModel.onEvent(
+                    AutoLockUiEvent.SetSkipWindow(config.skipStartHour, config.skipStartMinute, h, m),
+                )
+                showEndPicker = false
+            },
+            onDismiss = { showEndPicker = false },
+        )
+    }
+}
+
 @Composable
 private fun SkipWindowRow(
     hasWindow: Boolean,
@@ -301,12 +318,9 @@ private fun SkipWindowRow(
     endMinute: Int?,
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
-    onStartTimeChanged: (hour: Int, minute: Int) -> Unit,
-    onEndTimeChanged: (hour: Int, minute: Int) -> Unit,
+    onStartTimeClick: () -> Unit,
+    onEndTimeClick: () -> Unit,
 ) {
-    var showStartPicker by remember { mutableStateOf(false) }
-    var showEndPicker by remember { mutableStateOf(false) }
-
     Column(
         modifier =
             Modifier
@@ -336,62 +350,44 @@ private fun SkipWindowRow(
                     ),
             )
         }
-
         if (hasWindow && startHour != null && endHour != null) {
-            val sMin = startMinute ?: 0
-            val eMin = endMinute ?: 0
             Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TimeChip(
-                    hour = startHour,
-                    minute = sMin,
-                    label = stringResource(R.string.skip_window_start),
-                    enabled = enabled,
-                    onClick = { showStartPicker = true },
-                )
-                Text(
-                    text = "–",
-                    style = WaneTypography.bodyMedium,
-                    color = TextStatus,
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                )
-                TimeChip(
-                    hour = endHour,
-                    minute = eMin,
-                    label = stringResource(R.string.skip_window_end),
-                    enabled = enabled,
-                    onClick = { showEndPicker = true },
-                )
-            }
+            SkipWindowTimeChips(
+                startHour = startHour,
+                startMinute = startMinute ?: 0,
+                endHour = endHour,
+                endMinute = endMinute ?: 0,
+                enabled = enabled,
+                onStartClick = onStartTimeClick,
+                onEndClick = onEndTimeClick,
+            )
         }
     }
+}
 
-    if (showStartPicker && hasWindow && startHour != null) {
-        WaneTimePickerDialog(
-            initialHour = startHour,
-            initialMinute = startMinute ?: 0,
-            onConfirm = { h, m ->
-                onStartTimeChanged(h, m)
-                showStartPicker = false
-            },
-            onDismiss = { showStartPicker = false },
+@Composable
+private fun SkipWindowTimeChips(
+    startHour: Int,
+    startMinute: Int,
+    endHour: Int,
+    endMinute: Int,
+    enabled: Boolean,
+    onStartClick: () -> Unit,
+    onEndClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TimeChip(startHour, startMinute, stringResource(R.string.skip_window_start), enabled, onStartClick)
+        Text(
+            text = "–",
+            style = WaneTypography.bodyMedium,
+            color = TextStatus,
+            modifier = Modifier.padding(horizontal = 12.dp),
         )
-    }
-
-    if (showEndPicker && hasWindow && endHour != null) {
-        WaneTimePickerDialog(
-            initialHour = endHour,
-            initialMinute = endMinute ?: 0,
-            onConfirm = { h, m ->
-                onEndTimeChanged(h, m)
-                showEndPicker = false
-            },
-            onDismiss = { showEndPicker = false },
-        )
+        TimeChip(endHour, endMinute, stringResource(R.string.skip_window_end), enabled, onEndClick)
     }
 }
 

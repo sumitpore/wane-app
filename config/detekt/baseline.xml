@@ -16,7 +16,12 @@
     <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun AutoLockToggleRow</ID>
     <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun AutoLockTopBar</ID>
     <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun SkipWindowRow</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun SkipWindowSection</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun SkipWindowTimeChips</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable private fun SkipWindowSection</ID>
     <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun SliderRow</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@Composable private fun TimeChip</ID>
+    <ID>FunctionNaming:AutoLockSettingsScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable private fun WaneTimePickerDialog</ID>
     <ID>FunctionNaming:AutoLockStep.kt:@Composable fun AutoLockStep</ID>
     <ID>FunctionNaming:AutoLockStep.kt:@Composable private fun AutoLockToggleRow</ID>
     <ID>FunctionNaming:AutoLockStep.kt:@Composable private fun WaneToggle</ID>

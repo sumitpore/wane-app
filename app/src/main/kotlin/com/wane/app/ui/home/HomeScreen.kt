@@ -28,7 +28,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,7 +43,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -492,13 +496,39 @@ private fun StartButton(onClick: () -> Unit) {
                 ),
     ) {
         Icon(
-            imageVector = Icons.Filled.PlayArrow,
+            imageVector = HeroPlay,
             contentDescription = stringResource(R.string.start_session),
             modifier = Modifier.size(28.dp),
             tint = Color.White.copy(alpha = 0.80f),
         )
     }
 }
+
+private val HeroPlay: ImageVector =
+    ImageVector
+        .Builder(
+            name = "HeroPlay",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            path(
+                stroke = SolidColor(Color.White),
+                strokeLineWidth = 1.5f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(5.25f, 5.653f)
+                curveToRelative(0f, -0.856f, 0.917f, -1.398f, 1.667f, -0.986f)
+                lineToRelative(11.54f, 6.347f)
+                arcToRelative(1.125f, 1.125f, 0f, false, true, 0f, 1.972f)
+                lineToRelative(-11.54f, 6.347f)
+                arcToRelative(1.125f, 1.125f, 0f, false, true, -1.667f, -0.986f)
+                verticalLineTo(5.653f)
+                close()
+            }
+        }.build()
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A1628)
 @Composable
