@@ -504,6 +504,7 @@ private fun StartButton(onClick: () -> Unit) {
     }
 }
 
+@Suppress("MagicNumber")
 private val HeroPlay: ImageVector =
     ImageVector
         .Builder(
