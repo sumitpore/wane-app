@@ -83,6 +83,8 @@
     <string name="auto_lock_enabled">Start focus on unlock</string>
     <string name="grace_period">Grace period</string>
     <string name="skip_window">Skip window</string>
+    <string name="skip_window_start">Start</string>
+    <string name="skip_window_end">End</string>
     <string name="skip_while_charging">Skip while charging</string>
     <string name="autolock_seconds_format">%d sec</string>
     <string name="autolock_skip_window_range" formatted="false">%02d:%02d – %02d:%02d</string>

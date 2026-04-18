@@ -3,6 +3,7 @@ package com.wane.app.ui.settings
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -26,13 +28,21 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wane.app.R
@@ -113,6 +123,26 @@ fun AutoLockSettingsScreen(
                                 AutoLockUiEvent.SetSkipWindow(null, null, null, null),
                             )
                         }
+                    },
+                    onStartTimeChanged = { hour, minute ->
+                        viewModel.onEvent(
+                            AutoLockUiEvent.SetSkipWindow(
+                                hour,
+                                minute,
+                                config.skipEndHour,
+                                config.skipEndMinute,
+                            ),
+                        )
+                    },
+                    onEndTimeChanged = { hour, minute ->
+                        viewModel.onEvent(
+                            AutoLockUiEvent.SetSkipWindow(
+                                config.skipStartHour,
+                                config.skipStartMinute,
+                                hour,
+                                minute,
+                            ),
+                        )
                     },
                 )
             }
@@ -261,6 +291,7 @@ private fun SliderRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SkipWindowRow(
     hasWindow: Boolean,
@@ -270,7 +301,12 @@ private fun SkipWindowRow(
     endMinute: Int?,
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
+    onStartTimeChanged: (hour: Int, minute: Int) -> Unit,
+    onEndTimeChanged: (hour: Int, minute: Int) -> Unit,
 ) {
+    var showStartPicker by remember { mutableStateOf(false) }
+    var showEndPicker by remember { mutableStateOf(false) }
+
     Column(
         modifier =
             Modifier
@@ -302,19 +338,144 @@ private fun SkipWindowRow(
         }
 
         if (hasWindow && startHour != null && endHour != null) {
+            val sMin = startMinute ?: 0
+            val eMin = endMinute ?: 0
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text =
-                    stringResource(
-                        R.string.autolock_skip_window_range,
-                        startHour,
-                        startMinute ?: 0,
-                        endHour,
-                        endMinute ?: 0,
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TimeChip(
+                    hour = startHour,
+                    minute = sMin,
+                    label = stringResource(R.string.skip_window_start),
+                    enabled = enabled,
+                    onClick = { showStartPicker = true },
+                )
+                Text(
+                    text = "–",
+                    style = WaneTypography.bodyMedium,
+                    color = TextStatus,
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                )
+                TimeChip(
+                    hour = endHour,
+                    minute = eMin,
+                    label = stringResource(R.string.skip_window_end),
+                    enabled = enabled,
+                    onClick = { showEndPicker = true },
+                )
+            }
+        }
+    }
+
+    if (showStartPicker && hasWindow && startHour != null) {
+        WaneTimePickerDialog(
+            initialHour = startHour,
+            initialMinute = startMinute ?: 0,
+            onConfirm = { h, m ->
+                onStartTimeChanged(h, m)
+                showStartPicker = false
+            },
+            onDismiss = { showStartPicker = false },
+        )
+    }
+
+    if (showEndPicker && hasWindow && endHour != null) {
+        WaneTimePickerDialog(
+            initialHour = endHour,
+            initialMinute = endMinute ?: 0,
+            onConfirm = { h, m ->
+                onEndTimeChanged(h, m)
+                showEndPicker = false
+            },
+            onDismiss = { showEndPicker = false },
+        )
+    }
+}
+
+@Composable
+private fun TimeChip(
+    hour: Int,
+    minute: Int,
+    label: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(SurfaceDim)
+                .clickable(enabled = enabled, onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            text = label,
+            style = WaneTypography.labelSmall,
+            color = if (enabled) TextStatus else TextMuted,
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = "%02d:%02d".format(hour, minute),
+            style = WaneTypography.bodyLarge,
+            color = if (enabled) AccentPrimary else TextMuted,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WaneTimePickerDialog(
+    initialHour: Int,
+    initialMinute: Int,
+    onConfirm: (hour: Int, minute: Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val state =
+        rememberTimePickerState(
+            initialHour = initialHour,
+            initialMinute = initialMinute,
+            is24Hour = true,
+        )
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(BackgroundSettings)
+                    .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            TimePicker(
+                state = state,
+                colors =
+                    TimePickerDefaults.colors(
+                        clockDialColor = SurfaceDim,
+                        selectorColor = AccentPrimary,
+                        containerColor = BackgroundSettings,
+                        clockDialSelectedContentColor = TextPrimary,
+                        clockDialUnselectedContentColor = TextSecondary,
+                        timeSelectorSelectedContainerColor = AccentPrimary.copy(alpha = 0.2f),
+                        timeSelectorSelectedContentColor = AccentPrimary,
+                        timeSelectorUnselectedContainerColor = SurfaceDim,
+                        timeSelectorUnselectedContentColor = TextSecondary,
                     ),
-                style = WaneTypography.bodyMedium,
-                color = TextStatus,
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel), color = TextStatus)
+                }
+                TextButton(onClick = { onConfirm(state.hour, state.minute) }) {
+                    Text(stringResource(R.string.done), color = AccentPrimary)
+                }
+            }
         }
     }
 }
