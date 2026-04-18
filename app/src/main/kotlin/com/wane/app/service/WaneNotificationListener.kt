@@ -158,15 +158,18 @@ class WaneNotificationListener : NotificationListenerService() {
         }
     }
 
+    private fun shouldSnooze(sbn: StatusBarNotification): Boolean =
+        sbn.packageName !in phoneAndSmsPackages &&
+            sbn.packageName !in EmergencySafety.NEVER_BLOCK_PACKAGES &&
+            sbn.packageName != "com.wane.app" &&
+            sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE == 0 &&
+            sbn.notification.fullScreenIntent == null
+
     private fun snoozeExistingNotifications() {
         try {
             val active = getActiveNotifications() ?: return
             for (sbn in active) {
-                if (sbn.packageName in phoneAndSmsPackages) continue
-                if (sbn.packageName in EmergencySafety.NEVER_BLOCK_PACKAGES) continue
-                if (sbn.packageName == "com.wane.app") continue
-                if (sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE != 0) continue
-                if (sbn.notification.fullScreenIntent != null) continue
+                if (!shouldSnooze(sbn)) continue
                 try {
                     snoozeNotification(sbn.key, Long.MAX_VALUE)
                     synchronized(snoozedKeys) {
