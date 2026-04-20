@@ -8,14 +8,30 @@ A focus session app for Android that helps you stay off your phone by blocking d
 
 **Min SDK:** Android 9 (API 28) | **Target SDK:** Android 16 (API 36)
 
-## Prerequisites
+## Install Without Cloning
+
+You can install the app directly on your Android device without cloning the repo or building from source.
+
+1. On your Android device, open this link to download the APK:
+
+   **[Download app-debug.apk](https://github.com/sumitpore/wane-app/raw/main/app/build/outputs/apk/debug/app-debug.apk)**
+
+2. When prompted by your browser, tap **Download** (or **OK**)
+3. Once downloaded, open the APK from your notification shade or file manager
+4. If prompted, allow installation from unknown sources (your browser will guide you through this)
+5. Tap **Install**
+6. After installation, follow [Step 4](#step-4-enable-the-accessibility-service) and [Step 5](#step-5-grant-notification-access) below to grant the required permissions
+
+## Building from Source
+
+### Prerequisites
 
 - **Android Studio** Ladybug or later (with Android SDK 36)
 - **JDK 17**
 - An Android device or emulator running Android 9+
 - **USB cable** (for physical device installation)
 
-## Building the App
+### Build the APK
 
 ```bash
 # Clone the repository
@@ -32,11 +48,9 @@ The APK will be generated at:
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## Installing on a Device (Sideload)
+## Installing via USB (Sideload)
 
-Since the app is not yet published on Google Play, you need to sideload it via USB.
-
-> **Want to test without building?** Download the pre-built debug APK directly from [here](https://github.com/sumitpore/wane-app/blob/main/app/build/outputs/apk/debug/app-debug.apk) and skip to [Step 1](#step-1-enable-developer-options-on-your-android-device) below.
+If you built from source or downloaded the APK to your computer, you can install via USB.
 
 ### Step 1: Enable Developer Options on your Android device
 
@@ -76,7 +90,7 @@ Wane uses an Accessibility Service to block distracting apps during focus sessio
 4. Confirm the permission dialog
 
 > **Why does Wane need Accessibility access?**
-> The Accessibility Service allows Wane to detect when you open a blocked app during a focus session and redirect you back. Wane does not read, collect, or transmit any personal data through this service.
+> The Accessibility Service monitors which app is in the foreground. During an active focus session, if you open a blocked app, Wane redirects you back to its session screen. The service only reads package names from window-state events — it cannot read screen content, passwords, or messages, and it does not collect or transmit any data.
 
 ### Step 5: Grant Notification Access
 
@@ -84,6 +98,9 @@ For notification filtering during focus sessions:
 
 1. Open **Settings > Apps & notifications > Special app access > Notification access**
 2. Enable **Wane**
+
+> **Why does Wane need Notification access?**
+> During a focus session, Wane silences distracting notifications by snoozing them until the session ends. Calls and messages from your phone/SMS apps are never snoozed so you don't miss anything urgent. Wane only reads each notification's package name and category to decide whether to snooze it — it does not read notification text or content, and it does not collect or transmit any data.
 
 ## Running from Android Studio
 
