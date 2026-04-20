@@ -116,24 +116,6 @@ adb uninstall com.wane.app.debug
 
 Or uninstall from the device: **Settings > Apps > Wane > Uninstall**
 
-## Project Structure
-
-```
-app/src/main/kotlin/com/wane/app/
-├── animation/       # Water GL animation (shaders, renderer, themes)
-├── data/            # DataStore preferences, Room database, repositories
-├── service/         # Foreground service, Accessibility service, auto-lock
-├── shared/          # Domain models and route definitions
-├── ui/
-│   ├── components/  # Shared UI components
-│   ├── home/        # Main screen (duration picker, start button)
-│   ├── onboarding/  # First-launch onboarding flow
-│   ├── session/     # Active focus session screen
-│   ├── settings/    # App settings
-│   └── theme/       # Colors, typography, motion
-└── util/            # Accessibility, notification, and intent helpers
-```
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
