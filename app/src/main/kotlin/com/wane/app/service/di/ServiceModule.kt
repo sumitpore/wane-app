@@ -3,7 +3,6 @@ package com.wane.app.service.di
 import com.wane.app.service.AppBlocker
 import com.wane.app.service.ApplicationScope
 import com.wane.app.service.AutoLockScheduler
-import com.wane.app.service.RepeatedCallerTracker
 import com.wane.app.service.SessionManager
 import com.wane.app.service.SessionManagerImpl
 import dagger.Binds
@@ -33,8 +32,6 @@ interface AccessibilityServiceEntryPoint {
 @InstallIn(SingletonComponent::class)
 interface NotificationListenerEntryPoint {
     fun sessionManager(): SessionManager
-
-    fun repeatedCallerTracker(): RepeatedCallerTracker
 
     fun appBlocker(): AppBlocker
 }

@@ -37,7 +37,6 @@ class SessionManagerImpl
     @Inject
     constructor(
         private val sessionRepository: SessionRepository,
-        private val repeatedCallerTracker: RepeatedCallerTracker,
         @ApplicationContext private val context: Context,
         @ApplicationScope private val scope: CoroutineScope,
     ) : SessionManager {
@@ -219,7 +218,6 @@ class SessionManagerImpl
                     stopSessionService()
                     delay(EMERGENCY_EXIT_UI_DELAY_MS)
                     _sessionState.value = SessionState.Idle
-                    repeatedCallerTracker.reset()
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
@@ -234,7 +232,6 @@ class SessionManagerImpl
                 try {
                     _sessionState.value = SessionState.Idle
                     stopSessionService()
-                    repeatedCallerTracker.reset()
                 } catch (e: Exception) {
                     Log.e(TAG, "confirmSessionComplete failed", e)
                 }

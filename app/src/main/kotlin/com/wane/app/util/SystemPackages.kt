@@ -1,7 +1,7 @@
 package com.wane.app.util
 
-object EmergencySafety {
-    val NEVER_BLOCK_PACKAGES: Set<String> =
+object SystemPackages {
+    val NEVER_BLOCK: Set<String> =
         setOf(
             "com.android.dialer",
             "com.google.android.dialer",
@@ -17,5 +17,5 @@ object EmergencySafety {
             "com.samsung.android.app.resolver",
         )
 
-    fun isNeverBlockPackage(packageName: String): Boolean = packageName in NEVER_BLOCK_PACKAGES
+    fun isNeverBlock(packageName: String): Boolean = packageName in NEVER_BLOCK
 }

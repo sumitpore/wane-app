@@ -1,16 +1,14 @@
 package com.wane.app.service
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.service.notification.NotificationListenerService
+import android.service.notification.NotificationListenerService.RankingMap
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import com.wane.app.service.di.NotificationListenerEntryPoint
 import com.wane.app.shared.SessionState
-import com.wane.app.util.EmergencySafety
-import com.wane.app.util.NotificationUtils
 import com.wane.app.util.PackageUtils
+import com.wane.app.util.SystemPackages
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +21,6 @@ import kotlinx.coroutines.launch
 
 class WaneNotificationListener : NotificationListenerService() {
     private lateinit var sessionManager: SessionManager
-    private lateinit var repeatedCallerTracker: RepeatedCallerTracker
     private lateinit var appBlocker: AppBlocker
 
     private var serviceScope: CoroutineScope? = null
@@ -46,7 +43,6 @@ class WaneNotificationListener : NotificationListenerService() {
                     NotificationListenerEntryPoint::class.java,
                 )
             sessionManager = entryPoint.sessionManager()
-            repeatedCallerTracker = entryPoint.repeatedCallerTracker()
             appBlocker = entryPoint.appBlocker()
 
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -88,20 +84,10 @@ class WaneNotificationListener : NotificationListenerService() {
             sbn ?: return
             if (!::sessionManager.isInitialized) return
 
-            val callerNumber = NotificationUtils.extractCallerNumber(sbn)
-
-            if (callerNumber != null) {
-                repeatedCallerTracker.recordCall(callerNumber)
-                if (repeatedCallerTracker.isRepeatedCaller(callerNumber)) {
-                    showRepeatedCallerNotification(callerNumber)
-                    return
-                }
-            }
-
             if (sessionManager.sessionState.value !is SessionState.Running) return
 
             if (sbn.packageName in phoneAndSmsPackages) return
-            if (sbn.packageName in EmergencySafety.NEVER_BLOCK_PACKAGES) return
+            if (sbn.packageName in SystemPackages.NEVER_BLOCK) return
             if (sbn.packageName == "com.wane.app") return
             if (sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE != 0) return
 
@@ -114,7 +100,7 @@ class WaneNotificationListener : NotificationListenerService() {
             }
 
             try {
-                snoozeNotification(sbn.key, Long.MAX_VALUE)
+                snoozeNotification(sbn.key, SNOOZE_DURATION_MS)
                 synchronized(snoozedKeys) {
                     snoozedKeys.add(sbn.key)
                 }
@@ -126,9 +112,14 @@ class WaneNotificationListener : NotificationListenerService() {
         }
     }
 
-    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
+    override fun onNotificationRemoved(
+        sbn: StatusBarNotification?,
+        rankingMap: RankingMap?,
+        reason: Int,
+    ) {
         try {
             sbn ?: return
+            if (reason == REASON_SNOOZED) return
             synchronized(snoozedKeys) {
                 snoozedKeys.remove(sbn.key)
             }
@@ -160,7 +151,7 @@ class WaneNotificationListener : NotificationListenerService() {
 
     private fun shouldSnooze(sbn: StatusBarNotification): Boolean =
         sbn.packageName !in phoneAndSmsPackages &&
-            sbn.packageName !in EmergencySafety.NEVER_BLOCK_PACKAGES &&
+            sbn.packageName !in SystemPackages.NEVER_BLOCK &&
             sbn.packageName != "com.wane.app" &&
             sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE == 0 &&
             sbn.notification.fullScreenIntent == null
@@ -171,7 +162,7 @@ class WaneNotificationListener : NotificationListenerService() {
             for (sbn in active) {
                 if (!shouldSnooze(sbn)) continue
                 try {
-                    snoozeNotification(sbn.key, Long.MAX_VALUE)
+                    snoozeNotification(sbn.key, SNOOZE_DURATION_MS)
                     synchronized(snoozedKeys) {
                         snoozedKeys.add(sbn.key)
                     }
@@ -184,43 +175,9 @@ class WaneNotificationListener : NotificationListenerService() {
         }
     }
 
-    private fun showRepeatedCallerNotification(callerNumber: String) {
-        try {
-            val nm = getSystemService(NotificationManager::class.java) ?: return
-            val channel =
-                NotificationChannel(
-                    CHANNEL_REPEATED_CALLER,
-                    "Repeated Caller Alerts",
-                    NotificationManager.IMPORTANCE_HIGH,
-                )
-            nm.createNotificationChannel(channel)
-
-            val maskedNumber =
-                if (callerNumber.length > 4) {
-                    "***${callerNumber.takeLast(4)}"
-                } else {
-                    callerNumber
-                }
-
-            val notification =
-                Notification
-                    .Builder(this, CHANNEL_REPEATED_CALLER)
-                    .setSmallIcon(android.R.drawable.ic_menu_call)
-                    .setContentTitle("Repeated caller")
-                    .setContentText("$maskedNumber called 3+ times in 5 minutes")
-                    .setAutoCancel(true)
-                    .build()
-
-            nm.notify(NOTIFICATION_ID_REPEATED_CALLER, notification)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to show repeated caller notification", e)
-        }
-    }
-
     companion object {
         private const val TAG = "WaneNotifListener"
-        private const val CHANNEL_REPEATED_CALLER = "repeated_caller"
-        private const val NOTIFICATION_ID_REPEATED_CALLER = 9001
+        private const val SNOOZE_DURATION_MS = 365L * 24 * 60 * 60 * 1000
 
         private val FULL_SCREEN_EXEMPT_CATEGORIES =
             setOf(

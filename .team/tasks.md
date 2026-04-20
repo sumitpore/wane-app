@@ -1,6 +1,6 @@
 # Task Board: Wane
 
-**Last Updated**: 2026-04-15
+**Last Updated**: 2026-04-19
 
 > All teammates read and update this file. Use task IDs for dependency references.
 
@@ -138,3 +138,20 @@
 | P4-R5-7 | Unit tests for extendSession and graduated exit flow                            | Test Engineer  | COMPLETED | P4-R5-2, P4-R5-5 | 6 SessionManagerImpl + 4 SessionViewModel tests                                                    |
 
 
+## Phase 5: Release — v0.1.0 Internal Testing (2026-04-19)
+
+
+| ID   | Task                                                          | Role   | Status    | Depends On | Notes                                                                                    |
+| ---- | ------------------------------------------------------------- | ------ | --------- | ---------- | ---------------------------------------------------------------------------------------- |
+| P5-1 | Generate release signing keystore (RSA 2048, 10000 days)      | DevOps | COMPLETED | P4-INT-3   | PKCS12, alias wane-release, SHA-256 verified, stored at app/release.keystore (gitignored) |
+| P5-2 | Fix ci.yml syntax error                                       | DevOps | COMPLETED | —          | Verified correct — no `and` prefix on pull_request trigger                                |
+| P5-3 | Audit and harden release.yml for secret leak prevention       | DevOps | COMPLETED | P4-R2-5    | set +x, printf, file-based SA JSON, chmod 600, empty-file guards, always-cleanup         |
+| P5-4 | Build and verify signed release APK                           | DevOps | COMPLETED | P5-1       | assembleRelease BUILD SUCCESSFUL, apksigner verified cert matches keystore                |
+| P5-5 | Write Play Console setup guide                                | DevOps | COMPLETED | P5-1       | .team/artifacts/devops/play-console-setup-guide.md — 10 sections + troubleshooting        |
+| P5-6 | Create Google Play Console developer account                  | Lead   | PENDING   | P5-5       | $25 fee, account approval                                                                |
+| P5-7 | Create app in Play Console (com.wane.app)                     | Lead   | PENDING   | P5-6       | Store listing, data safety, content rating                                                |
+| P5-8 | Create GCP service account for automated uploads              | Lead   | PENDING   | P5-7       | Enable Google Play Developer API, grant Play Console permissions                         |
+| P5-9 | Configure GitHub Secrets (5 secrets)                          | Lead   | PENDING   | P5-1, P5-8 | KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD, PLAY_SERVICE_ACCOUNT_JSON   |
+| P5-10 | Push v0.1.0 tag to trigger first release                     | Lead   | PENDING   | P5-9       | git tag v0.1.0 && git push origin v0.1.0                                                 |
+| P5-11 | Set up internal testing track (add testers, share invite link)| Lead   | PENDING   | P5-10      | Create tester email list, distribute join link                                            |
+| P5-12 | Verify release in Play Console and on-device                  | Lead   | PENDING   | P5-11      | versionCode 1, versionName 0.1.0, install and smoke test                                 |

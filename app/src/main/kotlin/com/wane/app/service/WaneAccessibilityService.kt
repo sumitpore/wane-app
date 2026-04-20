@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.inputmethod.InputMethodManager
 import com.wane.app.service.di.AccessibilityServiceEntryPoint
-import com.wane.app.util.EmergencySafety
+import com.wane.app.util.SystemPackages
 import dagger.hilt.android.EntryPointAccessors
 
 class WaneAccessibilityService : AccessibilityService() {
@@ -35,7 +35,7 @@ class WaneAccessibilityService : AccessibilityService() {
         try {
             val packageName = event?.packageName?.toString() ?: return
 
-            if (EmergencySafety.isNeverBlockPackage(packageName)) return
+            if (SystemPackages.isNeverBlock(packageName)) return
             if (isEnabledIme(packageName)) return
 
             if (!::appBlocker.isInitialized) return

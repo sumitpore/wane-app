@@ -24,7 +24,6 @@ class SessionManagerImplTest {
             val impl =
                 SessionManagerImpl(
                     repo,
-                    RepeatedCallerTracker(),
                     mock<Context>(),
                     this as CoroutineScope,
                 )
@@ -55,7 +54,6 @@ class SessionManagerImplTest {
             val impl =
                 SessionManagerImpl(
                     repo,
-                    RepeatedCallerTracker(),
                     mock<Context>(),
                     this as CoroutineScope,
                 )
@@ -86,7 +84,6 @@ class SessionManagerImplTest {
             val impl =
                 SessionManagerImpl(
                     repo,
-                    RepeatedCallerTracker(),
                     mock<Context>(),
                     this as CoroutineScope,
                 )
@@ -108,7 +105,6 @@ class SessionManagerImplTest {
             val impl =
                 SessionManagerImpl(
                     repo,
-                    RepeatedCallerTracker(),
                     mock<Context>(),
                     this as CoroutineScope,
                 )
@@ -137,7 +133,6 @@ class SessionManagerImplTest {
             val impl =
                 SessionManagerImpl(
                     repo,
-                    RepeatedCallerTracker(),
                     mock<Context>(),
                     this as CoroutineScope,
                 )
@@ -168,7 +163,6 @@ class SessionManagerImplTest {
             val impl =
                 SessionManagerImpl(
                     repo,
-                    RepeatedCallerTracker(),
                     mock<Context>(),
                     this as CoroutineScope,
                 )

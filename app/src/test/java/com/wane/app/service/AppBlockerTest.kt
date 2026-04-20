@@ -1,7 +1,7 @@
 package com.wane.app.service
 
 import com.wane.app.shared.SessionState
-import com.wane.app.util.EmergencySafety
+import com.wane.app.util.SystemPackages
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
  * therefore cannot be exercised in a JVM unit test. Those paths are covered by
  * instrumentation tests. This file tests:
  *   - session-state transitions (only Running blocks)
- *   - NEVER_BLOCK_PACKAGES pass-through
+ *   - NEVER_BLOCK pass-through
  *   - own-package pass-through
  *   - unknown third-party apps get blocked
  *   - full-screen exemption add / remove / clear / expiry
@@ -57,12 +57,12 @@ class AppBlockerTest {
         assertTrue(blocker.shouldBlockApp("com.twitter.android"))
     }
 
-    // ── NEVER_BLOCK_PACKAGES ──────────────────────────────────────────
+    // ── NEVER_BLOCK ────────────────────────────────────────────────────
 
     @Test
     fun `running state does not block never-block packages`() {
         fakeSessionManager.setState(runningState())
-        for (pkg in EmergencySafety.NEVER_BLOCK_PACKAGES) {
+        for (pkg in SystemPackages.NEVER_BLOCK) {
             assertFalse("Expected $pkg to not be blocked", blocker.shouldBlockApp(pkg))
         }
     }
@@ -85,7 +85,7 @@ class AppBlockerTest {
     @Test
     fun `never-block packages are not blocked even without full-screen exemption`() {
         fakeSessionManager.setState(runningState())
-        for (pkg in EmergencySafety.NEVER_BLOCK_PACKAGES) {
+        for (pkg in SystemPackages.NEVER_BLOCK) {
             assertFalse("$pkg should pass without exemption", blocker.shouldBlockApp(pkg))
         }
     }
@@ -276,7 +276,7 @@ private class AppBlockerShim(
     private val fullScreenExemptions = ConcurrentHashMap<String, FullScreenExemption>()
 
     fun shouldBlockApp(packageName: String): Boolean {
-        if (EmergencySafety.isNeverBlockPackage(packageName)) return false
+        if (SystemPackages.isNeverBlock(packageName)) return false
         if (sessionManager.sessionState.value !is SessionState.Running) return false
         if (packageName in STATIC_ALLOWLIST) return false
         if (isFullScreenExempt(packageName)) return false
@@ -322,7 +322,7 @@ private class AppBlockerShim(
         const val FULL_SCREEN_EXEMPTION_TTL_MS = 60_000L
         val STATIC_ALLOWLIST: Set<String> =
             buildSet {
-                addAll(EmergencySafety.NEVER_BLOCK_PACKAGES)
+                addAll(SystemPackages.NEVER_BLOCK)
                 add("com.wane.app")
             }
     }

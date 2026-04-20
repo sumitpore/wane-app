@@ -455,3 +455,37 @@
   6. Coroutine testing correct? YES — runTest, advanceUntilIdle, MainDispatcherRule
 - **Result**: PASSED
 - **Note**: Build verification (`assembleDebug` + `testDebugUnitTest`) blocked by sandbox network restrictions in this session. Manual build verification recommended.
+
+---
+
+### Entry COV-PROJECT-MD: PROJECT.md Codebase Accuracy Audit (2026-04-20)
+- **Layer**: 2 (Peer) + 3 (Lead) + 6 (Requirements)
+- **Trigger**: User requested PROJECT.md audit against codebase
+- **Process**:
+  1. Business/Marketing specialist updated PROJECT.md with 15+ identified discrepancies
+  2. Independent peer reviewer verified every claim in updated PROJECT.md against source code
+  3. Peer review caught 2 additional issues missed in first pass; lead applied fixes
+- **Verification Questions**:
+  1. Does every FR (1-13) accurately describe what the code does? **PASS** — FR1 now notes notification MM:SS timer; FR5 now describes open-app-on-unlock (not auto-start-session); FR6-FR13 all verified against implementations
+  2. Are all missing/planned features clearly marked? **PASS** — FR9 (themes), FR10 (history screen), FR11 (theme picker/sounds/haptics), FR13 (share) all explicitly marked as planned; Scope split into Implemented vs Planned
+  3. Is the tech stack in Section 5 accurate? **PASS** — Kotlin, Compose M3, Navigation3, Hilt, Room+SQLite Bundled, DataStore, OpenGL ES 2.0/3.0, AccessibilityService, minSdk 28, compileSdk/targetSdk 36, v0.1.0 all verified in build.gradle.kts and libs.versions.toml
+  4. Does the tone match the original document style? **PASS** — confident, product-focused, no emoji, no apology language, consistent with untouched sections
+  5. Is the Scope section (Implemented vs Planned) accurate? **PASS** — all 13 Implemented items exist in code, all 7 Planned items confirmed absent
+  6. Are Non-Functional Requirements accurate? **PASS** (with caveat) — Battery LOD, ES3 fallback, local-only security verified in code; Performance targets (60fps, <5% battery) and accessibility claims are design targets not yet validated by benchmarks
+- **Files Modified**: `.team/PROJECT.md`
+- **Changes Applied**:
+  - Added Last Updated date and Version to header
+  - FR1: Clarified notification shows MM:SS, session screen has no timer
+  - FR5: Corrected from "starts session on lock" to "opens app on unlock after grace period"
+  - FR6: Changed from long-press to back gesture / toolbar button
+  - FR7: Removed haptic feedback claim
+  - FR8: Replaced aspirational fluid dynamics with actual shader implementation details
+  - FR9: Marked premium themes as planned
+  - FR10: Documented data layer as complete, history UI as planned
+  - FR11: Listed actual settings, marked planned items
+  - FR12: Changed from 3 screens to actual 5-step flow
+  - FR13: Marked as [Planned]
+  - Added Battery Awareness NFR
+  - Scope split into Implemented (13 items) and Planned (7 items)
+  - Technology constraint expanded with full stack details and SDK versions
+- **Result**: PASSED

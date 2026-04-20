@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.SystemClock
 import com.wane.app.MainActivity
 import com.wane.app.shared.SessionState
-import com.wane.app.util.EmergencySafety
+import com.wane.app.util.SystemPackages
 import com.wane.app.util.PackageUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.ConcurrentHashMap
@@ -32,7 +32,7 @@ class AppBlocker
             }
             val fresh =
                 buildSet {
-                    addAll(EmergencySafety.NEVER_BLOCK_PACKAGES)
+                    addAll(SystemPackages.NEVER_BLOCK)
                     addAll(PackageUtils.resolveDialerPackages(context))
                     addAll(PackageUtils.resolveContactsPackages(context))
                     addAll(PackageUtils.resolveSmsPackages(context))
@@ -45,7 +45,7 @@ class AppBlocker
         }
 
         fun shouldBlockApp(packageName: String): Boolean {
-            if (EmergencySafety.isNeverBlockPackage(packageName)) return false
+            if (SystemPackages.isNeverBlock(packageName)) return false
             if (sessionManager.sessionState.value !is SessionState.Running) return false
             if (packageName in getSessionAllowlist()) return false
             if (isFullScreenExempt(packageName)) return false
