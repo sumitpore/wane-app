@@ -1,10 +1,6 @@
 package com.wane.app.ui.home
 
-import android.Manifest
-import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
@@ -33,8 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
@@ -76,6 +70,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wane.app.R
 import com.wane.app.service.SessionError
+import com.wane.app.ui.components.WaneButton
 import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BackgroundDeep
 import com.wane.app.ui.theme.BackgroundDeepEnd
@@ -101,20 +96,8 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    val notificationPermissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
-            // Proceed regardless of grant result — FGS notification is exempt on 13+,
-            // but granting improves UX (visible notification in shade).
-        }
-
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.onEvent(HomeUiEvent.RefreshPermissions)
-    }
-
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
     }
 
     LaunchedEffect(Unit) {
@@ -368,26 +351,20 @@ private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
             )
             Text(
                 text = stringResource(R.string.accessibility_consent_label),
-                style = WaneTypography.bodySmall,
+                style = WaneTypography.bodyMedium,
                 color = TextPrimary,
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Button(
+        WaneButton(
+            text = stringResource(R.string.enable_accessibility),
             onClick = onEnableClick,
             enabled = consentChecked,
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = AccentPrimary,
-                    disabledContainerColor = AccentPrimary.copy(alpha = 0.3f),
-                ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.enable_accessibility),
-                style = WaneTypography.labelLarge,
-            )
-        }
+            containerColor = SurfaceGlass,
+            contentColor = AccentPrimary,
+            disabledContainerColor = SurfaceGlass.copy(alpha = 0.05f),
+            disabledContentColor = AccentPrimary.copy(alpha = 0.25f),
+        )
     }
 }
 
@@ -454,26 +431,20 @@ private fun NotificationPromptBanner(onEnableClick: () -> Unit) {
             )
             Text(
                 text = stringResource(R.string.notification_consent_label),
-                style = WaneTypography.bodySmall,
+                style = WaneTypography.bodyMedium,
                 color = TextPrimary,
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Button(
+        WaneButton(
+            text = stringResource(R.string.enable_notification_access),
             onClick = onEnableClick,
             enabled = consentChecked,
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = AccentPrimary,
-                    disabledContainerColor = AccentPrimary.copy(alpha = 0.3f),
-                ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.enable_notification_access),
-                style = WaneTypography.labelLarge,
-            )
-        }
+            containerColor = SurfaceGlass,
+            contentColor = AccentPrimary,
+            disabledContainerColor = SurfaceGlass.copy(alpha = 0.05f),
+            disabledContentColor = AccentPrimary.copy(alpha = 0.25f),
+        )
     }
 }
 

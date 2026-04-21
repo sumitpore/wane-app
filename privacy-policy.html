@@ -168,6 +168,9 @@
   <h2>2. Sensitive Permissions and How They Are Used</h2>
   <p>Wane requests certain Android system permissions to function. Each one is
      explained here in plain language.</p>
+  <p>Before you enable each sensitive permission, Wane asks you to confirm that
+     you understand what the permission does. The "Open Settings" button remains
+     inactive until you check the acknowledgment box.</p>
 
   <h3>AccessibilityService — App Redirection</h3>
   <p><strong>What it does:</strong> During an active focus session, Wane's
@@ -221,12 +224,6 @@
      <code>focus_session_timer</code>) as required by Android 14+ for novel
      use cases.</p>
 
-  <h3>POST_NOTIFICATIONS (Android 13+)</h3>
-  <p><strong>What it does:</strong> On Android 13 and later, apps must ask
-     permission before showing notifications. Wane needs this to display the
-     session notification (required for the foreground service) and
-     session-complete alerts.</p>
-
   <h3>Motion Sensors (Rotation Vector / Accelerometer)</h3>
   <p><strong>What it does:</strong> Wane reads your device's rotation vector
      sensor (or accelerometer as a fallback) to make the water animation respond
@@ -276,8 +273,10 @@
 
   <!-- 7 -->
   <h2>7. Data Retention and Deletion</h2>
-  <p>All Wane data is stored on your device only. You can delete it at any time
-     by:</p>
+  <p>All Wane data is stored on your device only. Cloud backup is fully disabled.
+     If you use Android's device-to-device transfer when setting up a new phone,
+     your session history and preferences may migrate — but they are never sent
+     to any cloud server. You can delete your data at any time by:</p>
   <ul>
     <li><strong>Clearing app data:</strong> Go to Android Settings → Apps →
         Wane → Storage → Clear Data</li>
@@ -346,6 +345,7 @@
       <tr><td>Does Wane read your screen content?</td><td>No</td></tr>
       <tr><td>Does Wane read your messages or call log?</td><td>No</td></tr>
       <tr><td>Does Wane read notification content?</td><td>No</td></tr>
+      <tr><td>Does Wane back up data to the cloud?</td><td>No — cloud backup is fully disabled</td></tr>
       <tr><td>Can you delete all Wane data?</td><td>Yes — clear app data or uninstall</td></tr>
       <tr><td>What does AccessibilityService see?</td><td>Only the foreground app's package name during sessions</td></tr>
       <tr><td>What does NotificationListener see?</td><td>Only notification metadata (app name, key) for filtering during sessions</td></tr>

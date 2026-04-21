@@ -19,13 +19,13 @@
 
     <!-- Onboarding: Accessibility -->
     <string name="accessibility_title">Stay focused</string>
-    <string name="accessibility_description">During focus sessions, Wane detects which app is in the foreground and redirects you back. It cannot read screen content, passwords, or personal information, and no data is stored or sent anywhere. Enable accessibility access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
+    <string name="accessibility_description">Wane detects foreground apps and redirects you back during focus sessions. It cannot read screen content or passwords, and no data leaves your device. Wane is open source — verify at github.com/sumitpore/wane-app.</string>
     <string name="enable_accessibility">Open Settings</string>
     <string name="accessibility_consent_label">I understand what this permission does</string>
 
     <!-- Onboarding: Notification -->
     <string name="notification_title">Silence distractions</string>
-    <string name="notification_description">During focus sessions, Wane temporarily snoozes notifications from non-essential apps. It sees which app sent each notification but cannot read message text or content, and no data is stored or sent anywhere. Phone and SMS notifications always come through. Enable notification access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
+    <string name="notification_description">Wane snoozes non-essential notifications during focus sessions. It cannot read message content, and no data leaves your device. Wane is open source — verify at github.com/sumitpore/wane-app.</string>
     <string name="enable_notification_access">Open Settings</string>
     <string name="notification_consent_label">I understand what this permission does</string>
 

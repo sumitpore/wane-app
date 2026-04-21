@@ -33,6 +33,8 @@ fun WaneButton(
     enabled: Boolean = true,
     containerColor: Color = AccentPrimary,
     contentColor: Color = Crystalline,
+    disabledContainerColor: Color = containerColor.copy(alpha = 0.4f),
+    disabledContentColor: Color = contentColor.copy(alpha = 0.4f),
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -66,8 +68,8 @@ fun WaneButton(
             ButtonDefaults.buttonColors(
                 containerColor = containerColor,
                 contentColor = contentColor,
-                disabledContainerColor = containerColor.copy(alpha = 0.4f),
-                disabledContentColor = contentColor.copy(alpha = 0.4f),
+                disabledContainerColor = disabledContainerColor,
+                disabledContentColor = disabledContentColor,
             ),
         contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
         interactionSource = interactionSource,

@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -51,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.wane.app.R
+import com.wane.app.ui.components.WaneButton
 import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BodyText
 import com.wane.app.ui.theme.SurfaceGlass
@@ -75,10 +74,11 @@ fun AccessibilityStep(modifier: Modifier = Modifier) {
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().padding(bottom = 160.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
     ) {
+        Spacer(modifier = Modifier.weight(1f))
+
         Text(
             text = stringResource(R.string.accessibility_title),
             style = WaneTypography.headlineLarge,
@@ -120,7 +120,7 @@ fun AccessibilityStep(modifier: Modifier = Modifier) {
             },
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         AnimatedContent(
             targetState = isEnabled,
@@ -170,7 +170,7 @@ fun AccessibilityStep(modifier: Modifier = Modifier) {
                             Modifier
                                 .fillMaxWidth()
                                 .clickable { consentChecked = !consentChecked }
-                                .padding(bottom = 12.dp),
+                                .padding(bottom = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
@@ -190,33 +190,21 @@ fun AccessibilityStep(modifier: Modifier = Modifier) {
                         )
                     }
 
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(if (consentChecked) SurfaceGlass else SurfaceGlass.copy(alpha = 0.4f))
-                                .then(
-                                    if (consentChecked) {
-                                        Modifier.clickable {
-                                            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                                        }
-                                    } else {
-                                        Modifier
-                                    },
-                                ).padding(horizontal = 20.dp, vertical = 18.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.enable_accessibility),
-                            style = WaneTypography.labelLarge,
-                            color = if (consentChecked) AccentPrimary else AccentPrimary.copy(alpha = 0.4f),
-                        )
-                    }
+                    WaneButton(
+                        text = stringResource(R.string.enable_accessibility),
+                        onClick = {
+                            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                        },
+                        enabled = consentChecked,
+                        containerColor = SurfaceGlass,
+                        contentColor = AccentPrimary,
+                        disabledContainerColor = SurfaceGlass.copy(alpha = 0.05f),
+                        disabledContentColor = AccentPrimary.copy(alpha = 0.25f),
+                    )
                 }
             }
         }
+
     }
 }
 
