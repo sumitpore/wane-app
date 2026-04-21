@@ -8,6 +8,10 @@ A focus session app for Android that helps you stay off your phone by blocking d
 
 **Min SDK:** Android 9 (API 28) | **Target SDK:** Android 16 (API 36)
 
+## Demo
+
+https://github.com/user-attachments/assets/ac324ff5-3538-4403-8ad1-f63cd2cf6a8b
+
 ## Install Without Cloning
 
 You can install the app directly on your Android device without cloning the repo or building from source.
