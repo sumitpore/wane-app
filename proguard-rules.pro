@@ -9,8 +9,9 @@
     public <methods>;
 }
 
-# Keep OpenGL renderer classes (referenced via reflection for shader compilation)
--keep class com.wane.app.animation.** { *; }
+# WaterSurfaceView is instantiated via Compose AndroidView (no reflection),
+# and WaterRenderer is kept by the GLSurfaceView.Renderer rule above.
+# No broad animation package keep is needed.
 
 # Keep GLES classes used by the animation engine
 -keep class android.opengl.** { *; }

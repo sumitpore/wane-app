@@ -14,4 +14,4 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew dependencies --configuration releaseRuntimeClasspath
-      - run: ./gradlew assembleRelease
+      - run: ./gradlew assembleDebug

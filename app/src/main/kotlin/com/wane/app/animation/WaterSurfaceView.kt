@@ -107,6 +107,7 @@ class WaterSurfaceView
             super.onDetachedFromWindow()
         }
 
+        @Suppress("ClickableViewAccessibility")
         override fun onTouchEvent(event: MotionEvent): Boolean {
             try {
                 if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
@@ -116,10 +117,15 @@ class WaterSurfaceView
                     val ny = (event.y / h.toFloat()).coerceIn(0f, 1f)
                     renderer.notifyTouch(nx, ny)
                 }
+                if (event.action == MotionEvent.ACTION_UP) {
+                    performClick()
+                }
             } catch (_: Throwable) {
             }
             return true
         }
+
+        override fun performClick(): Boolean = super.performClick()
 
         fun updateWaterLevel(level: Float) {
             try {

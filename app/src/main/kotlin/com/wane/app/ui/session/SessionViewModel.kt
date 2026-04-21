@@ -201,6 +201,10 @@ class SessionViewModel
         companion object {
             private const val EXTEND_DURATION_MS = 5L * 60L * 1000L
 
+            // Typing a phrase adds intentional friction to prevent accidental exits,
+            // but must NEVER prevent exiting: dialer, contacts, and SMS are always
+            // accessible without ending the session, and there is zero cooldown.
+            // Do not add timers, rate limits, or CAPTCHAs here.
             private val EXIT_PHRASES =
                 listOf(
                     "I am blessed",

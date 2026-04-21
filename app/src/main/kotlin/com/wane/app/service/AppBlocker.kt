@@ -19,6 +19,8 @@ class AppBlocker
         private val sessionManager: SessionManager,
         @ApplicationContext private val context: Context,
     ) {
+        private val allowlistLock = Any()
+
         @Volatile private var cachedAllowlist: Set<String> = emptySet()
 
         @Volatile private var cacheElapsedMs: Long = 0L
@@ -30,18 +32,23 @@ class AppBlocker
             if (cachedAllowlist.isNotEmpty() && (now - cacheElapsedMs) < ALLOWLIST_TTL_MS) {
                 return cachedAllowlist
             }
-            val fresh =
-                buildSet {
-                    addAll(SystemPackages.NEVER_BLOCK)
-                    addAll(PackageUtils.resolveDialerPackages(context))
-                    addAll(PackageUtils.resolveContactsPackages(context))
-                    addAll(PackageUtils.resolveSmsPackages(context))
-                    addAll(PackageUtils.resolveImePackages(context))
-                    add("com.wane.app")
+            synchronized(allowlistLock) {
+                if (cachedAllowlist.isNotEmpty() && (now - cacheElapsedMs) < ALLOWLIST_TTL_MS) {
+                    return cachedAllowlist
                 }
-            cachedAllowlist = fresh
-            cacheElapsedMs = now
-            return fresh
+                val fresh =
+                    buildSet {
+                        addAll(SystemPackages.NEVER_BLOCK)
+                        addAll(PackageUtils.resolveDialerPackages(context))
+                        addAll(PackageUtils.resolveContactsPackages(context))
+                        addAll(PackageUtils.resolveSmsPackages(context))
+                        addAll(PackageUtils.resolveImePackages(context))
+                        add("com.wane.app")
+                    }
+                cachedAllowlist = fresh
+                cacheElapsedMs = now
+                return fresh
+            }
         }
 
         fun shouldBlockApp(packageName: String): Boolean {

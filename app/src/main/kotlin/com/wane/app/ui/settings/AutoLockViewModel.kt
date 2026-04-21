@@ -70,7 +70,7 @@ class AutoLockViewModel
                     }
 
                     is AutoLockUiEvent.SetGracePeriod -> {
-                        current.copy(gracePeriodSeconds = event.seconds.coerceIn(0, 60))
+                        current.copy(gracePeriodSeconds = event.seconds.coerceIn(5, 60))
                     }
 
                     is AutoLockUiEvent.SetSkipWindow -> {

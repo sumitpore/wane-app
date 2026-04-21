@@ -25,6 +25,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +55,7 @@ import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BodyText
 import com.wane.app.ui.theme.SurfaceGlass
 import com.wane.app.ui.theme.TextSecondary
+import com.wane.app.ui.theme.TextMuted
 import com.wane.app.ui.theme.WaneTheme
 import com.wane.app.ui.theme.WaneTypography
 import com.wane.app.util.NotificationListenerUtils
@@ -65,6 +68,7 @@ fun NotificationStep(modifier: Modifier = Modifier) {
     var isEnabled by remember {
         mutableStateOf(NotificationListenerUtils.isNotificationListenerEnabled(context))
     }
+    var consentChecked by remember { mutableStateOf(false) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         isEnabled = NotificationListenerUtils.isNotificationListenerEnabled(context)
@@ -154,24 +158,62 @@ fun NotificationStep(modifier: Modifier = Modifier) {
                     }
                 }
             } else {
-                Row(
+                Column(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 40.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(SurfaceGlass)
-                            .clickable {
-                                context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-                            }.padding(horizontal = 20.dp, vertical = 18.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
+                            .padding(horizontal = 40.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(
-                        text = stringResource(R.string.enable_notification_access),
-                        style = WaneTypography.labelLarge,
-                        color = AccentPrimary,
-                    )
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { consentChecked = !consentChecked }
+                                .padding(bottom = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(
+                            checked = consentChecked,
+                            onCheckedChange = { consentChecked = it },
+                            colors =
+                                CheckboxDefaults.colors(
+                                    checkedColor = AccentPrimary,
+                                    uncheckedColor = TextMuted,
+                                    checkmarkColor = Color.White,
+                                ),
+                        )
+                        Text(
+                            text = stringResource(R.string.notification_consent_label),
+                            style = WaneTypography.bodyMedium,
+                            color = BodyText,
+                        )
+                    }
+
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(if (consentChecked) SurfaceGlass else SurfaceGlass.copy(alpha = 0.4f))
+                                .then(
+                                    if (consentChecked) {
+                                        Modifier.clickable {
+                                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                                        }
+                                    } else {
+                                        Modifier
+                                    },
+                                ).padding(horizontal = 20.dp, vertical = 18.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.enable_notification_access),
+                            style = WaneTypography.labelLarge,
+                            color = if (consentChecked) AccentPrimary else AccentPrimary.copy(alpha = 0.4f),
+                        )
+                    }
                 }
             }
         }

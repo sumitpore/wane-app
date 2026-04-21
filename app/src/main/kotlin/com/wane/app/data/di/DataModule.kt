@@ -39,7 +39,6 @@ object DataModule {
                 WANE_DB_NAME,
             ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
-            .fallbackToDestructiveMigration()
             .build()
 
     @Provides

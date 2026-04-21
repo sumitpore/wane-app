@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wane — Privacy Policy</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #e0e0e0;
+      --bg: #fff;
+      --bg-subtle: #f8f9fa;
+      --accent: #3b6ea5;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #e4e4e4;
+        --muted: #aaa;
+        --border: #333;
+        --bg: #1a1a1a;
+        --bg-subtle: #222;
+        --accent: #6fa8dc;
+      }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .highlight {
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 1rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 2.25rem 0 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    h2:first-of-type { border-top: none; padding-top: 0; }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 0.9rem; }
+
+    ul {
+      margin: 0.5rem 0 1rem 1.5rem;
+    }
+
+    li { margin-bottom: 0.35rem; }
+
+    code {
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: var(--bg-subtle);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+
+    strong { font-weight: 600; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--bg-subtle);
+      font-weight: 600;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<main>
+
+  <h1>Privacy Policy — Wane</h1>
+  <div class="meta">
+    <strong>Effective Date:</strong> April 18, 2026<br>
+    <strong>Developer:</strong> Uncluttered Apps<br>
+    <strong>Contact:</strong> sumit.pore+uncluttered-apps@gmail.com<br>
+    <strong>App:</strong> Wane (com.wane.app)
+  </div>
+
+  <div class="highlight">
+    <strong>The short version:</strong> Wane does not collect, transmit, or share
+    any of your data. Everything stays on your device.
+  </div>
+
+  <!-- 1 -->
+  <h2>1. Data That Stays on Your Device</h2>
+  <p>Wane stores a small amount of data locally on your device to provide its
+     features. This data is never sent anywhere — it exists only on your phone
+     and is deleted when you uninstall the app.</p>
+
+  <h3>Session History</h3>
+  <p>When you complete a focus session, Wane saves the session duration, start
+     and end times, and whether the session was completed or ended early. This
+     powers the session stats displayed in settings (total sessions and total
+     focus time). This data is stored in a local database (Room) on your device.</p>
+
+  <h3>Preferences and Settings</h3>
+  <p>Your chosen settings — default session duration, auto-lock configuration
+     (enabled state, duration, grace period, skip window, skip while charging),
+     and onboarding completion — are stored locally using Android's Jetpack
+     DataStore. These never leave your device.</p>
+
+  <!-- 2 -->
+  <h2>2. Sensitive Permissions and How They Are Used</h2>
+  <p>Wane requests certain Android system permissions to function. Each one is
+     explained here in plain language.</p>
+
+  <h3>AccessibilityService — App Redirection</h3>
+  <p><strong>What it does:</strong> During an active focus session, Wane's
+     AccessibilityService detects which app is currently in the foreground by
+     listening for window-change events
+     (<code>TYPE_WINDOW_STATE_CHANGED</code>). If the foreground app is not
+     the phone dialer, contacts, or messaging app, Wane redirects you back to
+     the water screen.</p>
+  <p><strong>What it can see:</strong> Only the package name of the foreground
+     app (e.g., "com.instagram.android"). Nothing else.</p>
+  <p><strong>What it cannot do:</strong></p>
+  <ul>
+    <li>It cannot read any content on your screen (<code>canRetrieveWindowContent</code> is set to <code>false</code>)</li>
+    <li>It cannot read text you type</li>
+    <li>It cannot perform gestures or taps on your behalf (<code>canPerformGestures</code> is set to <code>false</code>)</li>
+    <li>It cannot take screenshots</li>
+    <li>It does not record or store which apps you use</li>
+  </ul>
+  <p><strong>When it is active:</strong> Only during an active focus session.
+     It does nothing when no session is running.</p>
+  <p><strong>Data sent off device:</strong> None. The foreground app name is
+     checked in real time and immediately discarded. It is not logged, stored,
+     or transmitted.</p>
+
+  <h3>NotificationListenerService — Notification Filtering</h3>
+  <p><strong>What it does:</strong> During an active focus session, Wane's
+     NotificationListenerService filters your notifications. Notifications from
+     phone, SMS, and contacts apps are allowed through. Notifications from other
+     apps are temporarily snoozed until the session ends.</p>
+  <p><strong>What it can see:</strong> Notification metadata — the posting app's
+     package name and the notification key — enough to decide whether to allow
+     or snooze the notification.</p>
+  <p><strong>What it cannot and does not do:</strong></p>
+  <ul>
+    <li>It does not read notification text content</li>
+    <li>It does not read message bodies or sender details from notification content</li>
+    <li>It does not store any notification data</li>
+    <li>It does not transmit any notification data off your device</li>
+  </ul>
+  <p><strong>When it is active:</strong> The service is registered while Wane
+     has notification access enabled, but filtering logic only activates during
+     focus sessions.</p>
+
+  <h3>Foreground Service (Special Use)</h3>
+  <p><strong>What it does:</strong> During a focus session, Wane runs a
+     foreground service to keep the session timer reliable. Android requires a
+     visible notification for this, which is why you see a persistent
+     notification during sessions.</p>
+  <p><strong>What it accesses:</strong> Nothing beyond keeping the session
+     active. The foreground service type is <code>specialUse</code> (subtype:
+     <code>focus_session_timer</code>) as required by Android 14+ for novel
+     use cases.</p>
+
+  <h3>POST_NOTIFICATIONS (Android 13+)</h3>
+  <p><strong>What it does:</strong> On Android 13 and later, apps must ask
+     permission before showing notifications. Wane needs this to display the
+     session notification (required for the foreground service) and
+     session-complete alerts.</p>
+
+  <h3>Motion Sensors (Rotation Vector / Accelerometer)</h3>
+  <p><strong>What it does:</strong> Wane reads your device's rotation vector
+     sensor (or accelerometer as a fallback) to make the water animation respond
+     to how you tilt your phone. This sensor data is used only for the animation
+     in real time. It is not stored or transmitted.</p>
+
+  <!-- 3 -->
+  <h2>3. Data We Do NOT Collect</h2>
+  <p>To be explicit, Wane does <strong>not</strong>:</p>
+  <ul>
+    <li>Collect any personal information (name, email, phone number, age, gender)</li>
+    <li>Require any user account or login</li>
+    <li>Use any analytics or crash reporting services</li>
+    <li>Display any advertisements</li>
+    <li>Transmit any data over the internet (the app has no internet permission)</li>
+    <li>Access your contacts list (Wane uses system intents — <code>ACTION_DIAL</code>,
+        <code>ACTION_VIEW</code>, <code>ACTION_SENDTO</code> — to let you make
+        calls and send messages through your phone's built-in apps)</li>
+    <li>Read your call log</li>
+    <li>Read your SMS messages</li>
+    <li>Read the content displayed on your screen</li>
+    <li>Read notification text or message content</li>
+    <li>Track your location</li>
+    <li>Access your camera or microphone</li>
+    <li>Share data with any third party</li>
+    <li>Contain any third-party SDKs that collect data</li>
+  </ul>
+
+  <!-- 4 -->
+  <h2>4. Internet and Network Access</h2>
+  <p>Wane does not include the <code>INTERNET</code> permission in its manifest.
+     The app makes zero network requests. No data of any kind leaves your
+     device.</p>
+
+  <!-- 5 -->
+  <h2>5. Third-Party Services</h2>
+  <p>Wane does not integrate any third-party services, SDKs, or libraries that
+     collect user data. There are no analytics providers, ad networks, crash
+     reporters, or cloud services.</p>
+
+  <!-- 6 -->
+  <h2>6. Data Security</h2>
+  <p>All data stored by Wane resides in your device's private app storage,
+     which is sandboxed by Android and inaccessible to other apps. Wane does
+     not transmit data, so encryption in transit is not applicable. The app
+     follows Android security best practices for local data storage.</p>
+
+  <!-- 7 -->
+  <h2>7. Data Retention and Deletion</h2>
+  <p>All Wane data is stored on your device only. You can delete it at any time
+     by:</p>
+  <ul>
+    <li><strong>Clearing app data:</strong> Go to Android Settings → Apps →
+        Wane → Storage → Clear Data</li>
+    <li><strong>Uninstalling the app:</strong> All locally stored data (session
+        history, preferences) is automatically deleted when Wane is uninstalled</li>
+  </ul>
+  <p>Since no data is ever sent to a server, there is nothing to request
+     deletion of remotely.</p>
+
+  <!-- 8 -->
+  <h2>8. Children's Privacy</h2>
+  <p>Wane is not directed at children under 13. The app does not knowingly
+     collect personal information from children. Since Wane collects no personal
+     information from anyone and requires no account creation, there is no
+     mechanism through which children's data could be collected.</p>
+
+  <!-- 9 -->
+  <h2>9. Your Rights</h2>
+  <p>Because Wane stores all data locally on your device and transmits
+     nothing:</p>
+  <ul>
+    <li><strong>You have full control</strong> over your data at all times</li>
+    <li><strong>You can delete all data</strong> by clearing app data or
+        uninstalling</li>
+    <li><strong>No data portability request is needed</strong> — your data is
+        already entirely on your device</li>
+    <li><strong>No account deletion is needed</strong> — there are no accounts</li>
+    <li><strong>You can revoke any permission</strong> at any time through
+        Android Settings, and the app will degrade gracefully (explaining which
+        features require which permissions)</li>
+  </ul>
+  <p>For users in the European Union, United Kingdom, California, or other
+     jurisdictions with specific privacy rights: because Wane processes data
+     only locally on your device with no server-side component, your data is
+     under your direct control. If you have questions about your rights, contact
+     us at sumit.pore+uncluttered-apps@gmail.com.</p>
+
+  <!-- 10 -->
+  <h2>10. Changes to This Privacy Policy</h2>
+  <p>If we update this privacy policy, the revised version will be posted at
+     this URL with an updated effective date. For material changes — especially
+     any change involving data being transmitted off your device — we will also
+     notify you through an in-app notice.</p>
+  <p>We encourage you to review this policy periodically.</p>
+
+  <!-- 11 -->
+  <h2>11. Contact</h2>
+  <p>If you have questions or concerns about this privacy policy or Wane's data
+     practices, contact:</p>
+  <p><strong>Uncluttered Apps</strong><br>
+     Email: sumit.pore+uncluttered-apps@gmail.com</p>
+
+  <!-- 12 -->
+  <h2>12. Summary</h2>
+  <table>
+    <thead>
+      <tr><th>Question</th><th>Answer</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Does Wane collect personal data?</td><td>No</td></tr>
+      <tr><td>Does Wane send data off your device?</td><td>No</td></tr>
+      <tr><td>Does Wane use analytics?</td><td>No</td></tr>
+      <tr><td>Does Wane show ads?</td><td>No</td></tr>
+      <tr><td>Does Wane have user accounts?</td><td>No</td></tr>
+      <tr><td>Does Wane share data with third parties?</td><td>No</td></tr>
+      <tr><td>Does Wane read your screen content?</td><td>No</td></tr>
+      <tr><td>Does Wane read your messages or call log?</td><td>No</td></tr>
+      <tr><td>Does Wane read notification content?</td><td>No</td></tr>
+      <tr><td>Can you delete all Wane data?</td><td>Yes — clear app data or uninstall</td></tr>
+      <tr><td>What does AccessibilityService see?</td><td>Only the foreground app's package name during sessions</td></tr>
+      <tr><td>What does NotificationListener see?</td><td>Only notification metadata (app name, key) for filtering during sessions</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    &copy; 2026 Uncluttered Apps &middot; Wane
+  </footer>
+
+</main>
+</body>
+</html>

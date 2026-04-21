@@ -1,6 +1,10 @@
 package com.wane.app.ui.home
 
+import android.Manifest
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
@@ -31,12 +35,16 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,8 +101,20 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val notificationPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+            // Proceed regardless of grant result — FGS notification is exempt on 13+,
+            // but granting improves UX (visible notification in shade).
+        }
+
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.onEvent(HomeUiEvent.RefreshPermissions)
+    }
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -287,6 +307,7 @@ private fun WaneLogo() {
 
 @Composable
 private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
+    var consentChecked by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val fullText = stringResource(R.string.accessibility_prompt_message)
     val linkDisplay = "github.com/sumitpore/wane-app"
@@ -326,12 +347,39 @@ private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
                     ?.let { uriHandler.openUri(it.item) }
             },
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { consentChecked = !consentChecked },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Checkbox(
+                checked = consentChecked,
+                onCheckedChange = { consentChecked = it },
+                colors =
+                    CheckboxDefaults.colors(
+                        checkedColor = AccentPrimary,
+                        uncheckedColor = TextMuted,
+                        checkmarkColor = Color.White,
+                    ),
+            )
+            Text(
+                text = stringResource(R.string.accessibility_consent_label),
+                style = WaneTypography.bodySmall,
+                color = TextPrimary,
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
         Button(
             onClick = onEnableClick,
+            enabled = consentChecked,
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = AccentPrimary,
+                    disabledContainerColor = AccentPrimary.copy(alpha = 0.3f),
                 ),
             shape = RoundedCornerShape(12.dp),
         ) {
@@ -345,6 +393,7 @@ private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
 
 @Composable
 private fun NotificationPromptBanner(onEnableClick: () -> Unit) {
+    var consentChecked by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val fullText = stringResource(R.string.notification_prompt_message)
     val linkDisplay = "github.com/sumitpore/wane-app"
@@ -384,12 +433,39 @@ private fun NotificationPromptBanner(onEnableClick: () -> Unit) {
                     ?.let { uriHandler.openUri(it.item) }
             },
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { consentChecked = !consentChecked },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Checkbox(
+                checked = consentChecked,
+                onCheckedChange = { consentChecked = it },
+                colors =
+                    CheckboxDefaults.colors(
+                        checkedColor = AccentPrimary,
+                        uncheckedColor = TextMuted,
+                        checkmarkColor = Color.White,
+                    ),
+            )
+            Text(
+                text = stringResource(R.string.notification_consent_label),
+                style = WaneTypography.bodySmall,
+                color = TextPrimary,
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
         Button(
             onClick = onEnableClick,
+            enabled = consentChecked,
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = AccentPrimary,
+                    disabledContainerColor = AccentPrimary.copy(alpha = 0.3f),
                 ),
             shape = RoundedCornerShape(12.dp),
         ) {

@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -109,6 +110,12 @@ fun SettingsScreen(
             }
 
             SettingsSection(title = stringResource(R.string.about_section)) {
+                val uriHandler = LocalUriHandler.current
+                val privacyUrl = stringResource(R.string.privacy_policy_url)
+                SettingsRowNavigation(
+                    label = stringResource(R.string.settings_privacy_policy),
+                    onClick = { uriHandler.openUri(privacyUrl) },
+                )
                 SettingsRowValue(
                     label = stringResource(R.string.settings_version),
                     value = stringResource(R.string.settings_version_value),

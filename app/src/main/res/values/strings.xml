@@ -19,13 +19,15 @@
 
     <!-- Onboarding: Accessibility -->
     <string name="accessibility_title">Stay focused</string>
-    <string name="accessibility_description">Wane gently covers other apps during your focus session. Enable accessibility access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
+    <string name="accessibility_description">During focus sessions, Wane detects which app is in the foreground and redirects you back. It cannot read screen content, passwords, or personal information, and no data is stored or sent anywhere. Enable accessibility access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
     <string name="enable_accessibility">Open Settings</string>
+    <string name="accessibility_consent_label">I understand what this permission does</string>
 
     <!-- Onboarding: Notification -->
     <string name="notification_title">Silence distractions</string>
-    <string name="notification_description">Wane can temporarily snooze notifications during your focus session, so nothing breaks your flow. Enable notification access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
+    <string name="notification_description">During focus sessions, Wane temporarily snoozes notifications from non-essential apps. It sees which app sent each notification but cannot read message text or content, and no data is stored or sent anywhere. Phone and SMS notifications always come through. Enable notification access to activate this. Wane is open source — you can verify the code at github.com/sumitpore/wane-app.</string>
     <string name="enable_notification_access">Open Settings</string>
+    <string name="notification_consent_label">I understand what this permission does</string>
 
     <!-- Onboarding: Auto-Start -->
     <string name="auto_lock_title">Focus, on its own</string>
@@ -79,6 +81,8 @@
     <string name="clear_sessions">Clear all sessions</string>
     <string name="clear_sessions_confirm">This will delete all session history and reset your streak. This cannot be undone.</string>
     <string name="about_section">About</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_url" translatable="false">https://sumitpore.github.io/wane-app/privacy-policy.html</string>
     <string name="auto_lock_settings_title">Focus on Unlock</string>
     <string name="auto_lock_enabled">Start focus on unlock</string>
     <string name="grace_period">Grace period</string>
