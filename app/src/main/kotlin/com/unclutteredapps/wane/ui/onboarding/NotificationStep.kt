@@ -204,7 +204,6 @@ fun NotificationStep(modifier: Modifier = Modifier) {
                 }
             }
         }
-
     }
 }
 

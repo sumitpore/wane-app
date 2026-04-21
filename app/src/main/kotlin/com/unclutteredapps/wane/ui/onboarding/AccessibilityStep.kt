@@ -204,7 +204,6 @@ fun AccessibilityStep(modifier: Modifier = Modifier) {
                 }
             }
         }
-
     }
 }
 
