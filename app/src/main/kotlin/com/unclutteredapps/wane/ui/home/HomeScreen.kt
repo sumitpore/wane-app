@@ -1,6 +1,7 @@
 package com.unclutteredapps.wane.ui.home
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
@@ -243,14 +244,20 @@ private fun HomeContent(
 
             if (uiState.accessibilityDisabled) {
                 Spacer(modifier = Modifier.height(24.dp))
-                AccessibilityPromptBanner(
+                ConsentPromptBanner(
+                    messageResId = R.string.accessibility_prompt_message,
+                    consentLabelResId = R.string.accessibility_consent_label,
+                    buttonTextResId = R.string.enable_accessibility,
                     onEnableClick = onOpenAccessibilitySettings,
                 )
             }
 
             if (uiState.notificationListenerDisabled) {
                 Spacer(modifier = Modifier.height(if (uiState.accessibilityDisabled) 12.dp else 24.dp))
-                NotificationPromptBanner(
+                ConsentPromptBanner(
+                    messageResId = R.string.notification_prompt_message,
+                    consentLabelResId = R.string.notification_consent_label,
+                    buttonTextResId = R.string.enable_notification_access,
                     onEnableClick = onOpenNotificationSettings,
                 )
             }
@@ -289,10 +296,15 @@ private fun WaneLogo() {
 }
 
 @Composable
-private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
+private fun ConsentPromptBanner(
+    @StringRes messageResId: Int,
+    @StringRes consentLabelResId: Int,
+    @StringRes buttonTextResId: Int,
+    onEnableClick: () -> Unit,
+) {
     var consentChecked by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
-    val fullText = stringResource(R.string.accessibility_prompt_message)
+    val fullText = stringResource(messageResId)
     val linkDisplay = "github.com/sumitpore/wane-app"
     val linkUrl = stringResource(R.string.open_source_url)
     val linkStart = fullText.indexOf(linkDisplay)
@@ -350,94 +362,14 @@ private fun AccessibilityPromptBanner(onEnableClick: () -> Unit) {
                     ),
             )
             Text(
-                text = stringResource(R.string.accessibility_consent_label),
+                text = stringResource(consentLabelResId),
                 style = WaneTypography.bodyMedium,
                 color = TextPrimary,
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
         WaneButton(
-            text = stringResource(R.string.enable_accessibility),
-            onClick = onEnableClick,
-            enabled = consentChecked,
-            containerColor = SurfaceGlass,
-            contentColor = AccentPrimary,
-            disabledContainerColor = SurfaceGlass.copy(alpha = 0.05f),
-            disabledContentColor = AccentPrimary.copy(alpha = 0.25f),
-        )
-    }
-}
-
-@Composable
-private fun NotificationPromptBanner(onEnableClick: () -> Unit) {
-    var consentChecked by remember { mutableStateOf(false) }
-    val uriHandler = LocalUriHandler.current
-    val fullText = stringResource(R.string.notification_prompt_message)
-    val linkDisplay = "github.com/sumitpore/wane-app"
-    val linkUrl = stringResource(R.string.open_source_url)
-    val linkStart = fullText.indexOf(linkDisplay)
-    val annotatedMessage =
-        buildAnnotatedString {
-            append(fullText)
-            addStyle(SpanStyle(color = TextPrimary), 0, fullText.length)
-            if (linkStart >= 0) {
-                addStyle(
-                    SpanStyle(color = AccentPrimary, textDecoration = TextDecoration.Underline),
-                    linkStart,
-                    linkStart + linkDisplay.length,
-                )
-                addStringAnnotation("URL", linkUrl, linkStart, linkStart + linkDisplay.length)
-            }
-        }
-
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(
-                    color = SurfaceGlass,
-                    shape = RoundedCornerShape(16.dp),
-                ).padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ClickableText(
-            text = annotatedMessage,
-            style = WaneTypography.bodyMedium.copy(textAlign = TextAlign.Center),
-            onClick = { offset ->
-                annotatedMessage
-                    .getStringAnnotations("URL", offset, offset)
-                    .firstOrNull()
-                    ?.let { uriHandler.openUri(it.item) }
-            },
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { consentChecked = !consentChecked },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Checkbox(
-                checked = consentChecked,
-                onCheckedChange = { consentChecked = it },
-                colors =
-                    CheckboxDefaults.colors(
-                        checkedColor = AccentPrimary,
-                        uncheckedColor = TextMuted,
-                        checkmarkColor = Color.White,
-                    ),
-            )
-            Text(
-                text = stringResource(R.string.notification_consent_label),
-                style = WaneTypography.bodyMedium,
-                color = TextPrimary,
-            )
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        WaneButton(
-            text = stringResource(R.string.enable_notification_access),
+            text = stringResource(buttonTextResId),
             onClick = onEnableClick,
             enabled = consentChecked,
             containerColor = SurfaceGlass,

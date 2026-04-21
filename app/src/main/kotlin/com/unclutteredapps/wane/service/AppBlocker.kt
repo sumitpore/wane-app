@@ -32,11 +32,10 @@ class AppBlocker
             if (cachedAllowlist.isNotEmpty() && (now - cacheElapsedMs) < ALLOWLIST_TTL_MS) {
                 return cachedAllowlist
             }
-            synchronized(allowlistLock) {
+            return synchronized(allowlistLock) {
                 if (cachedAllowlist.isNotEmpty() && (now - cacheElapsedMs) < ALLOWLIST_TTL_MS) {
-                    return cachedAllowlist
-                }
-                val fresh =
+                    cachedAllowlist
+                } else {
                     buildSet {
                         addAll(SystemPackages.NEVER_BLOCK)
                         addAll(PackageUtils.resolveDialerPackages(context))
@@ -44,10 +43,11 @@ class AppBlocker
                         addAll(PackageUtils.resolveSmsPackages(context))
                         addAll(PackageUtils.resolveImePackages(context))
                         add("com.unclutteredapps.wane")
+                    }.also {
+                        cachedAllowlist = it
+                        cacheElapsedMs = now
                     }
-                cachedAllowlist = fresh
-                cacheElapsedMs = now
-                return fresh
+                }
             }
         }
 

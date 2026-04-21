@@ -31,10 +31,9 @@
     <ID>FunctionNaming:DurationStep.kt:@Composable private fun RoundControlButton</ID>
     <ID>FunctionNaming:DurationStep.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun DurationStepPreview</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable fun HomeScreen</ID>
-    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun AccessibilityPromptBanner</ID>
+    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun ConsentPromptBanner</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable private fun DurationPicker</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable private fun HomeContent</ID>
-    <ID>FunctionNaming:HomeScreen.kt:@Composable private fun NotificationPromptBanner</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable private fun StartButton</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Composable private fun WaneLogo</ID>
     <ID>FunctionNaming:HomeScreen.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun HomeContentDurationBoundaryPreview</ID>
@@ -67,6 +66,7 @@
     <ID>FunctionNaming:WelcomeStep.kt:@Preview(showBackground = true, backgroundColor = 0xFF0A1628) @Composable private fun WelcomeStepPreview</ID>
     <ID>LongMethod:AccessibilityStep.kt:@Composable fun AccessibilityStep</ID>
     <ID>LongMethod:AutoLockSettingsScreen.kt:@Composable fun AutoLockSettingsScreen</ID>
+    <ID>LongMethod:HomeScreen.kt:@Composable private fun ConsentPromptBanner</ID>
     <ID>LongMethod:HomeScreen.kt:@Composable private fun HomeContent</ID>
     <ID>LongMethod:NotificationStep.kt:@Composable fun NotificationStep</ID>
     <ID>LongMethod:OnboardingScreen.kt:@Composable fun OnboardingScreen</ID>

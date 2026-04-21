@@ -48,7 +48,7 @@ class SystemPackagesTest {
     @Test
     fun `never-block packages set has expected count`() {
         val snapshot = SystemPackages.NEVER_BLOCK.toSet()
-        assertTrue(snapshot.size == 12)
+        assertTrue(snapshot.size == 13)
         assertTrue(snapshot == SystemPackages.NEVER_BLOCK)
     }
 }
