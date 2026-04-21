@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.SystemClock
 import com.wane.app.MainActivity
 import com.wane.app.shared.SessionState
-import com.wane.app.util.SystemPackages
 import com.wane.app.util.PackageUtils
+import com.wane.app.util.SystemPackages
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject

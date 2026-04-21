@@ -54,8 +54,8 @@ import com.wane.app.R
 import com.wane.app.ui.theme.AccentPrimary
 import com.wane.app.ui.theme.BodyText
 import com.wane.app.ui.theme.SurfaceGlass
-import com.wane.app.ui.theme.TextSecondary
 import com.wane.app.ui.theme.TextMuted
+import com.wane.app.ui.theme.TextSecondary
 import com.wane.app.ui.theme.WaneTheme
 import com.wane.app.ui.theme.WaneTypography
 import com.wane.app.util.NotificationListenerUtils
