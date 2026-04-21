@@ -1,0 +1,54 @@
+package com.unclutteredapps.wane.service.di
+
+import com.unclutteredapps.wane.service.AppBlocker
+import com.unclutteredapps.wane.service.ApplicationScope
+import com.unclutteredapps.wane.service.AutoLockScheduler
+import com.unclutteredapps.wane.service.SessionManager
+import com.unclutteredapps.wane.service.SessionManagerImpl
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Singleton
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface ScreenLockServiceEntryPoint {
+    fun autoLockScheduler(): AutoLockScheduler
+}
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface AccessibilityServiceEntryPoint {
+    fun appBlocker(): AppBlocker
+}
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface NotificationListenerEntryPoint {
+    fun sessionManager(): SessionManager
+
+    fun appBlocker(): AppBlocker
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class ServiceBindingModule {
+    @Binds
+    @Singleton
+    abstract fun bindSessionManager(impl: SessionManagerImpl): SessionManager
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object ServiceModule {
+    @Provides
+    @Singleton
+    @ApplicationScope
+    fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+}

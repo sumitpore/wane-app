@@ -1,0 +1,17 @@
+package com.unclutteredapps.wane.data.datastore
+
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+
+object PreferenceKeys {
+    val DEFAULT_DURATION_MINUTES = intPreferencesKey("default_duration_minutes")
+    val AUTO_LOCK_ENABLED = booleanPreferencesKey("auto_lock_enabled")
+    val AUTO_LOCK_DURATION_MINUTES = intPreferencesKey("auto_lock_duration_minutes")
+    val AUTO_LOCK_GRACE_PERIOD_SECONDS = intPreferencesKey("auto_lock_grace_period_seconds")
+    val AUTO_LOCK_SKIP_START_HOUR = intPreferencesKey("auto_lock_skip_start_hour")
+    val AUTO_LOCK_SKIP_START_MINUTE = intPreferencesKey("auto_lock_skip_start_minute")
+    val AUTO_LOCK_SKIP_END_HOUR = intPreferencesKey("auto_lock_skip_end_hour")
+    val AUTO_LOCK_SKIP_END_MINUTE = intPreferencesKey("auto_lock_skip_end_minute")
+    val AUTO_LOCK_SKIP_WHILE_CHARGING = booleanPreferencesKey("auto_lock_skip_while_charging")
+    val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+}

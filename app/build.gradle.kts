@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = "com.wane.app"
+    namespace = "com.unclutteredapps.wane"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.wane.app"
+        applicationId = "com.unclutteredapps.wane"
         minSdk = 28
         targetSdk = 36
         versionCode = 1

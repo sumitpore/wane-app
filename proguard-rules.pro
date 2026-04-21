@@ -53,11 +53,11 @@
 -keepclasseswithmembers class kotlinx.serialization.json.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
--keep,includedescriptorclasses class com.wane.app.**$$serializer { *; }
--keepclassmembers class com.wane.app.** {
+-keep,includedescriptorclasses class com.unclutteredapps.wane.**$$serializer { *; }
+-keepclassmembers class com.unclutteredapps.wane.** {
     *** Companion;
 }
--keepclasseswithmembers class com.wane.app.** {
+-keepclasseswithmembers class com.unclutteredapps.wane.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
@@ -77,7 +77,7 @@
 # explicit keeps for framework subclasses used by Wane
 -keep class * extends android.accessibilityservice.AccessibilityService { *; }
 -keep class * extends android.service.notification.NotificationListenerService { *; }
--keep class com.wane.app.service.** { *; }
+-keep class com.unclutteredapps.wane.service.** { *; }
 
 # ── Debug: keep source file names for stack traces ──
 -keepattributes SourceFile,LineNumberTable

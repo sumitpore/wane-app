@@ -8,4 +8,4 @@
   android:canPerformGestures="false"
   android:description="@string/accessibility_service_description"
   android:notificationTimeout="100"
-  android:settingsActivity="com.wane.app.MainActivity" />
+  android:settingsActivity="com.unclutteredapps.wane.MainActivity" />

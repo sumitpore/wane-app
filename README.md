@@ -111,7 +111,7 @@ For notification filtering during focus sessions:
 ## Uninstalling
 
 ```bash
-adb uninstall com.wane.app.debug
+adb uninstall com.unclutteredapps.wane.debug
 ```
 
 Or uninstall from the device: **Settings > Apps > Wane > Uninstall**
